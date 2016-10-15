@@ -215,9 +215,12 @@ function checkForGameEnd(){
       for(var k in ROOM_LIST[i].players){
           s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
           s.emit("endGame", {room: i});
-          s.emit("roomUpdate", {
-            rooms : ROOM_LIST,
-          });
+      }
+      for(var i in SOCKET_LIST){
+        var s = SOCKET_LIST[i];
+        s.emit("roomUpdate", {
+          rooms : ROOM_LIST,
+        });
       }
     }
   }
