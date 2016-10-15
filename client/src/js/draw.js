@@ -6,7 +6,7 @@ function draw(data){
     if(i < colors.length)
       canvas.fillStyle = colors[i];
     else canvas.fillStyle = "#FF0000";
-    canvas.fillText(data[i].name, data[i].x, data[i].y);
+    canvas.fillText(data[i].name, data[i].x, data[i].y - 5);
     canvas.fillRect(data[i].x, data[i].y, 20, 20);
   }
 }
