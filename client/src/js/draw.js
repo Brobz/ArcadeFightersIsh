@@ -1,5 +1,6 @@
 function draw(data){
   var hasDrawBullets = false;
+  var hasDrawnBlocks = false;
   canvas.clearRect(0, 0, 500, 500);
   for(var i = 0; i < data.length; i++){
     if(data[i].room != currentRoom)
@@ -15,6 +16,15 @@ function draw(data){
     }
 
     hasDrawBullets = true;
+
+    for(var k in data[i].blocks){
+      if(!hasDrawnBlocks){
+        canvas.fillStyle = data[i].blocks[k].color;
+        canvas.fillRect(data[i].blocks[k].x, data[i].blocks[k].y, data[i].blocks[k].width, data[i].blocks[k].height);
+      }
+    }
+
+    hasDrawnBlocks = true;
 
     canvas.fillStyle = data[i].color;
     canvas.fillRect(data[i].x, data[i].y, 20, 20);

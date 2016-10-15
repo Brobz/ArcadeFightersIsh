@@ -14,11 +14,34 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
-var colors = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
+var COLORS = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
+var MAP = [
+            ["W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W"],
 
+          ]
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
 var Bullet = require('./server/bullet.js').Bullet;
+var Block = require('./server/block.js').Block;
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
@@ -30,7 +53,7 @@ io.sockets.on("connection", function(socket){
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    var p = Player(socket.id, colors[Object.keys(SOCKET_LIST).length - 1]);
+    var p = Player(socket.id, COLORS[Object.keys(SOCKET_LIST).length - 1]);
     PLAYER_LIST[socket.id] = p;
 
 
@@ -87,6 +110,7 @@ io.sockets.on("connection", function(socket){
       if(ROOM_LIST[data.room].players.length < ROOM_LIST[data.room].minSize)
         return;
 
+      buildMap(MAP, data.room);
 
       ROOM_LIST[data.room].inGame = true;
       for(var i in ROOM_LIST[data.room].players){
@@ -147,6 +171,19 @@ function getKeyInput(id, data){
 
 }
 
+function buildMap(map, room){
+  var blocks = []
+  var blockSize = 20;
+  for(var y = 0; y < map.length; y++){
+    for(var x = 0; x < map[y].length; x++){
+      if(map[y][x] == "W")
+        blocks.push(Block([x * blockSize, y * blockSize], [blockSize, blockSize], "#100074"));
+    }
+  }
+
+  ROOM_LIST[room].blocks = blocks;
+}
+
 function resetRoom(room){
   for(var i in ROOM_LIST[room].players){
     ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
@@ -154,7 +191,7 @@ function resetRoom(room){
     ROOM_LIST[room].bullets = [];
 
     // here also reset powerups and player position;
-    
+
   }
 
 }
@@ -243,6 +280,7 @@ function Update(){
             x : p.x,
             y : p.y,
             bullets : ROOM_LIST[i].bullets,
+            blocks : ROOM_LIST[i].blocks,
             color : p.color,
             room : i
 

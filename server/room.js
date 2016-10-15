@@ -2,6 +2,7 @@ exports.Room = function(mnS, mxS, wcS, tb){
   var self = {
     players : [],
     bullets : [],
+    blocks : [],
     maxSize : mxS,
     minSize : mnS,
     winConditionSize : wcS,

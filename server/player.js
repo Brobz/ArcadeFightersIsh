@@ -4,7 +4,6 @@ exports.Player = function(id, color){
     y : 250,
     width : 20,
     height : 20,
-    maxHp : 100,
     alive : true,
     maxHp : 25,
     hp : 25,
@@ -20,7 +19,6 @@ exports.Player = function(id, color){
     shootingDelay : 10,
     timeUntilNextShot : 10,
     speed : 3,
-    alive : true,
     team : null,
     id : id
 
