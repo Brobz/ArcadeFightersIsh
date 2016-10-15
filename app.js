@@ -17,38 +17,40 @@ console.log("Server Ready!");
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 
-class Player{
-  constructor(id){
-    this.x = 250;
-    this.y = 250;
-    this.isMovingLeft = 0;
-    this.isMovingRight = 0;
-    this.isMovingUp = 0;
-    this.isMovingDown = 0;
-    this.speed = 3;
-    this.id = id;
+var Player = function(id){
+  var self = {
+    x : 250,
+    y : 250,
+    isMovingLeft : 0,
+    isMovingRight : 0,
+    isMovingUp : 0,
+    isMovingDown : 0,
+    speed : 3,
+    id : id
 
   }
 
-  updatePosition(){
+  self.updatePosition = function(){
 
-    if(this.isMovingUp)
-      this.y -= this.speed;
-    if(this.isMovingDown)
-      this.y += this.speed;
-    if(this.isMovingLeft)
-      this.x -= this.speed;
-    if(this.isMovingRight)
-      this.x += this.speed;
+    if(self.isMovingUp)
+      self.y -= self.speed;
+    if(self.isMovingDown)
+      self.y += self.speed;
+    if(self.isMovingLeft)
+      self.x -= self.speed;
+    if(self.isMovingRight)
+      self.x += self.speed;
 
   }
+
+  return self;
 }
 
 var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
 
     socket.id = Math.random();
-    var p = new Player(socket.id);
+    var p = Player(socket.id);
     PLAYER_LIST[socket.id] = p;
 
     SOCKET_LIST[socket.id] = socket;
