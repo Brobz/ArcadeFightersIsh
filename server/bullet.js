@@ -8,7 +8,7 @@ exports.Bullet = function(dir, pos, size, team, color){
     dmg : 5,
     color : color,
     dir : dir,
-    speed : 5,
+    speed : 8,
     team : team
   }
 

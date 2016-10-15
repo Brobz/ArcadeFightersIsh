@@ -225,22 +225,22 @@ function checkForGameEnd(){
 function shoot(player, room){
   if(p.isShootingUp){
     pos = [p.x + 7, p.y + 7];
-    size = [10, 10];
+    size = [7, 7];
     ROOM_LIST[room].bullets.push(new Bullet(0, pos, size, p.team, p.color));
   }
   else if(p.isShootingDown){
     pos = [p.x + 7, p.y  + 7];
-    size = [10, 10];
+    size = [7, 7];
     ROOM_LIST[room].bullets.push(new Bullet(1, pos, size, p.team, p.color));
   }
   else if(p.isShootingLeft){
     pos = [p.x + 7, p.y + 7];
-    size = [10, 10];
+    size = [7, 7];
     ROOM_LIST[room].bullets.push(new Bullet(2, pos, size, p.team, p.color));
   }
   else if(p.isShootingRight){
     pos = [p.x + 7, p.y + 7];
-    size = [10, 10];
+    size = [7, 7];
     ROOM_LIST[room].bullets.push(new Bullet(3, pos, size, p.team, p.color));
   }
 
