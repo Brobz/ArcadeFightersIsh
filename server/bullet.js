@@ -1,27 +1,22 @@
-exports.Player = function(id){
+exports.Bullet = function(dir, pos, team, color){
   var self = {
-    x : 250,
-    y : 250,
-    isMovingLeft : 0,
-    isMovingRight : 0,
-    isMovingUp : 0,
-    isMovingDown : 0,
-    speed : 3,
-    alive : true,
-    team : null,
-    id : id
-
+    x : pos[0],
+    y : pos[1],
+    color : color,
+    dir : dir,
+    speed : 5,
+    team : team
   }
 
   self.updatePosition = function(){
 
-    if(self.isMovingUp)
+    if(self.dir == 0)
       self.y -= self.speed;
-    if(self.isMovingDown)
+    if(self.dir == 1)
       self.y += self.speed;
-    if(self.isMovingLeft)
+    if(self.dir == 2)
       self.x -= self.speed;
-    if(self.isMovingRight)
+    if(self.dir == 3)
       self.x += self.speed;
 
   }

@@ -14,8 +14,11 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
+var colors = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
+
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
+var Bullet = require('./server/bullet.js').Bullet;
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
@@ -25,10 +28,12 @@ var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
 
     socket.id = Math.random();
-    var p = Player(socket.id);
+    SOCKET_LIST[socket.id] = socket;
+
+    var p = Player(socket.id, colors[Object.keys(SOCKET_LIST).length - 1]);
     PLAYER_LIST[socket.id] = p;
 
-    SOCKET_LIST[socket.id] = socket;
+
 
     socket.emit("roomUpdate", {
       rooms : ROOM_LIST,
@@ -127,6 +132,19 @@ function getKeyInput(id, data){
     PLAYER_LIST[id].isMovingUp = data.state;
   }
 
+  if(data.input == "shoot0"){
+    PLAYER_LIST[id].isShootingLeft = data.state;
+  }
+  if(data.input == "shoot1"){
+    PLAYER_LIST[id].isShootingUp = data.state;
+  }
+  if(data.input == "shoot2"){
+    PLAYER_LIST[id].isShootingRight = data.state;
+  }
+  if(data.input == "shoot3"){
+    PLAYER_LIST[id].isShootingDown = data.state;
+  }
+
 }
 
 function checkForGameEnd(){
@@ -148,19 +166,47 @@ function checkForGameEnd(){
   }
 }
 
+function shoot(player, room){
+  if(p.isShootingUp){
+    pos = [p.x + 7, p.y + 7];
+    ROOM_LIST[room].bullets.push(new Bullet(0, pos, p.team, p.color));
+  }
+  else if(p.isShootingDown){
+    pos = [p.x + 7, p.y  + 7];
+    ROOM_LIST[room].bullets.push(new Bullet(1, pos, p.team, p.color));
+  }
+  else if(p.isShootingLeft){
+    pos = [p.x + 7, p.y + 7];
+    ROOM_LIST[room].bullets.push(new Bullet(2, pos, p.team, p.color));
+  }
+  else if(p.isShootingRight){
+    pos = [p.x + 7, p.y + 7];
+    ROOM_LIST[room].bullets.push(new Bullet(3, pos, p.team, p.color));
+  }
+
+}
+
 function Update(){
   checkForGameEnd();
   var infoPack = [];
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
+      for(var j in ROOM_LIST[i].bullets){
+        ROOM_LIST[i].bullets[j].updatePosition();
+      }
       for(var k in ROOM_LIST[i].players){
         p = ROOM_LIST[i].players[k];
         p.updatePosition();
+        if(p.updateShooting()){
+          shoot(p, i);
+        }
         infoPack.push(
           {
             name : p.name,
             x : p.x,
             y : p.y,
+            bullets : ROOM_LIST[i].bullets,
+            color : p.color,
             room : i
 
           });
