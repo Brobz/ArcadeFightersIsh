@@ -59,6 +59,8 @@ io.sockets.on("connection", function(socket){
       msg: "Connected to Server.",
     });
 
+    socket.on("setName", function(data){p.name = data.name;});
+
     socket.on("keyPress", function(data){getKeyInput(socket.id, data);});
 
     socket.on("disconnect", function(){Disconnected(socket.id)});
@@ -94,8 +96,10 @@ function Update(){
     p.updatePosition();
     infoPack.push(
       {
+        name : p.name,
         x : p.x,
         y : p.y
+
       });
   }
 
