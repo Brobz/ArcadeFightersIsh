@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>TDZ</title>
+  <title>AFI</title>
 
 </head>
 
@@ -14,7 +14,33 @@
   <h1 id="title">Arcade Fighters Ish</h1>
   <input type="text" id="nameInput" placeholder="Username"> <button id = "connectButton">Connect</button>
   <p id="connectedText"></p>
-
+  <br><br><br>
+  <div id="roomsDiv" style="display: none;">
+    <div id="room1Div">
+      Room 1 <button id = "startGame1" onclick="callForGameStart(0)">Start Game</button>
+      <br>
+      <p id="room1PlayersText"></p>
+      <br>
+      <button id = "joinRoom1Button" onclick="joinRoom(0)">Join</button>
+    </div>
+    <br>
+    <div id="room2Div">
+      Room 2 <button id = "startGame2" onclick="callForGameStart(1)">Start Game</button>
+      <br>
+      <p id="room2PlayersText"></p>
+      <br>
+      <button id = "joinRoom2Button" onclick="joinRoom(1)">Join</button>
+    </div>
+    <br>
+    <div id="room3Div">
+      Room 3 <button id = "startGame3" onclick="callForGameStart(2)">Start Game</button>
+      <br>
+      <p id="room3PlayersText"></p>
+      <br>
+      <button id = "joinRoom3Button" onclick="joinRoom(2)">Join</button>
+    </div>
+    <br>
+  </div>
   <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas>
 
 </body>
