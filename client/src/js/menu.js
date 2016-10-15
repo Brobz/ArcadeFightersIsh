@@ -37,6 +37,13 @@ function startGame(data){
   }
 }
 
+function endGame(data){
+  if(data.room == currentRoom){
+    roomsDiv.style.display = "";
+    canvasElement.style.display = "none";
+  }
+}
+
 function callForGameStart(index){
   socket.emit("callForGameStart", {room: index});
 }
@@ -46,15 +53,18 @@ function roomUpdate(data){
   for(var i in data.rooms){
     startGameButtons[i].style.display = "none";
     roomTexts[i].innerHTML = "";
-    if(data.rooms[i].inGame){
+    joinRoomButtons[i].style.display = "";
+    if(data.rooms[i].inGame || data.rooms[i].players.length >= data.rooms[i].maxSize){
       joinRoomButtons[i].style.display = "none";
     }
     for(var k in data.rooms[i].players){
       if(data.rooms[i].players[0].id == id)
         startGameButtons[i].style.display = "";
-      if(data.rooms[i].players[k].id == id)
+      if(data.rooms[i].players[k].id == id){
         currentRoom = i;
-      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name;
+        joinRoomButtons[i].style.display = "none";
+      }
+      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
     }
   }
 }
@@ -70,6 +80,8 @@ function connected(data){
   socket.on("update", function(data){update(data)});
 
   socket.on("startGame", function(data){startGame(data)});
+
+  socket.on("endGame", function(data){endGame(data)});
 
   nameInput.style.display = "none";
   connectButton.style.display = "none";

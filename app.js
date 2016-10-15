@@ -17,11 +17,13 @@ console.log("Server Ready!");
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 
-var Room = function(){
+var Room = function(mnS, mxS, wcS, tb){
   var self = {
     players : [],
-    maxSize : 4,
-    minSize : 2,
+    maxSize : mxS,
+    minSize : mnS,
+    winConditionSize : wcS,
+    teamBased : tb,
     inGame : false
   }
 
@@ -31,14 +33,40 @@ var Room = function(){
   }
 
   self.addPlayer = function(player){
+    if(!self.teamBased){
+      player.team = self.players.length;
+    }else{
+      if(self.players.length < self.maxSize / 2){
+        player.team = 1;
+      }else player.team = 0
+    }
     self.players.push(player);
+
+  }
+
+  self.checkForWin = function(){
+    if(self.players.length <= self.winConditionSize){
+      if(self.winConditionSize == 1){
+        return true;
+      }else{
+        var team = self.players[0].team;
+        for(var i in self.players){
+          var cTeam = self.players[i].team;
+          if(cTeam != team)
+            return false
+        }
+
+        return true;
+      }
+    }
+    return false;
   }
 
   return self;
 
 }
 
-var ROOM_LIST = [Room(), Room(), Room()];
+var ROOM_LIST = [Room(2, 4, 1, false), Room(4, 4, 2, true), Room(6, 6, 3, true)];
 
 var Player = function(id){
   var self = {
@@ -49,6 +77,8 @@ var Player = function(id){
     isMovingUp : 0,
     isMovingDown : 0,
     speed : 3,
+    alive : true,
+    team : null,
     id : id
 
   }
@@ -177,8 +207,24 @@ function getKeyInput(id, data){
 
 }
 
-function Update(){
+function checkForGameEnd(){
+  for(var i in ROOM_LIST){
+    if(!ROOM_LIST[i].inGame) continue;
+    if(ROOM_LIST[i].checkForWin()){
+      ROOM_LIST[i].inGame = false;
+      for(var k in ROOM_LIST[i].players){
+          s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
+          s.emit("endGame", {room: i});
+          s.emit("roomUpdate", {
+            rooms : ROOM_LIST,
+          });
+      }
+    }
+  }
+}
 
+function Update(){
+  checkForGameEnd();
   var infoPack = [];
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
