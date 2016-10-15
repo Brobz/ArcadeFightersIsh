@@ -24,15 +24,45 @@ exports.Player = function(id, color){
 
   }
 
-  self.updatePosition = function(){
+  self.checkForCollision = function(entities, x, y){
+    for(var i in entities){
+      if(!(entities[i].x >= self.x + self.width ||  entities[i].x + entities[i].width <= self.x || entities[i].y >= self.y + self.height || entities[i].y + entities[i].height <= self.y)){
+        if(y < 0){
+          self.y = entities[i].y + entities[i].height;
+        }
+
+        if(y > 0){
+          self.y = entities[i].y - entities[i].height;
+        }
+
+        if(x < 0){
+          self.x = entities[i].x + entities[i].height;
+        }
+
+        if(x > 0){
+          self.x = entities[i].x - entities[i].height;
+        }
+      }
+    }
+  }
+
+  self.move = function(x, y, blocks){
+    self.x += x;
+    self.y += y;
+
+    self.checkForCollision(blocks, x, y);
+  }
+
+  self.updatePosition = function(blocks){
     if(self.isMovingUp)
-      self.y -= self.speed;
+      self.move(0, -self.speed, blocks);
     if(self.isMovingDown)
-      self.y += self.speed;
+      self.move(0, self.speed, blocks);
     if(self.isMovingLeft)
-      self.x -= self.speed;
+      self.move(-self.speed, 0, blocks);
     if(self.isMovingRight)
-      self.x += self.speed;
+      self.move(self.speed, 0, blocks);
+
 
   }
 
