@@ -20,6 +20,8 @@
 
 <script>
 
+  var colors = ["#ffffcc", "#99ff99", "#00ff00", "#000099"]
+
   function connected(data){
     document.getElementById("connectedText").innerHTML = data.msg;
   }
@@ -27,7 +29,10 @@
   function update(data){
     canvas.clearRect(0, 0, 500, 500);
     for(var i = 0; i < data.length; i++){
-      canvas.fillText("P", data[i].x, data[i].y);
+      if(i < colors.length)
+        canvas.fillStyle = colors[i];
+      else canvas.fillStyle = "#FF0000";
+      canvas.fillRect(20, 20, data[i].x, data[i].y);
     }
   }
 
