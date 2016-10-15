@@ -4,8 +4,6 @@ var express = require("express");
 var app = express();
 var server = require("http").Server(app);
 
-var port = Number(process.env.PORT || 3000);
-
 app.get("/", function(req, res){
     res.sendFile(__dirname + "/client/index.html");
 });
@@ -19,33 +17,31 @@ console.log("Server Ready!");
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 
-var Player = function(id){
-  var self = {
-    x : 250,
-    y : 250,
-    isMovingLeft : 0,
-    isMovingRight : 0,
-    isMovingUp : 0,
-    isMovingDown : 0,
-    speed : 3,
-    id : id
+class Player{
+  constructor(id){
+    this.x = 250;
+    this.y = 250;
+    this.isMovingLeft = 0;
+    this.isMovingRight = 0;
+    this.isMovingUp = 0;
+    this.isMovingDown = 0;
+    this.speed = 3;
+    this.id = id;
 
   }
+  
+  updatePosition(){
 
-  self.updatePosition = function(){
-
-    if(self.isMovingUp)
-      self.y -= self.speed;
-    if(self.isMovingDown)
-      self.y += self.speed;
-    if(self.isMovingLeft)
-      self.x -= self.speed;
-    if(self.isMovingRight)
-      self.x += self.speed;
+    if(this.isMovingUp)
+      this.y -= this.speed;
+    if(this.isMovingDown)
+      this.y += this.speed;
+    if(this.isMovingLeft)
+      this.x -= this.speed;
+    if(this.isMovingRight)
+      this.x += this.speed;
 
   }
-
-  return self;
 }
 
 var io = require("socket.io")(server, {});
