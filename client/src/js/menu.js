@@ -58,13 +58,13 @@ function roomUpdate(data){
       joinRoomButtons[i].style.display = "none";
     }
     for(var k in data.rooms[i].players){
-      if(data.rooms[i].players[0].id == id)
+      if(data.rooms[i].players[0].id == id && data.rooms[i].players.length >= data.rooms[i].minSize)
         startGameButtons[i].style.display = "";
       if(data.rooms[i].players[k].id == id){
         currentRoom = i;
         joinRoomButtons[i].style.display = "none";
       }
-      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
+      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + (data.rooms[i].players[k].team + 1);
     }
   }
 }

@@ -14,90 +14,12 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
+var Room = require('./server/room.js').Room;
+var Player = require('./server/player.js').Player;
+
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-
-var Room = function(mnS, mxS, wcS, tb){
-  var self = {
-    players : [],
-    maxSize : mxS,
-    minSize : mnS,
-    winConditionSize : wcS,
-    teamBased : tb,
-    inGame : false
-  }
-
-  self.removePlayer = function(player){
-    index = self.players.indexOf(player);
-    self.players.splice(index, 1);
-  }
-
-  self.addPlayer = function(player){
-    if(!self.teamBased){
-      player.team = self.players.length;
-    }else{
-      if(self.players.length < self.maxSize / 2){
-        player.team = 1;
-      }else player.team = 0
-    }
-    self.players.push(player);
-
-  }
-
-  self.checkForWin = function(){
-    if(self.players.length <= self.winConditionSize){
-      if(self.winConditionSize == 1){
-        return true;
-      }else{
-        var team = self.players[0].team;
-        for(var i in self.players){
-          var cTeam = self.players[i].team;
-          if(cTeam != team)
-            return false
-        }
-
-        return true;
-      }
-    }
-    return false;
-  }
-
-  return self;
-
-}
-
 var ROOM_LIST = [Room(2, 4, 1, false), Room(4, 4, 2, true), Room(6, 6, 3, true)];
-
-var Player = function(id){
-  var self = {
-    x : 250,
-    y : 250,
-    isMovingLeft : 0,
-    isMovingRight : 0,
-    isMovingUp : 0,
-    isMovingDown : 0,
-    speed : 3,
-    alive : true,
-    team : null,
-    id : id
-
-  }
-
-  self.updatePosition = function(){
-
-    if(self.isMovingUp)
-      self.y -= self.speed;
-    if(self.isMovingDown)
-      self.y += self.speed;
-    if(self.isMovingLeft)
-      self.x -= self.speed;
-    if(self.isMovingRight)
-      self.x += self.speed;
-
-  }
-
-  return self;
-}
 
 var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
