@@ -10,12 +10,12 @@ function draw(data){
     for(var k in data[i].bullets){
       if(!hasDrawBullets){
         canvas.fillStyle = data[i].bullets[k].color;
-        canvas.fillRect(data[i].bullets[k].x, data[i].bullets[k].y, 7, 7);
+        canvas.fillRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
       }
     }
 
     hasDrawBullets = true;
-    
+
     canvas.fillStyle = data[i].color;
     canvas.fillRect(data[i].x, data[i].y, 20, 20);
     canvas.fillText(data[i].name, data[i].x, data[i].y - 5);

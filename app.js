@@ -147,6 +147,18 @@ function getKeyInput(id, data){
 
 }
 
+function resetRoom(room){
+  for(var i in ROOM_LIST[room].players){
+    ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
+    ROOM_LIST[room].players[i].alive = true;
+    ROOM_LIST[room].bullets = [];
+
+    // here also reset powerups and player position;
+    
+  }
+
+}
+
 function checkForGameEnd(){
   for(var i in ROOM_LIST){
     if(!ROOM_LIST[i].inGame) continue;
@@ -154,6 +166,7 @@ function checkForGameEnd(){
       ROOM_LIST[i].inGame = false;
       for(var k in ROOM_LIST[i].players){
           s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
+          resetRoom(i);
           s.emit("endGame", {room: i});
       }
       for(var i in SOCKET_LIST){
@@ -169,19 +182,23 @@ function checkForGameEnd(){
 function shoot(player, room){
   if(p.isShootingUp){
     pos = [p.x + 7, p.y + 7];
-    ROOM_LIST[room].bullets.push(new Bullet(0, pos, p.team, p.color));
+    size = [10, 10];
+    ROOM_LIST[room].bullets.push(new Bullet(0, pos, size, p.team, p.color));
   }
   else if(p.isShootingDown){
     pos = [p.x + 7, p.y  + 7];
-    ROOM_LIST[room].bullets.push(new Bullet(1, pos, p.team, p.color));
+    size = [10, 10];
+    ROOM_LIST[room].bullets.push(new Bullet(1, pos, size, p.team, p.color));
   }
   else if(p.isShootingLeft){
     pos = [p.x + 7, p.y + 7];
-    ROOM_LIST[room].bullets.push(new Bullet(2, pos, p.team, p.color));
+    size = [10, 10];
+    ROOM_LIST[room].bullets.push(new Bullet(2, pos, size, p.team, p.color));
   }
   else if(p.isShootingRight){
     pos = [p.x + 7, p.y + 7];
-    ROOM_LIST[room].bullets.push(new Bullet(3, pos, p.team, p.color));
+    size = [10, 10];
+    ROOM_LIST[room].bullets.push(new Bullet(3, pos, size, p.team, p.color));
   }
 
 }
@@ -193,9 +210,29 @@ function Update(){
     if(ROOM_LIST[i].inGame){
       for(var j in ROOM_LIST[i].bullets){
         ROOM_LIST[i].bullets[j].updatePosition();
+        for(var k in ROOM_LIST[i].bullets){
+          var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].bullets[k]);
+          if(collider == null) continue;
+          if(collider.team != null){
+            collider.hp -= ROOM_LIST[i].bullets[j].dmg;
+          }
+        }
+        for(var k in ROOM_LIST[i].players){
+          var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].players[k]);
+          if(collider == null) continue;
+          if(collider.team != ROOM_LIST[i].bullets[j].team){
+            collider.hp -= ROOM_LIST[i].bullets[j].dmg;
+            ROOM_LIST[i].bullets[j].hp -= 1;
+          }
+        }
+        if(!ROOM_LIST[i].bullets[j].isAlive()){
+          ROOM_LIST[i].bullets.splice(j, 1);
+        }
       }
       for(var k in ROOM_LIST[i].players){
         p = ROOM_LIST[i].players[k];
+        p.updateState();
+        if(!p.alive) continue;
         p.updatePosition();
         if(p.updateShooting()){
           shoot(p, i);

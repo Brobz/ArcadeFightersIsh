@@ -46,6 +46,34 @@ exports.Room = function(mnS, mxS, wcS, tb){
 
         return true;
       }
+    }else{
+      if(!self.teamBased){
+        var playersAlive = 0;
+        for(var i in self.players){
+          if (self.players[i].alive)
+            playersAlive += 1;
+        }
+        if(playersAlive <= 1){
+          return true;
+        }
+        return false;
+      }else{
+        var team1Alive = team2Alive = 0;
+        for(var i in self.players){
+          if (self.players[i].alive)
+            if(self.players[i].team == 1){
+              team1Alive += 1;
+            }else if (self.players[i].team == 2){
+              team2Alive += 1;
+            }
+        }
+
+        if(team2Alive == 0 || team1Alive == 0){
+          return true;
+        }
+        return false
+
+      }
     }
     return false;
   }

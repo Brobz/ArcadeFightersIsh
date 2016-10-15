@@ -2,6 +2,12 @@ exports.Player = function(id, color){
   var self = {
     x : 250,
     y : 250,
+    width : 20,
+    height : 20,
+    maxHp : 100,
+    alive : true,
+    maxHp : 25,
+    hp : 25,
     color : color,
     isMovingLeft : 0,
     isMovingRight : 0,
@@ -32,9 +38,15 @@ exports.Player = function(id, color){
 
   }
 
+  self.updateState = function(){
+    if(self.hp <= 0){
+      self.alive = false;
+    }
+  }
+
   self.updateShooting = function(){
     self.timeUntilNextShot -= 1;
-    if (self.timeUntilNextShot <= 0) {
+    if (self.timeUntilNextShot <= 0 && (self.isShootingUp || self.isShootingDown || self.isShootingLeft || self.isShootingRight)) {
       self.timeUntilNextShot = self.shootingDelay;
       return true;
     }
