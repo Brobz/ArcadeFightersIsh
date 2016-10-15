@@ -29,7 +29,7 @@ class Player{
     this.id = id;
 
   }
-  
+
   updatePosition(){
 
     if(this.isMovingUp)
@@ -48,7 +48,7 @@ var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
 
     socket.id = Math.random();
-    var p = Player(socket.id);
+    var p = new Player(socket.id);
     PLAYER_LIST[socket.id] = p;
 
     SOCKET_LIST[socket.id] = socket;
