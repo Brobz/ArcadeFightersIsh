@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>TDZ</title>
+
+</head>
+
+<body>
+
+  <p id="connectedText">Connecting...</p>
+
+  <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000;"></canvas>
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+  function connected(data){
+    document.getElementById("connectedText").innerHTML = data.msg;
+  }
+
+  function update(data){
+    canvas.clearRect(0, 0, 500, 500);
+    for(var i = 0; i < data.length; i++){
+      canvas.fillText("P", data[i].x, data[i].y);
+    }
+  }
+
+  var canvas = document.getElementById("canvas").getContext("2d");
+  canvas.font = "30px Monaco";
+
+  document.onkeydown = function(event){
+    if(event.keyCode == 68)
+      socket.emit("keyPress", {input:"d", state:1});
+    if(event.keyCode == 83)
+      socket.emit("keyPress", {input:"s", state:1});
+    if(event.keyCode == 65)
+      socket.emit("keyPress", {input:"a", state:1});
+    if(event.keyCode == 87)
+      socket.emit("keyPress", {input:"w", state:1});
+  }
+
+
+  document.onkeyup = function(event){
+
+    if(event.keyCode == 68)
+      socket.emit("keyPress", {input:"d", state:0});
+    if(event.keyCode == 83)
+      socket.emit("keyPress", {input:"s", state:0});
+    if(event.keyCode == 65)
+      socket.emit("keyPress", {input:"a", state:0});
+    if(event.keyCode == 87)
+      socket.emit("keyPress", {input:"w", state:0});
+  }
+
+  var socket = io();
+
+  socket.on("connected", function(data){connected(data)});
+
+  socket.on("update", function(data){update(data)});
+
+</script>
+
+</html>
