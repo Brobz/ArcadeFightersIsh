@@ -21,6 +21,8 @@ var joinRoom2Button = document.getElementById("joinRoom2Button");
 var joinRoom3Button = document.getElementById("joinRoom3Button");
 var joinRoomButtons = [joinRoom1Button, joinRoom2Button, joinRoom3Button];
 
+var winners = ["", "", ""]
+
 var canvasElement = document.getElementById("canvas");
 var canvas = document.getElementById("canvas").getContext("2d");
 
@@ -38,7 +40,21 @@ function startGame(data){
 }
 
 function endGame(data){
-  if(data.room == currentRoom){
+  if(!data.room.teamBased){
+    for(var i in data.room.players){
+      if(data.room.players[i].alive){
+        winners[data.roomIndex] = data.room.players[i].name + " Won!!!";
+      }
+    }
+
+  }else{
+    for(var i in data.room.players){
+      if(data.room.players[i].alive){
+        winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!";
+      }
+    }
+  }
+  if(data.roomIndex == currentRoom){
     roomsDiv.style.display = "";
     canvasElement.style.display = "none";
   }
@@ -52,7 +68,7 @@ function roomUpdate(data){
   currentRoom = -1;
   for(var i in data.rooms){
     startGameButtons[i].style.display = "none";
-    roomTexts[i].innerHTML = "";
+    roomTexts[i].innerHTML = "<br>" + winners[i];
     joinRoomButtons[i].style.display = "";
     if(data.rooms[i].inGame || data.rooms[i].players.length >= data.rooms[i].maxSize){
       joinRoomButtons[i].style.display = "none";
