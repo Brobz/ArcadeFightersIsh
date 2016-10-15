@@ -64,7 +64,7 @@ function roomUpdate(data){
         currentRoom = i;
         joinRoomButtons[i].style.display = "none";
       }
-      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + (data.rooms[i].players[k].team + 1);
+      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
     }
   }
 }

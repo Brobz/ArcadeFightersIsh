@@ -11,18 +11,24 @@ exports.Room = function(mnS, mxS, wcS, tb){
   self.removePlayer = function(player){
     index = self.players.indexOf(player);
     self.players.splice(index, 1);
+    self.updateTeams();
   }
 
   self.addPlayer = function(player){
-    if(!self.teamBased){
-      player.team = self.players.length;
-    }else{
-      if(self.players.length < self.maxSize / 2){
-        player.team = 0;
-      }else player.team = 1
-    }
     self.players.push(player);
+    self.updateTeams();
+  }
 
+  self.updateTeams = function(){
+    for(var i in self.players){
+      if(!self.teamBased){
+        self.players[i].team = parseInt(i) + 1;
+      }else{
+        if(i < self.maxSize / 2){
+          self.players[i].team = 1;
+        }else self.players[i].team = 2
+      }
+    }
   }
 
   self.checkForWin = function(){
