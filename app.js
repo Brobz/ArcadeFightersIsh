@@ -137,6 +137,12 @@ function Disconnected(id) {
       ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
     }
   }
+  for(var i in SOCKET_LIST){
+    var s = SOCKET_LIST[i];
+    s.emit("roomUpdate", {
+      rooms : ROOM_LIST,
+    });
+  }
   delete SOCKET_LIST[id];
   delete PLAYER_LIST[id];
 
