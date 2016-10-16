@@ -39,7 +39,7 @@ MAP = function(){
   blocks.push(Block([360, 60], [20, 10], "#100074"));
   blocks.push(Block([360, 330], [20, 10], "#100074"));
 
-  for(var i = 0; i < 10; i++){
+  for(var i = 0; i < 5; i++){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
