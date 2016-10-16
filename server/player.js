@@ -47,7 +47,7 @@ exports.Player = function(id, color){
     }
     else if(type == 3){
       if(self.powerUpsActive.indexOf(type) == -1){
-        self.shootingDelay = 5;
+        self.shootingDelay = 3;
         self.powerUpsActive.push(type);
         self.powerUpsTime.push(60 * 5);
       }
@@ -64,7 +64,7 @@ exports.Player = function(id, color){
         else if(self.powerUpsActive[i] == 2){
           self.hasShield = false;
         }
-        else if(self.powerUpsActive[i] == 4){
+        else if(self.powerUpsActive[i] == 3){
           self.shootingDelay = 8;
         }
 
