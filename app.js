@@ -170,8 +170,8 @@ function buildMap(map, room){
   var blockSize;
   blocks.push(Block([0, 0], [400, 20], "#100074"));
   blocks.push(Block([0, 0], [20, 400], "#100074"));
-  blocks.push(Block([400, 0], [20, 400], "#100074"));
-  blocks.push(Block([0, 400], [400, 20], "#100074"));
+  blocks.push(Block([380, 0], [20, 400], "#100074"));
+  blocks.push(Block([0, 380], [400, 20], "#100074"));
   for(var y = 0; y < map.length; y++){
     for(var x = 0; x < map[y].length; x++){
       if(map[y][x] == "W"){
