@@ -259,6 +259,7 @@ function Update(){
           ROOM_LIST[i].bullets[j].hp -= 1;
         }
         for(var k in ROOM_LIST[i].players){
+          if(!ROOM_LIST[i].players[k].alive) continue;
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].players[k]);
           if(collider == null) continue;
           if(collider.team != ROOM_LIST[i].bullets[j].team){
