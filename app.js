@@ -16,15 +16,12 @@ console.log("Server Ready!");
 
 var COLORS = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
 var MAP = [
-            ["W", "W", "W", "W", "W", "W", "W", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", "W", "W", "W", "W", "W", "W", "W"],
-
+            [" ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " "]
           ]
 
 var PLAYER_POSITIONS = [[50,50], [330,330], [50, 330], [330, 50], [50, 160], [330, 180]];
@@ -170,11 +167,21 @@ function getKeyInput(id, data){
 
 function buildMap(map, room){
   var blocks = []
-  var blockSize = 50;
+  var blockSize;
+  blocks.push(Block([0, 0], [400, 20], "#100074"));
+  blocks.push(Block([0, 0], [20, 400], "#100074"));
+  blocks.push(Block([400, 0], [20, 400], "#100074"));
+  blocks.push(Block([0, 400], [400, 20], "#100074"));
   for(var y = 0; y < map.length; y++){
     for(var x = 0; x < map[y].length; x++){
-      if(map[y][x] == "W")
+      if(map[y][x] == "W"){
+        blockSize = 50;
         blocks.push(Block([x * blockSize, y * blockSize], [blockSize, blockSize], "#100074"));
+      }
+      else if(map[y][x] == "B"){
+        blockSize = 20;
+        blocks.push(Block([x * blockSize, y * blockSize], [blockSize, blockSize], "#100074"));
+      }
     }
   }
 
