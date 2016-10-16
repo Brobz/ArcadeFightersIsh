@@ -32,15 +32,15 @@ exports.Player = function(id, color){
         }
 
         if(y > 0){
-          self.y = entities[i].y - entities[i].height;
+          self.y = entities[i].y - self.height;
         }
 
         if(x < 0){
-          self.x = entities[i].x + entities[i].height;
+          self.x = entities[i].x + entities[i].width;
         }
 
         if(x > 0){
-          self.x = entities[i].x - entities[i].height;
+          self.x = entities[i].x - self.width;
         }
       }
     }

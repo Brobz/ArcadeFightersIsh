@@ -16,30 +16,18 @@ console.log("Server Ready!");
 
 var COLORS = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
 var MAP = [
-            ["W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W", "W", "W", " ", " ", " ", "W", " ", " ", "W"],
-            ["W", " ", "W", "W", "W", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W", "W", "W", "W"],
-            ["W", " ", " ", " ", " ", "w", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", "W", "W", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", "W", "W", "W", "W", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", "W", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", "W", "W", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", "W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "W"],
-            ["W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W", "W"],
+            ["W", "W", "W", "W", "W", "W", "W", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", " ", " ", " ", " ", " ", " ", "W"],
+            ["W", "W", "W", "W", "W", "W", "W", "W"],
 
           ]
 
-var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 160], [360, 180]];
+var PLAYER_POSITIONS = [[50,50], [330,330], [50, 330], [330, 50], [50, 160], [330, 180]];
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
 var Bullet = require('./server/bullet.js').Bullet;
@@ -112,8 +100,8 @@ io.sockets.on("connection", function(socket){
       if(ROOM_LIST[data.room].players.length < ROOM_LIST[data.room].minSize)
         return;
 
-      buildMap(MAP, data.room);
       resetRoom(data.room);
+      buildMap(MAP, data.room);
 
       ROOM_LIST[data.room].inGame = true;
       for(var i in ROOM_LIST[data.room].players){
@@ -182,7 +170,7 @@ function getKeyInput(id, data){
 
 function buildMap(map, room){
   var blocks = []
-  var blockSize = 20;
+  var blockSize = 50;
   for(var y = 0; y < map.length; y++){
     for(var x = 0; x < map[y].length; x++){
       if(map[y][x] == "W")
@@ -194,21 +182,20 @@ function buildMap(map, room){
 }
 
 function resetRoom(room){
+  // here also reset powerups
+  ROOM_LIST[room].bullets = [];
+  ROOM_LIST[room].blocks = [];
   for(var i in ROOM_LIST[room].players){
     ROOM_LIST[room].players[i].x = PLAYER_POSITIONS[i][0];
     ROOM_LIST[room].players[i].y = PLAYER_POSITIONS[i][1];
     ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
     ROOM_LIST[room].players[i].alive = true;
-    ROOM_LIST[room].bullets = [];
-
-    // here also reset powerups and player position;
-
   }
 
 }
 
 function checkForGameEnd(){
-  for(var i in ROOM_LIST){
+  for(var i = 0; i < ROOM_LIST.length; i++){
     if(!ROOM_LIST[i].inGame) continue;
     if(ROOM_LIST[i].checkForWin()){
       ROOM_LIST[i].inGame = false;
@@ -217,8 +204,8 @@ function checkForGameEnd(){
           s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
           resetRoom(i);
       }
-      for(var i in SOCKET_LIST){
-        var s = SOCKET_LIST[i];
+      for(var j in SOCKET_LIST){
+        var s = SOCKET_LIST[j];
         s.emit("roomUpdate", {
           rooms : ROOM_LIST,
         });
@@ -231,22 +218,22 @@ function shoot(player, room){
   if(p.isShootingUp){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(new Bullet(0, pos, size, p.team, p.color));
+    ROOM_LIST[room].bullets.push(Bullet(0, pos, size, p.team, p.color));
   }
   else if(p.isShootingDown){
     pos = [p.x + 7, p.y  + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(new Bullet(1, pos, size, p.team, p.color));
+    ROOM_LIST[room].bullets.push(Bullet(1, pos, size, p.team, p.color));
   }
   else if(p.isShootingLeft){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(new Bullet(2, pos, size, p.team, p.color));
+    ROOM_LIST[room].bullets.push(Bullet(2, pos, size, p.team, p.color));
   }
   else if(p.isShootingRight){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(new Bullet(3, pos, size, p.team, p.color));
+    ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color));
   }
 
 }
@@ -256,14 +243,14 @@ function Update(){
   var infoPack = [];
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
-      for(var j in ROOM_LIST[i].bullets){
+      for(var j = 0; j < ROOM_LIST[i].bullets.length; j++){
         ROOM_LIST[i].bullets[j].updatePosition();
         for(var k in ROOM_LIST[i].blocks){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
           if(collider == null) continue;
           ROOM_LIST[i].bullets[j].hp -= 1;
         }
-        for(var k in ROOM_LIST[i].players){
+        for(var k  = 0; k < ROOM_LIST[i].players.length; k++){
           if(!ROOM_LIST[i].players[k].alive) continue;
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].players[k]);
           if(collider == null) continue;
@@ -276,7 +263,7 @@ function Update(){
           ROOM_LIST[i].bullets.splice(j, 1);
         }
       }
-      for(var k in ROOM_LIST[i].players){
+      for(var k = 0; k < ROOM_LIST[i].players.length; k++){
         p = ROOM_LIST[i].players[k];
         p.updateState();
         if(!p.alive) continue;
@@ -303,7 +290,7 @@ function Update(){
 
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
-      for(var k in ROOM_LIST[i].players){
+      for(var k = 0; k < ROOM_LIST[i].players.length; k++){
         var s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
         s.emit("update", infoPack);
       }
