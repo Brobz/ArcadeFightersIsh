@@ -24,7 +24,7 @@ var MAP = [
             [" ", " ", " ", " ", " ", " "]
           ]
 
-var PLAYER_POSITIONS = [[50,50], [330,330], [50, 330], [330, 50], [50, 160], [330, 180]];
+var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 160], [360, 180]];
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
 var Bullet = require('./server/bullet.js').Bullet;
