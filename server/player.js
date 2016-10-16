@@ -16,8 +16,8 @@ exports.Player = function(id, color){
     isShootingRight : 0,
     isShootingUp : 0,
     isShootingDown : 0,
-    shootingDelay : 10,
-    timeUntilNextShot : 10,
+    shootingDelay : 8,
+    timeUntilNextShot : 8,
     speed : 2,
     team : null,
     id : id
