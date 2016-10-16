@@ -178,13 +178,13 @@ function getKeyInput(id, data){
   if(data.input == "shoot0"){
     PLAYER_LIST[id].isShootingLeft = data.state;
   }
-  if(data.input == "shoot1"){
+  else if(data.input == "shoot1"){
     PLAYER_LIST[id].isShootingUp = data.state;
   }
-  if(data.input == "shoot2"){
+  else if(data.input == "shoot2"){
     PLAYER_LIST[id].isShootingRight = data.state;
   }
-  if(data.input == "shoot3"){
+  else if(data.input == "shoot3"){
     PLAYER_LIST[id].isShootingDown = data.state;
   }
 
@@ -233,17 +233,17 @@ function shoot(player, room){
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(0, pos, size, p.team, p.color));
   }
-  else if(p.isShootingDown || p.hasMultigun){
+  if(p.isShootingDown || p.hasMultigun){
     pos = [p.x + 7, p.y  + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(1, pos, size, p.team, p.color));
   }
-  else if(p.isShootingLeft || p.hasMultigun){
+ if(p.isShootingLeft || p.hasMultigun){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(2, pos, size, p.team, p.color));
   }
-  else if(p.isShootingRight || p.hasMultigun){
+ if(p.isShootingRight || p.hasMultigun){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color));
