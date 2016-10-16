@@ -42,7 +42,14 @@ exports.Player = function(id, color){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.hasShield = true;
         self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 3);
+        self.powerUpsTime.push(60 * 5);
+      }
+    }
+    else if(type == 3){
+      if(self.powerUpsActive.indexOf(type) == -1){
+        self.shootingDelay = 5;
+        self.powerUpsActive.push(type);
+        self.powerUpsTime.push(60 * 5);
       }
     }
   }
@@ -56,6 +63,9 @@ exports.Player = function(id, color){
         }
         else if(self.powerUpsActive[i] == 2){
           self.hasShield = false;
+        }
+        else if(self.powerUpsActive[i] == 4){
+          self.shootingDelay = 8;
         }
 
         self.powerUpsTime.splice(i, 1);

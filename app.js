@@ -15,7 +15,7 @@ server.listen(process.env.PORT || 2000);
 console.log("Server Ready!");
 
 var COLORS = ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"];
-var POWERUP_COLORS = ["#00FF00", "#FF0000", "#0000FF"];
+var POWERUP_COLORS = ["#00FF00", "#FF0000", "#0000FF", "#FFFF00"];
 var POWERUP_VALUES = [.01, .01, .01];
 var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]];
 var POWERUP_DELAY = 60 * 10;
@@ -261,7 +261,7 @@ function processPowerups(room){
       for(k in ROOM_LIST[room].blocks){
         var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
         var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-        var type = Math.floor(Math.random() * (3));
+        var type = Math.floor(Math.random() * (4));
         var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type, POWERUP_VALUES[type]);
         if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
           passed = false;
