@@ -15,20 +15,32 @@ server.listen(process.env.PORT || 2000);
 console.log("Server Ready!");
 
 var COLORS = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
-var MAP = [
-            [" ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " "]
-          ]
-
-var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 160], [360, 180]];
+var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]];
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
 var Bullet = require('./server/bullet.js').Bullet;
 var Block = require('./server/block.js').Block;
+
+
+MAP = function(){
+  var blocks = []
+  blocks.push(Block([0, 0], [400, 20], "#100074"));
+  blocks.push(Block([0, 0], [20, 400], "#100074"));
+  blocks.push(Block([380, 0], [20, 400], "#100074"));
+  blocks.push(Block([0, 380], [400, 20], "#100074"));
+
+  blocks.push(Block([60, 20], [10, 40], "#100074"));
+  blocks.push(Block([330, 20], [10, 40], "#100074"));
+  blocks.push(Block([60, 340], [10, 40], "#100074"));
+  blocks.push(Block([330, 340], [10, 40], "#100074"));
+
+  blocks.push(Block([20, 60], [20, 10], "#100074"));
+  blocks.push(Block([20, 330], [20, 10], "#100074"));
+  blocks.push(Block([360, 60], [20, 10], "#100074"));
+  blocks.push(Block([360, 330], [20, 10], "#100074"));
+
+  return blocks;
+}
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
@@ -166,26 +178,7 @@ function getKeyInput(id, data){
 }
 
 function buildMap(map, room){
-  var blocks = []
-  var blockSize;
-  blocks.push(Block([0, 0], [400, 20], "#100074"));
-  blocks.push(Block([0, 0], [20, 400], "#100074"));
-  blocks.push(Block([380, 0], [20, 400], "#100074"));
-  blocks.push(Block([0, 380], [400, 20], "#100074"));
-  for(var y = 0; y < map.length; y++){
-    for(var x = 0; x < map[y].length; x++){
-      if(map[y][x] == "W"){
-        blockSize = 50;
-        blocks.push(Block([x * blockSize, y * blockSize], [blockSize, blockSize], "#100074"));
-      }
-      else if(map[y][x] == "B"){
-        blockSize = 20;
-        blocks.push(Block([x * blockSize, y * blockSize], [blockSize, blockSize], "#100074"));
-      }
-    }
-  }
-
-  ROOM_LIST[room].blocks = blocks;
+  ROOM_LIST[room].blocks = map();
 }
 
 function resetRoom(room){
