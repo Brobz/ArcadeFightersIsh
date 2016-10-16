@@ -39,14 +39,14 @@ MAP = function(){
   blocks.push(Block([360, 60], [20, 10], "#100074"));
   blocks.push(Block([360, 330], [20, 10], "#100074"));
 
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
-  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  for(var i = 0; i < 10; i++){
+    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+    var height = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+    blocks.push(Block([x, y], [width, height], "#100074"));
+  }
+
 
   return blocks;
 }
