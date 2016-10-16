@@ -27,6 +27,7 @@ var canvasElement = document.getElementById("canvas");
 var canvas = document.getElementById("canvas").getContext("2d");
 
 canvas.font = "15px Monaco";
+canvas.textAlign = 'center';
 
 function joinRoom(index){
   socket.emit("joinRoom", {room:index});
@@ -50,6 +51,7 @@ function endGame(data){
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
+        console.log("wonr");
         winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!";
       }
     }

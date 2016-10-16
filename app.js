@@ -280,7 +280,7 @@ function Update(){
         p = ROOM_LIST[i].players[k];
         p.updateState();
         if(!p.alive) continue;
-        p.updatePosition(ROOM_LIST[i].blocks);
+        p .updatePosition(ROOM_LIST[i].blocks);
         if(p.updateShooting()){
           shoot(p, i);
         }
@@ -289,6 +289,8 @@ function Update(){
             name : p.name,
             x : p.x,
             y : p.y,
+            hp : p.hp,
+            maxHp : p.maxHp,
             bullets : ROOM_LIST[i].bullets,
             blocks : ROOM_LIST[i].blocks,
             color : p.color,

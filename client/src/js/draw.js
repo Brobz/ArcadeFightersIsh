@@ -28,7 +28,12 @@ function draw(data){
 
     canvas.fillStyle = data[i].color;
     canvas.fillRect(data[i].x, data[i].y, 20, 20);
-    canvas.fillText(data[i].name, data[i].x, data[i].y - 5);
+    canvas.fillText(data[i].name, data[i].x + 10, data[i].y - 15);
+
+    canvas.fillStyle = "#FF0000";
+    canvas.fillRect(data[i].x - 10, data[i].y - 10, 40, 5);
+    canvas.fillStyle = "#00FF00";
+    canvas.fillRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
 
   }
 }
