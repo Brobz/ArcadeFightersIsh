@@ -5,8 +5,8 @@ exports.Player = function(id, color){
     width : 20,
     height : 20,
     alive : true,
-    maxHp : 25,
-    hp : 25,
+    maxHp : 35,
+    hp : 35,
     color : color,
     isMovingLeft : 0,
     isMovingRight : 0,
@@ -35,21 +35,21 @@ exports.Player = function(id, color){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.speed *= 1.5;
         self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 5);
+        self.powerUpsTime.push(60 * 4);
       }
     }
     else if(type == 2){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.hasShield = true;
         self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 5);
+        self.powerUpsTime.push(60 * 3);
       }
     }
     else if(type == 3){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.shootingDelay = 3;
         self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 5);
+        self.powerUpsTime.push(60 * 3);
       }
     }
   }
