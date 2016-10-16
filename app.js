@@ -39,6 +39,11 @@ MAP = function(){
   blocks.push(Block([360, 60], [20, 10], "#100074"));
   blocks.push(Block([360, 330], [20, 10], "#100074"));
 
+  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
+  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
+  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
+  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
+  
   return blocks;
 }
 
