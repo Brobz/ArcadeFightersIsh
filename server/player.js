@@ -21,6 +21,7 @@ exports.Player = function(id, color){
     powerUpsActive : [],
     powerUpsTime : [],
     hasShield : false,
+    hasMultigun : false,
     speed : 2,
     team : null,
     id : id
@@ -52,6 +53,14 @@ exports.Player = function(id, color){
         self.powerUpsTime.push(60 * 3);
       }
     }
+
+    else if(type == 4){
+      if(self.powerUpsActive.indexOf(type) == -1){
+        self.hasMultigun = true;
+        self.powerUpsActive.push(type);
+        self.powerUpsTime.push(60 * 3);
+      }
+    }
   }
 
   self.updatePowerUps = function(){
@@ -66,6 +75,9 @@ exports.Player = function(id, color){
         }
         else if(self.powerUpsActive[i] == 3){
           self.shootingDelay = 8;
+        }
+        else if(self.powerUpsActive[i] == 4){
+          self.hasMultigun = false;
         }
 
         self.powerUpsTime.splice(i, 1);
