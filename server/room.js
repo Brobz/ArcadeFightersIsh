@@ -3,6 +3,7 @@ exports.Room = function(mnS, mxS, wcS, tb){
     players : [],
     bullets : [],
     blocks : [],
+    powerups : [],
     maxSize : mxS,
     minSize : mnS,
     winConditionSize : wcS,

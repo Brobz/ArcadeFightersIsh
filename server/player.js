@@ -18,9 +18,51 @@ exports.Player = function(id, color){
     isShootingDown : 0,
     shootingDelay : 8,
     timeUntilNextShot : 8,
+    powerUpsActive : [],
+    powerUpsTime : [],
+    hasShield : false,
     speed : 2,
     team : null,
     id : id
+
+  }
+
+  self.powerUp = function(type, value){
+    if(type == 0){
+      self.hp = self.maxHp;
+    }
+    else if(type == 1){
+      if(self.powerUpsActive.indexOf(type) == -1){
+        self.speed *= 1.5;
+        self.powerUpsActive.push(type);
+        self.powerUpsTime.push(60 * 5);
+      }
+    }
+    else if(type == 2){
+      if(self.powerUpsActive.indexOf(type) == -1){
+        self.hasShield = true;
+        self.powerUpsActive.push(type);
+        self.powerUpsTime.push(60 * 3);
+      }
+    }
+  }
+
+  self.updatePowerUps = function(){
+    for(i in self.powerUpsTime){
+      self.powerUpsTime[i] -= 1;
+      if(self.powerUpsTime[i] <= 0){
+        if(self.powerUpsActive[i] == 1){
+          self.speed = self.speed / 1.5;
+        }
+        else if(self.powerUpsActive[i] == 2){
+          self.hasShield = false;
+        }
+
+        self.powerUpsTime.splice(i, 1);
+        self.powerUpsActive.splice(i, 1);
+      }
+    }
+
 
   }
 

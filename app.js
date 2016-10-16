@@ -14,13 +14,17 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
-var COLORS = [ "#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"]
+var COLORS = ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"];
+var POWERUP_COLORS = ["#00FF00", "#FF0000", "#0000FF"];
+var POWERUP_VALUES = [.01, .01, .01];
 var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]];
+var POWERUP_DELAY = 60 * 10;
+var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
 var Bullet = require('./server/bullet.js').Bullet;
 var Block = require('./server/block.js').Block;
-
+var Powerup = require('./server/powerup.js').Powerup;
 
 MAP = function(){
   var blocks = []
@@ -247,11 +251,43 @@ function shoot(player, room){
 
 }
 
+function processPowerups(room){
+  TIME_UNTILL_NEXT_POWERUP -= 1;
+  if(TIME_UNTILL_NEXT_POWERUP <= 0){
+    var passed = false
+    var pUP;
+    while(!passed){
+      passed = true;
+      for(k in ROOM_LIST[room].blocks){
+        var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+        var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+        var type = Math.floor(Math.random() * (3));
+        var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type, POWERUP_VALUES[type]);
+        if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
+          passed = false;
+      }
+    }
+    ROOM_LIST[room].powerups.push(pUP);
+    TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
+  }
+
+  for(var i = ROOM_LIST[room].powerups.length - 1; i > -1; i--){
+    for(var k in ROOM_LIST[room].players){
+      if(!ROOM_LIST[room].powerups[i]) continue;
+      if(ROOM_LIST[room].powerups[i].checkForCollision(ROOM_LIST[room].players[k])){
+        ROOM_LIST[room].players[k].powerUp(ROOM_LIST[room].powerups[i].type, ROOM_LIST[room].powerups[i].value);
+        ROOM_LIST[room].powerups.splice(i, 1);
+      }
+    }
+  }
+}
+
 function Update(){
   checkForGameEnd();
   var infoPack = [];
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
+      processPowerups(i);
       for(var j = 0; j < ROOM_LIST[i].bullets.length; j++){
         ROOM_LIST[i].bullets[j].updatePosition();
         for(var k in ROOM_LIST[i].blocks){
@@ -264,7 +300,8 @@ function Update(){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].players[k]);
           if(collider == null) continue;
           if(collider.team != ROOM_LIST[i].bullets[j].team){
-            collider.hp -= ROOM_LIST[i].bullets[j].dmg;
+            if(!collider.hasShield)
+              collider.hp -= ROOM_LIST[i].bullets[j].dmg;
             ROOM_LIST[i].bullets[j].hp -= 1;
           }
         }
@@ -275,6 +312,7 @@ function Update(){
       for(var k = 0; k < ROOM_LIST[i].players.length; k++){
         p = ROOM_LIST[i].players[k];
         p.updateState();
+        p.updatePowerUps();
         if(!p.alive) continue;
         p .updatePosition(ROOM_LIST[i].blocks);
         if(p.updateShooting()){
@@ -287,8 +325,10 @@ function Update(){
             y : p.y,
             hp : p.hp,
             maxHp : p.maxHp,
+            playerPowerups : p.powerUpsActive,
             bullets : ROOM_LIST[i].bullets,
             blocks : ROOM_LIST[i].blocks,
+            powerups : ROOM_LIST[i].powerups,
             color : p.color,
             room : i
 
