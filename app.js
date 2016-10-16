@@ -39,11 +39,15 @@ MAP = function(){
   blocks.push(Block([360, 60], [20, 10], "#100074"));
   blocks.push(Block([360, 330], [20, 10], "#100074"));
 
-  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
-  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
-  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
-  blocks.push(Block([Math.random(20, 360), Math.random(20, 360)], [Math.random(10, 40), Math.random(10, 40)], "#100074"));
-  
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+  blocks.push(Block([Math.ceil(Math.random() * 360), Math.ceil(Math.random() * 360)], [Math.ceil(Math.random() * 50), Math.ceil(Math.random() * 50)], "#100074"));
+
   return blocks;
 }
 
@@ -207,8 +211,8 @@ function checkForGameEnd(){
       for(var k in ROOM_LIST[i].players){
           s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
           s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
-          resetRoom(i);
       }
+      resetRoom(i);
       for(var j in SOCKET_LIST){
         var s = SOCKET_LIST[j];
         s.emit("roomUpdate", {
