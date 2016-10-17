@@ -229,6 +229,8 @@ function resetRoom(room){
     ROOM_LIST[room].players[i].y = PLAYER_POSITIONS[i][1];
     ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
     ROOM_LIST[room].players[i].alive = true;
+    ROOM_LIST[room].players[i].powerUpsTime = [];
+    ROOM_LIST[room].players[i].powerUpsActive = [];
   }
 
 }
