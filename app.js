@@ -178,30 +178,38 @@ function getKeyInput(id, data){
   if(data.input == "shoot0"){
     PLAYER_LIST[id].isShootingLeft = data.state;
 
-    PLAYER_LIST[id].isShootingRight = false;
-    PLAYER_LIST[id].isShootingDown = false;
-    PLAYER_LIST[id].isShootingUp = false;
+    if(data.state){
+      PLAYER_LIST[id].isShootingRight = false;
+      PLAYER_LIST[id].isShootingDown = false;
+      PLAYER_LIST[id].isShootingUp = false;
+    }
   }
   if(data.input == "shoot1"){
     PLAYER_LIST[id].isShootingUp = data.state;
 
-    PLAYER_LIST[id].isShootingRight = false;
-    PLAYER_LIST[id].isShootingDown = false;
-    PLAYER_LIST[id].isShootingLeft = false;
+    if(data.state){
+      PLAYER_LIST[id].isShootingRight = false;
+      PLAYER_LIST[id].isShootingDown = false;
+      PLAYER_LIST[id].isShootingLeft = false;
+    }
   }
   if(data.input == "shoot2"){
     PLAYER_LIST[id].isShootingRight = data.state;
 
-    PLAYER_LIST[id].isShootingLeft = false;
-    PLAYER_LIST[id].isShootingDown = false;
-    PLAYER_LIST[id].isShootingUp = false;
+    if(data.state){
+      PLAYER_LIST[id].isShootingLeft = false;
+      PLAYER_LIST[id].isShootingDown = false;
+      PLAYER_LIST[id].isShootingUp = false;
+    }
   }
   if(data.input == "shoot3"){
     PLAYER_LIST[id].isShootingDown = data.state;
 
-    PLAYER_LIST[id].isShootingRight = false;
-    PLAYER_LIST[id].isShootingLeft = false;
-    PLAYER_LIST[id].isShootingUp = false;
+    if(data.state){
+      PLAYER_LIST[id].isShootingRight = false;
+      PLAYER_LIST[id].isShootingLeft = false;
+      PLAYER_LIST[id].isShootingUp = false;
+    }
   }
 
 }
