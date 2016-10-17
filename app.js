@@ -223,6 +223,7 @@ function resetRoom(room){
   // here also reset powerups
   ROOM_LIST[room].bullets = [];
   ROOM_LIST[room].blocks = [];
+  ROOM_LIST[room].powerups = [];
   for(var i in ROOM_LIST[room].players){
     ROOM_LIST[room].players[i].x = PLAYER_POSITIONS[i][0];
     ROOM_LIST[room].players[i].y = PLAYER_POSITIONS[i][1];
