@@ -33,6 +33,7 @@ MAP = function(){
   blocks.push(Block([380, 0], [20, 400], "#100074"));
   blocks.push(Block([0, 380], [400, 20], "#100074"));
 
+  /*
   blocks.push(Block([60, 20], [10, 40], "#100074"));
   blocks.push(Block([330, 20], [10, 40], "#100074"));
   blocks.push(Block([60, 340], [10, 40], "#100074"));
@@ -42,7 +43,7 @@ MAP = function(){
   blocks.push(Block([20, 330], [20, 10], "#100074"));
   blocks.push(Block([360, 60], [20, 10], "#100074"));
   blocks.push(Block([360, 330], [20, 10], "#100074"));
-
+  */
   for(var i = 0; i < 5; i++){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
