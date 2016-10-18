@@ -7,32 +7,24 @@ function draw(data){
     if(data[i].room != currentRoom)
       continue;
 
-    for(var k in data[i].powerups){
-      if(!hasDrawunPUPS){
+    if(data[i].blocks != null){
+      for(var k in data[i].powerups){
         canvas.fillStyle = data[i].powerups[k].color;
         canvas.fillRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
       }
-    }
 
-    hasDrawunPUPS = true;
 
-    for(var k in data[i].bullets){
-      if(!hasDrawBullets){
+      for(var k in data[i].bullets){
         canvas.fillStyle = data[i].bullets[k].color;
         canvas.fillRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
       }
-    }
 
-    hasDrawBullets = true;
 
-    for(var k in data[i].blocks){
-      if(!hasDrawnBlocks){
+      for(var k in data[i].blocks){
         canvas.fillStyle = data[i].blocks[k].color;
         canvas.fillRect(data[i].blocks[k].x, data[i].blocks[k].y, data[i].blocks[k].width, data[i].blocks[k].height);
       }
     }
-
-    hasDrawnBlocks = true;
 
     for(var k in data[i].playerPowerups){
       if(data[i].playerPowerups[k] == 2){

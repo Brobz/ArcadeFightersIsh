@@ -358,14 +358,17 @@ function Update(){
             hp : p.hp,
             maxHp : p.maxHp,
             playerPowerups : p.powerUpsActive,
-            bullets : ROOM_LIST[i].bullets,
-            blocks : ROOM_LIST[i].blocks,
-            powerups : ROOM_LIST[i].powerups,
             color : p.color,
             room : i
 
           });
       }
+      infoPack.push({
+        bullets : ROOM_LIST[i].bullets,
+        blocks : ROOM_LIST[i].blocks,
+        powerups : ROOM_LIST[i].powerups,
+        room : i
+      });
     }
   }
 
