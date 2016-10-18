@@ -316,7 +316,7 @@ function Update(){
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
       processPowerups(i);
-      for(var j = 0; j < ROOM_LIST[i].bullets.length; j++){
+      for(var j = ROOM_LIST[i].bullets.length; j > -1; j--){
         ROOM_LIST[i].bullets[j].updatePosition();
         for(var k in ROOM_LIST[i].blocks){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
