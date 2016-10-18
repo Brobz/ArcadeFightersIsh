@@ -231,6 +231,10 @@ function resetRoom(room){
     ROOM_LIST[room].players[i].alive = true;
     ROOM_LIST[room].players[i].powerUpsTime = [];
     ROOM_LIST[room].players[i].powerUpsActive = [];
+    ROOM_LIST[room].players[i].shootingDelay = 8;
+    ROOM_LIST[room].players[i].speed = 2;
+    ROOM_LIST[room].players[i].hasShield = false;
+    ROOM_LIST[room].players[i].hasMultigun = false;
   }
 
 }
