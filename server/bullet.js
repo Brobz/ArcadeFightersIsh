@@ -8,7 +8,7 @@ exports.Bullet = function(dir, pos, size, team, color){
     dmg : 5,
     color : color,
     dir : dir,
-    speed : 6,
+    speed : 5,
     team : team
   }
 
@@ -33,7 +33,7 @@ exports.Bullet = function(dir, pos, size, team, color){
   }
 
   self.checkForCollision = function(entity){
-    if(entity == self) return null;
+    if(entity)
 
     if(!(entity.x > self.x + self.width ||  entity.x + entity.width < self.x || entity.y > self.y + self.height || entity.y + entity.height < self.y)){
       return entity;

@@ -15,10 +15,10 @@ server.listen(process.env.PORT || 2000);
 console.log("Server Ready!");
 
 var COLORS = ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"];
-var POWERUP_COLORS = ["#00FF00", "#FF0000", "#000000", "#FFFFF0", "#0000FF"];
+var POWERUP_COLORS = ["#00FF00", "#FF0000", "#000000", "#FFFF00", "#0000FF"];
 var POWERUP_VALUES = [.01, .01, .01];
 var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]];
-var POWERUP_DELAY = 60 * 10;
+var POWERUP_DELAY = 60 * 7;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
@@ -229,8 +229,8 @@ function resetRoom(room){
     ROOM_LIST[room].players[i].y = PLAYER_POSITIONS[i][1];
     ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
     ROOM_LIST[room].players[i].alive = true;
-    //ROOM_LIST[room].players[i].powerUpsTime = [];
-    //ROOM_LIST[room].players[i].powerUpsActive = [];
+    ROOM_LIST[room].players[i].powerUpsTime = [];
+    ROOM_LIST[room].players[i].powerUpsActive = [];
   }
 
 }
@@ -286,11 +286,11 @@ function processPowerups(room){
     var pUP;
     while(!passed){
       passed = true;
+      var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+      var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+      var type = Math.floor(Math.random() * (5));
+      var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type, POWERUP_VALUES[type]);
       for(k in ROOM_LIST[room].blocks){
-        var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-        var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-        var type = Math.floor(Math.random() * (5));
-        var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type, POWERUP_VALUES[type]);
         if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
           passed = false;
       }
@@ -316,13 +316,14 @@ function Update(){
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].inGame){
       processPowerups(i);
+      loop:
       for(var j = ROOM_LIST[i].bullets.length - 1; j > -1; j--){
         ROOM_LIST[i].bullets[j].updatePosition();
         for(var k in ROOM_LIST[i].blocks){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
           if(collider == null) continue;
           ROOM_LIST[i].bullets.splice(j, 1);
-          continue;
+          continue loop;
         }
         for(var k  = 0; k < ROOM_LIST[i].players.length; k++){
           if(!ROOM_LIST[i].players[k].alive) continue;
@@ -332,7 +333,7 @@ function Update(){
             if(!collider.hasShield)
               collider.hp -= ROOM_LIST[i].bullets[j].dmg;
               ROOM_LIST[i].bullets.splice(j, 1);
-              continue;
+              continue loop;
           }
         }
       }
