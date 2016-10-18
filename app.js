@@ -322,6 +322,7 @@ function Update(){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
           if(collider == null) continue;
           ROOM_LIST[i].bullets.splice(j, 1);
+          continue;
         }
         for(var k  = 0; k < ROOM_LIST[i].players.length; k++){
           if(!ROOM_LIST[i].players[k].alive) continue;
@@ -331,6 +332,7 @@ function Update(){
             if(!collider.hasShield)
               collider.hp -= ROOM_LIST[i].bullets[j].dmg;
               ROOM_LIST[i].bullets.splice(j, 1);
+              continue;
           }
         }
       }
