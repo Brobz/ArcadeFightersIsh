@@ -321,7 +321,7 @@ function Update(){
         for(var k in ROOM_LIST[i].blocks){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
           if(collider == null) continue;
-          ROOM_LIST[i].bullets[j].hp -= 1;
+          ROOM_LIST[i].bullets.splice(j, 1);
         }
         for(var k  = 0; k < ROOM_LIST[i].players.length; k++){
           if(!ROOM_LIST[i].players[k].alive) continue;
@@ -330,11 +330,8 @@ function Update(){
           if(collider.team != ROOM_LIST[i].bullets[j].team){
             if(!collider.hasShield)
               collider.hp -= ROOM_LIST[i].bullets[j].dmg;
-            ROOM_LIST[i].bullets[j].hp -= 1;
+              ROOM_LIST[i].bullets.splice(j, 1);
           }
-        }
-        if(!ROOM_LIST[i].bullets[j].isAlive()){
-          ROOM_LIST[i].bullets.splice(j, 1);
         }
       }
       for(var k = 0; k < ROOM_LIST[i].players.length; k++){
