@@ -1,4 +1,4 @@
-exports.Room = function(mnS, mxS, wcS, tb){
+exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
   var self = {
     players : [],
     bullets : [],
@@ -8,6 +8,8 @@ exports.Room = function(mnS, mxS, wcS, tb){
     minSize : mnS,
     winConditionSize : wcS,
     teamBased : tb,
+    colors : colors,
+    player_positions : pPos,
     inGame : false
   }
 
@@ -31,6 +33,8 @@ exports.Room = function(mnS, mxS, wcS, tb){
           self.players[i].team = 1;
         }else self.players[i].team = 2
       }
+
+      self.players[i].color = self.colors[i];
     }
   }
 

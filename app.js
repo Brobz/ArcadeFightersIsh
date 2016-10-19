@@ -14,10 +14,7 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
-var COLORS = ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "#A135B7", "#3E5252"];
 var POWERUP_COLORS = ["#00FF00", "#FF0000", "#000000", "#FFFF00", "#0000FF"];
-var POWERUP_VALUES = [.01, .01, .01];
-var PLAYER_POSITIONS = [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]];
 var POWERUP_DELAY = 60 * 7;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
@@ -33,23 +30,12 @@ MAP = function(){
   blocks.push(Block([380, 0], [20, 400], "#100074"));
   blocks.push(Block([0, 380], [400, 20], "#100074"));
 
-  /*
-  blocks.push(Block([60, 20], [10, 40], "#100074"));
-  blocks.push(Block([330, 20], [10, 40], "#100074"));
-  blocks.push(Block([60, 340], [10, 40], "#100074"));
-  blocks.push(Block([330, 340], [10, 40], "#100074"));
-
-  blocks.push(Block([20, 60], [20, 10], "#100074"));
-  blocks.push(Block([20, 330], [20, 10], "#100074"));
-  blocks.push(Block([360, 60], [20, 10], "#100074"));
-  blocks.push(Block([360, 330], [20, 10], "#100074"));
-  */
   for(var i = 0; i < 5; i++){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
-    var height = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
-    blocks.push(Block([x, y], [width, height], "#100074"));
+    //var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+    //var height = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+    blocks.push(Block([x, y], [20, 20], "#100074"));
   }
 
 
@@ -58,7 +44,9 @@ MAP = function(){
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-var ROOM_LIST = [Room(2, 4, 1, false), Room(4, 4, 2, true), Room(6, 6, 3, true)];
+var ROOM_LIST = [Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735"]),
+                 Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
+                 Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 
 var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
@@ -66,7 +54,7 @@ io.sockets.on("connection", function(socket){
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    var p = Player(socket.id, COLORS[Object.keys(SOCKET_LIST).length - 1]);
+    var p = Player(socket.id, null);
     PLAYER_LIST[socket.id] = p;
 
 
@@ -225,8 +213,8 @@ function resetRoom(room){
   ROOM_LIST[room].blocks = [];
   ROOM_LIST[room].powerups = [];
   for(var i in ROOM_LIST[room].players){
-    ROOM_LIST[room].players[i].x = PLAYER_POSITIONS[i][0];
-    ROOM_LIST[room].players[i].y = PLAYER_POSITIONS[i][1];
+    ROOM_LIST[room].players[i].x = ROOM_LIST[room].player_positions[i][0];
+    ROOM_LIST[room].players[i].y = ROOM_LIST[room].player_positions[i][1];
     ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
     ROOM_LIST[room].players[i].alive = true;
     ROOM_LIST[room].players[i].powerUpsTime = [];
@@ -293,7 +281,7 @@ function processPowerups(room){
       var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
       var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
       var type = Math.floor(Math.random() * (5));
-      var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type, POWERUP_VALUES[type]);
+      var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
       for(k in ROOM_LIST[room].blocks){
         if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
           passed = false;

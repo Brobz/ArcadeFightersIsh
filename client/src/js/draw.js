@@ -1,13 +1,16 @@
+canvas.scale(1.25, 1.25);
+
 function draw(data){
   var hasDrawBullets = false;
   var hasDrawnBlocks = false;
   var hasDrawunPUPS = false;
   canvas.clearRect(0, 0, 500, 500);
-  for(var i = 0; i < data.length; i++){
+  for(var i = data.length - 1; i > -1; i--){
     if(data[i].room != currentRoom)
       continue;
 
     if(data[i].blocks != null){
+      canvas.drawImage(ring_borders_img, 0, 0);
       for(var k in data[i].powerups){
         canvas.fillStyle = data[i].powerups[k].color;
         canvas.fillRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
@@ -20,9 +23,8 @@ function draw(data){
       }
 
 
-      for(var k in data[i].blocks){
-        canvas.fillStyle = data[i].blocks[k].color;
-        canvas.fillRect(data[i].blocks[k].x, data[i].blocks[k].y, data[i].blocks[k].width, data[i].blocks[k].height);
+      for(var k = 3; k < data[i].blocks.length; k++){
+        canvas.drawImage(block_img, data[i].blocks[k].x, data[i].blocks[k].y);
       }
     }
 

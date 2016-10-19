@@ -36,6 +36,7 @@ function joinRoom(index){
 function startGame(data){
   if(currentRoom == data.room){
     roomsDiv.style.display = "none";
+    connectedText.style.display = "none";
     canvasElement.style.display = "";
   }
 }
@@ -58,6 +59,7 @@ function endGame(data){
     }
   }
   if(data.roomIndex == currentRoom){
+    connectedText.style.display = "";
     roomsDiv.style.display = "";
     canvasElement.style.display = "none";
   }

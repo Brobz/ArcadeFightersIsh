@@ -1,4 +1,4 @@
-exports.Powerup = function(pos, size, color, type, value){
+exports.Powerup = function(pos, size, color, type){
   var self = {
     x : pos[0],
     y : pos[1],
@@ -10,7 +10,6 @@ exports.Powerup = function(pos, size, color, type, value){
     color : color,
     team : null,
     type : type,
-    value : value
   }
 
   self.checkForCollision = function(entity){
