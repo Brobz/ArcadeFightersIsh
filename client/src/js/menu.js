@@ -45,7 +45,6 @@ function endGame(data){
   if(!data.room.teamBased){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        console.log(data.room.players[i].name);
         winners[data.roomIndex] = data.room.players[i].name + " Won!!!";
       }
     }
@@ -53,7 +52,6 @@ function endGame(data){
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        console.log("wonr");
         winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!";
       }
     }
