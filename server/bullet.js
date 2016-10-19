@@ -14,13 +14,13 @@ exports.Bullet = function(dir, pos, size, team, color){
 
   self.updatePosition = function(){
 
-    if(self.dir == 0)
+    if(self.dir == 0 || self.dir == 4 || self.dir == 6)
       self.y -= self.speed;
-    if(self.dir == 1)
+    if(self.dir == 1 || self.dir == 5 || self.dir = 7)
       self.y += self.speed;
-    if(self.dir == 2)
+    if(self.dir == 2 || self.dir == 4 || self.dir == 7)
       self.x -= self.speed;
-    if(self.dir == 3)
+    if(self.dir == 3 || self.dir == 5 || self.dir == 6)
       self.x += self.speed;
 
   }

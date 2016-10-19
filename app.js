@@ -269,6 +269,30 @@ function shoot(player, room){
     ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color));
   }
 
+  if(p.hasMultigun){
+    pos = [p.x + 7, p.y + 7];
+    size = [7, 7];
+    ROOM_LIST[room].bullets.push(Bullet(4, pos, size, p.team, p.color));
+  }
+
+  if(p.hasMultigun){
+    pos = [p.x + 7, p.y + 7];
+    size = [7, 7];
+    ROOM_LIST[room].bullets.push(Bullet(5, pos, size, p.team, p.color));
+  }
+
+  if(p.hasMultigun){
+    pos = [p.x + 7, p.y + 7];
+    size = [7, 7];
+    ROOM_LIST[room].bullets.push(Bullet(6, pos, size, p.team, p.color));
+  }
+
+  if(p.hasMultigun){
+    pos = [p.x + 7, p.y + 7];
+    size = [7, 7];
+    ROOM_LIST[room].bullets.push(Bullet(7, pos, size, p.team, p.color));
+  }
+
 }
 
 function processPowerups(room){
