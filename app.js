@@ -30,7 +30,7 @@ MAP = function(){
   blocks.push(Block([380, 0], [20, 400], "#100074"));
   blocks.push(Block([0, 380], [400, 20], "#100074"));
 
-  for(var i = 0; i < 5; i++){
+  for(var i = 0; i < 8; i++){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     //var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
