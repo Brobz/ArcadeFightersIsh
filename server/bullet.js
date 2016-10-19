@@ -16,7 +16,7 @@ exports.Bullet = function(dir, pos, size, team, color){
 
     if(self.dir == 0 || self.dir == 4 || self.dir == 6)
       self.y -= self.speed;
-    if(self.dir == 1 || self.dir == 5 || self.dir = 7)
+    if(self.dir == 1 || self.dir == 5 || self.dir == 7)
       self.y += self.speed;
     if(self.dir == 2 || self.dir == 4 || self.dir == 7)
       self.x -= self.speed;
