@@ -64,7 +64,7 @@ io.sockets.on("connection", function(socket){
     });
 
     socket.emit("connected", {
-      msg: "Connected to Server",
+      msg: "Connected to Server!",
       id: socket.id
     });
 

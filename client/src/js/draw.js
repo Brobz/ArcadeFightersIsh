@@ -32,7 +32,6 @@ function draw(data){
       if(data[i].playerPowerups[k] == 2){
         canvas.fillStyle = "#000000";
         canvas.fillRect(data[i].x - 5, data[i].y - 5, 30, 30);
-
       }
     }
 
