@@ -1,0 +1,10 @@
+TO ADD:
+  1. More Powerups
+    -> Cluster Shot Powerup
+    -> Bigger Bullets Powerup
+
+  2. Add Lobby Customization
+
+  3. Make Sprites and animation for everyhing
+
+  4. Add CSS Style to the page

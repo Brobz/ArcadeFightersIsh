@@ -248,46 +248,46 @@ function checkForGameEnd(){
 }
 
 function shoot(player, room){
-  if(p.isShootingUp || p.hasMultigun){
+  if(p.isShootingUp){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(0, pos, size, p.team, p.color));
   }
-  if(p.isShootingDown || p.hasMultigun){
+  if(p.isShootingDown){
     pos = [p.x + 7, p.y  + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(1, pos, size, p.team, p.color));
   }
- if(p.isShootingLeft || p.hasMultigun){
+ if(p.isShootingLeft){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(2, pos, size, p.team, p.color));
   }
- if(p.isShootingRight || p.hasMultigun){
+ if(p.isShootingRight){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color));
   }
 
-  if(p.hasMultigun){
+  if(p.hasMultigun && (p.isShootingUp || p.isShootingLeft)){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(4, pos, size, p.team, p.color));
   }
 
-  if(p.hasMultigun){
+  if(p.hasMultigun && (p.isShootingDown || p.isShootingRight)){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(5, pos, size, p.team, p.color));
   }
 
-  if(p.hasMultigun){
+  if(p.hasMultigun && (p.isShootingUp || p.isShootingRight)){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(6, pos, size, p.team, p.color));
   }
 
-  if(p.hasMultigun){
+  if(p.hasMultigun && (p.isShootingDown || p.isShootingLeft)){
     pos = [p.x + 7, p.y + 7];
     size = [7, 7];
     ROOM_LIST[room].bullets.push(Bullet(7, pos, size, p.team, p.color));

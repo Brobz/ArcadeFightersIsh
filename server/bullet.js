@@ -9,10 +9,15 @@ exports.Bullet = function(dir, pos, size, team, color){
     color : color,
     dir : dir,
     speed : 5,
+    hasNormalized : false,
     team : team
   }
 
   self.updatePosition = function(){
+    if(self.dir > 3 && !self.hasNormalized){
+      self.speed *= 1 / Math.sqrt(2);
+      self.hasNormalized = true;
+    }
 
     if(self.dir == 0 || self.dir == 4 || self.dir == 6)
       self.y -= self.speed;
