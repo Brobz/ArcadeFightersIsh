@@ -15,7 +15,7 @@ server.listen(process.env.PORT || 2000);
 console.log("Server Ready!");
 
 var POWERUP_COLORS = ["#00FF00", "#FF0000", "#000000", "#FFFF00", "#0000FF"];
-var POWERUP_DELAY = 60 * 7;
+var POWERUP_DELAY = 60 * 5;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
