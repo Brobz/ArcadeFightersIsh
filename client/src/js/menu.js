@@ -45,14 +45,14 @@ function endGame(data){
   if(!data.room.teamBased){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winners[data.roomIndex] = data.room.players[i].name + " Won!!!";
+        winners[data.roomIndex] = data.room.players[i].name + " Won!!!<br>";
       }
     }
 
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!";
+        winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!<br>";
       }
     }
   }
