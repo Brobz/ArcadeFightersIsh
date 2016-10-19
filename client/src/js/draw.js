@@ -44,7 +44,7 @@ function draw(data){
     canvas.fillRect(data[i].x - 10, data[i].y - 10, 40, 5);
     canvas.fillStyle = "#00FF00";
     canvas.fillRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
-    canvas.stroke();
+    canvas.strokeRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
 
   }
 }
