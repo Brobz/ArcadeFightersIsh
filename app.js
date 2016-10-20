@@ -65,7 +65,7 @@ io.sockets.on("connection", function(socket){
             socket.id = Math.random();
             SOCKET_LIST[socket.id] = socket;
 
-            p = Player(socket.id, res.ign, null);
+            p = Player(socket.id, res[0].ign, null);
             PLAYER_LIST[socket.id] = p;
 
             socket.emit("connected", {
