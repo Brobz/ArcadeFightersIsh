@@ -1,10 +1,17 @@
 var socket;
 var id;
 var currentRoom;
+var log_sign = document.getElementById("log_sign");
 var nameInput = document.getElementById("nameInput");
 var passInput = document.getElementById("passInput");
+var ignInput = document.getElementById("ignInput");
 var connectButton = document.getElementById("connectButton");
+var signButton = document.getElementById("signButton");
+var backToLoginButton = document.getElementById("backToLoginButton");
+var signedText = document.getElementById("signedText");
 var connectedText = document.getElementById("connectedText");
+var actionText = document.getElementById("actionText");
+var signUpText = document.getElementById("signUpText");
 var roomsDiv = document.getElementById("roomsDiv");
 
 var room1Text = document.getElementById("room1PlayersText");
@@ -101,9 +108,7 @@ function connected(data){
 
   socket.on("endGame", function(data){endGame(data)});
 
-  nameInput.style.display = "none";
-  passInput.style.display = "none";
-  connectButton.style.display = "none";
+  log_sign.style.display = "none";
   roomsDiv.style.display = "";
 
 
@@ -113,10 +118,55 @@ function connectionFailed(data){
   document.getElementById("connectedText").innerHTML = data.msg;
 }
 
-connectButton.onclick = function(){
+backToLoginButton.onclick = function(){
+  ignInput.style.display = "none";
+  backToLoginButton.style.display = "none";
+  connectButton.style.display = "";
+  actionText.innerHTML = "Log In"
+  signUpText.style.display = "";
+  signedText.innerHTML = "";
+  connectedText.innerHTML = "";
+  nameInput.value = "";
+  passInput.value = "";
+  ignInput.value = "";
+}
 
-  if(nameInput.value == "" || passInput.value == "")
-    return;
+signButton.onclick = function(){
+  if(ignInput.style.display == "none"){
+
+    nameInput.value = "";
+    passInput.value = "";
+    ignInput.value = "";
+
+    ignInput.style.display = "";
+    backToLoginButton.style.display = "";
+    connectButton.style.display = "none";
+    actionText.innerHTML = "Sign Up"
+    signUpText.style.display = "none";
+    connectedText.innerHTML = "";
+
+  }else{
+
+    if(nameInput.value == "" || passInput.value == "" || ignInput.value == "")
+      return;
+
+    socket = io();
+
+    signedText.innerHTML = "Signing Up...";
+
+    socket.emit("signUpInfo", {username:nameInput.value, password:passInput.value, ign:ignInput.value});
+
+    socket.on("signUpSuccessfull", function(data){
+      signedText.innerHTML = data.msg;
+    });
+
+    socket.on("signUpFailed", function(data){
+      signedText.innerHTML = data.msg;
+    });
+  }
+}
+
+connectButton.onclick = function(){
 
     socket = io();
 
@@ -133,4 +183,13 @@ connectButton.onclick = function(){
 
 
 
+}
+
+nameInput.onkeypress = passInput.onkeypress = function(e){
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode == '13'){
+      if(connectButton.style.display == "")
+        connectButton.onclick();
+    }
 }

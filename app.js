@@ -58,6 +58,26 @@ var ROOM_LIST = [Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20]]
 var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
     var p;
+    socket.on("signUpInfo", function(data){
+      db.accounts.find({username:data.username}, function(err, res){
+        if(res.length > 0){
+          socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+          return;
+        }else{
+          console.log(data.ign);
+          db.accounts.find({ign:data.ign}, function(err, res){
+            if(res.length > 0){
+              socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+              return;
+            }else{
+              db.accounts.save({username: data.username, password: data.password, ign: data.ign});
+              socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
+              return;
+            }
+          });
+        }
+      });
+    });
     socket.on("logInInfo", function(data){
         db.accounts.find({username:data.username, password:data.password}, function(err, res){
           if(res.length > 0){
@@ -78,6 +98,7 @@ io.sockets.on("connection", function(socket){
             });
           }else{
             socket.emit("connectionFailed", {msg:"Invalide Username/Password"});
+            return;
           }
         });
     });
@@ -106,6 +127,9 @@ io.sockets.on("connection", function(socket){
 
 
     });
+
+    if(!p)
+      return;
 
     socket.on("leaveRoom", function(data){
       for(var i in ROOM_LIST){

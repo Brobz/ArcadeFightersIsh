@@ -11,13 +11,23 @@
 <body>
 
 
-  Arcade Fighters Ish
-  <br>
-  <input type="text" id="nameInput" placeholder="Username">
-  <br>
-  <input type="password" id="passInput" placeholder="Password">
-  <br>
-  <button id = "connectButton">Log In</button>
+  <h1>Arcade Fighters Ish</h1>
+  <div id="log_sign">
+    <p id="actionText"> Log In </p>
+    <input type="text" id="nameInput" placeholder="Username" onkeypress="this.value = this.value.toLowerCase();">
+    <br><br>
+    <input type="password" id="passInput" placeholder="Password">
+    <br><br>
+    <input type="text" id="ignInput" placeholder="In Game Name" style="display:none;">
+    <br>
+    <button id = "connectButton">Log In</button>
+    <br>
+    <p id="signUpText">No account? Sign Up!</p>
+    <button id = "signButton">Sign Up</button>
+    <br><br>
+    <button id = "backToLoginButton" style="display:none;">Back to Login</button>
+    <p id="signedText"></p>
+  </div>
   <p id="connectedText"></p>
   <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
   <div id="roomsDiv" style="display: none;">
