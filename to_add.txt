@@ -8,3 +8,12 @@ TO ADD:
   3. Make Sprites and animation for everyhing
 
   4. Add CSS Style to the page
+
+
+COMMANDS:
+    Run Server Locally: node app.js
+    Upload to Heroku: git add . && git commit -m "update" && git push && git push heroku master
+    Open Mongo: mongo ds047146.mlab.com:47146/afi -u brobz -p astecas2012
+      Then Acces AFI Database: use afi
+        Insert Collection: db.createCollection("collection_name");
+          Insert Documents: db.accounts.insert({username:"username", password:"password"});
