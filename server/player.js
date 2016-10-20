@@ -22,8 +22,9 @@ exports.Player = function(id, color){
     powerUpsTime : [],
     hasShield : false,
     hasMultigun : false,
-    hasClusterGun : true,
+    hasClusterGun : false,
     bulletSize : 7,
+    bulletDmg : 5,
     speed : 2,
     team : null,
     id : id
@@ -67,14 +68,16 @@ exports.Player = function(id, color){
     else if(type == 5){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.hasClusterGun = true;
+        self.shootingDelay = 15;
         self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 4);
+        self.powerUpsTime.push(60 * 3);
       }
     }
 
     else if(type == 6){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.bulletSize = 10;
+        self.bulletDmg = 8;
         self.powerUpsActive.push(type);
         self.powerUpsTime.push(60 * 4);
       }
@@ -99,9 +102,11 @@ exports.Player = function(id, color){
         }
         else if(self.powerUpsActive[i] == 5){
           self.hasClusterGun = false;
+          self.shootingDelay = 8;
         }
         else if(self.powerUpsActive[i] == 6){
           self.bulletSize = 7;
+          self.bulletDmg = 5;
         }
 
         self.powerUpsTime.splice(i, 1);

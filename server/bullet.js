@@ -1,25 +1,33 @@
-exports.Bullet = function(dir, pos, size, team, color, cluster){
+exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
   var self = {
     x : pos[0],
     y : pos[1],
     width : size[0],
     height : size[1],
     hp : 1,
-    dmg : 5,
+    dmg : damage,
     color : color,
     dir : dir,
     speed : 5,
     hasNormalized : false,
+    hasShrinked : false,
     isCluster : cluster,
+    isChild : child,
     team : team
   }
 
-  self.updatePosition = function(){
-    if(self.dir > 3 && !self.hasNormalized){
-      self.speed *= 1 / Math.sqrt(2);
-      self.hasNormalized = true;
-    }
+  self.normalize = function(){
+    self.speed *= 1 / Math.sqrt(2);
+    self.hasNormalized = true;
+  }
 
+  self.shrink = function(){
+    self.width *= 0.5;
+    self.height *= 0.5;
+    self.hasShrinked = true;
+  }
+
+  self.updatePosition = function(){
     if(self.dir == 0 || self.dir == 4 || self.dir == 6)
       self.y -= self.speed;
     if(self.dir == 1 || self.dir == 5 || self.dir == 7)
@@ -28,6 +36,11 @@ exports.Bullet = function(dir, pos, size, team, color, cluster){
       self.x -= self.speed;
     if(self.dir == 3 || self.dir == 5 || self.dir == 6)
       self.x += self.speed;
+
+
+    if(self.dir > 3 && !self.hasNormalized)
+      self.normalize();
+
 
   }
   self.isAlive = function(){
@@ -38,7 +51,8 @@ exports.Bullet = function(dir, pos, size, team, color, cluster){
   }
 
   self.checkForCollision = function(entity){
-    if(entity)
+    if(!entity)
+      return;
 
     if(!(entity.x >= self.x + self.width ||  entity.x + entity.width <= self.x || entity.y >= self.y + self.height || entity.y + entity.height <= self.y)
         && entity.team != self.team){
@@ -60,10 +74,12 @@ exports.Bullet = function(dir, pos, size, team, color, cluster){
         self.x = entity.x - self.width;
       }
       */
-      
+
       return entity;
     }
+    /*
 
+    */
     return null;
   }
 
