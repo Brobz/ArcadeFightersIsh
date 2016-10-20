@@ -128,7 +128,7 @@ io.sockets.on("connection", function(socket){
 
     });
 
-    if(!p)
+    if(p === null)
       return;
 
     socket.on("leaveRoom", function(data){
