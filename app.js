@@ -65,11 +65,11 @@ io.sockets.on("connection", function(socket){
             socket.id = Math.random();
             SOCKET_LIST[socket.id] = socket;
 
-            p = Player(socket.id, data.username, null);
+            p = Player(socket.id, res.ign, null);
             PLAYER_LIST[socket.id] = p;
 
             socket.emit("connected", {
-              msg: "Connected to Server!",
+              msg: "Logged in as " + p.name,
               id: socket.id
             });
 
