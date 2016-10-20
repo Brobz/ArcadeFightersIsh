@@ -1,11 +1,12 @@
 {
-  "name": "TopDownZomboid",
+  "name": "ArcadeFightersIsh",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "dependencies": {
     "express": "^4.14.0",
-    "socket.io": "^1.5.0"
+    "socket.io": "^1.5.0",
+    "mongojs": "^3.2.10"
   },
   "devDependencies": {},
   "scripts": {

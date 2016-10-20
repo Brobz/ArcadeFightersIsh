@@ -1,5 +1,9 @@
 console.log("Starting Server...");
 
+
+var mongojs = require("mongojs");
+var db = mongojs("mongodb://brobz:astecas2012@ds047146.mlab.com:47146/afi", ["accounts", "progress"]);
+
 var express = require("express");
 var app = express();
 var server = require("http").Server(app);
@@ -10,7 +14,10 @@ app.get("/", function(req, res){
 
 app.use("/client", express.static(__dirname + "/client"));
 
+
 server.listen(process.env.PORT || 2000);
+
+
 
 console.log("Server Ready!");
 
@@ -50,22 +57,29 @@ var ROOM_LIST = [Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20]]
 
 var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
+    var p;
+    socket.on("logInInfo", function(data){
+        db.accounts.find({username:data.username, password:data.password}, function(err, res){
+          if(res.length > 0){
 
-    socket.id = Math.random();
-    SOCKET_LIST[socket.id] = socket;
+            socket.id = Math.random();
+            SOCKET_LIST[socket.id] = socket;
 
-    var p = Player(socket.id, null);
-    PLAYER_LIST[socket.id] = p;
+            p = Player(socket.id, data.username, null);
+            PLAYER_LIST[socket.id] = p;
 
+            socket.emit("connected", {
+              msg: "Connected to Server!",
+              id: socket.id
+            });
 
-
-    socket.emit("roomUpdate", {
-      rooms : ROOM_LIST,
-    });
-
-    socket.emit("connected", {
-      msg: "Connected to Server!",
-      id: socket.id
+            socket.emit("roomUpdate", {
+              rooms : ROOM_LIST,
+            });
+          }else{
+            socket.emit("connectionFailed", {msg:"Invalide Username/Password"});
+          }
+        });
     });
 
     socket.on("setName", function(data){p.name = data.name;});

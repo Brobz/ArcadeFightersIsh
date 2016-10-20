@@ -1,10 +1,11 @@
-exports.Player = function(id, color){
+exports.Player = function(id, name, color){
   var self = {
     x : 250,
     y : 250,
     width : 20,
     height : 20,
     alive : true,
+    name : name,
     maxHp : 40,
     hp : 40,
     color : color,

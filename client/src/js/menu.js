@@ -2,6 +2,7 @@ var socket;
 var id;
 var currentRoom;
 var nameInput = document.getElementById("nameInput");
+var passInput = document.getElementById("passInput");
 var connectButton = document.getElementById("connectButton");
 var connectedText = document.getElementById("connectedText");
 var roomsDiv = document.getElementById("roomsDiv");
@@ -94,8 +95,6 @@ function connected(data){
 
   document.getElementById("connectedText").innerHTML = data.msg;
 
-  socket.emit("setName", {name:nameInput.value});
-
   socket.on("update", function(data){update(data)});
 
   socket.on("startGame", function(data){startGame(data)});
@@ -103,24 +102,35 @@ function connected(data){
   socket.on("endGame", function(data){endGame(data)});
 
   nameInput.style.display = "none";
+  passInput.style.display = "none";
   connectButton.style.display = "none";
   roomsDiv.style.display = "";
 
 
 }
 
+function connectionFailed(data){
+  document.getElementById("connectedText").innerHTML = data.msg;
+}
+
 connectButton.onclick = function(){
 
-    if(nameInput.value == "")
-      return;
-
-    connectedText.innerHTML = "Connecting...";
+  if(nameInput.value == "" || passInput.value == "")
+    return;
 
     socket = io();
 
-    socket.on("roomUpdate", function(data){roomUpdate(data)});
+    connectedText.innerHTML = "Connecting...";
+
+    socket.emit("logInInfo", {username:nameInput.value, password:passInput.value});
 
     socket.on("connected", function(data){connected(data)});
+
+    socket.on("connectionFailed", function(data){connectionFailed(data)});
+
+    socket.on("roomUpdate", function(data){roomUpdate(data)});
+
+
 
 
 }
