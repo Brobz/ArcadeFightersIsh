@@ -1,4 +1,4 @@
-exports.Bullet = function(dir, pos, size, team, color){
+exports.Bullet = function(dir, pos, size, team, color, cluster){
   var self = {
     x : pos[0],
     y : pos[1],
@@ -10,6 +10,7 @@ exports.Bullet = function(dir, pos, size, team, color){
     dir : dir,
     speed : 5,
     hasNormalized : false,
+    isCluster : cluster,
     team : team
   }
 
@@ -29,7 +30,6 @@ exports.Bullet = function(dir, pos, size, team, color){
       self.x += self.speed;
 
   }
-
   self.isAlive = function(){
     if(self.hp > 0){
       return true;
@@ -40,7 +40,27 @@ exports.Bullet = function(dir, pos, size, team, color){
   self.checkForCollision = function(entity){
     if(entity)
 
-    if(!(entity.x > self.x + self.width ||  entity.x + entity.width < self.x || entity.y > self.y + self.height || entity.y + entity.height < self.y)){
+    if(!(entity.x >= self.x + self.width ||  entity.x + entity.width <= self.x || entity.y >= self.y + self.height || entity.y + entity.height <= self.y)
+        && entity.team != self.team){
+
+      /*
+      if(dir == 0){
+        self.y = entity.y + entity.height;
+      }
+
+      if(dir == 1){
+        self.y = entity.y - self.height;
+      }
+
+      if(dir == 2){
+        self.x = entity.x + entity.width;
+      }
+
+      if(dir == 3){
+        self.x = entity.x - self.width;
+      }
+      */
+      
       return entity;
     }
 

@@ -14,8 +14,8 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
-var POWERUP_COLORS = ["#00FF00", "#FF0000", "#000000", "#FFFF00", "#0000FF"];
-var POWERUP_DELAY = 60 * 5;
+var POWERUP_COLORS = ["Green", "Red", "DarkGrey", "Yellow", "CornflowerBlue", "Coral", "DarkMagenta"];
+var POWERUP_DELAY = 60 * 100;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
 var Player = require('./server/player.js').Player;
@@ -250,40 +250,40 @@ function checkForGameEnd(){
 function shoot(player, room){
   if(p.isShootingUp){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(0, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(0, pos, size, p.team, p.color, p.hasClusterGun));
   }
   if(p.isShootingDown){
     pos = [p.x + 7, p.y  + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(1, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(1, pos, size, p.team, p.color, p.hasClusterGun));
   }
  if(p.isShootingLeft){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(2, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(2, pos, size, p.team, p.color, p.hasClusterGun));
   }
  if(p.isShootingRight){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(3, pos, size, p.team, p.color, p.hasClusterGun));
   }
 
   if(p.hasMultigun && (p.isShootingUp || p.isShootingLeft)){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(4, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(4, pos, size, p.team, p.color, p.hasClusterGun));
   }
 
   if(p.hasMultigun && (p.isShootingDown || p.isShootingRight)){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(5, pos, size, p.team, p.color));
+    size = [p.bulletSize, p.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(5, pos, size, p.team, p.color, p.hasClusterGun));
   }
 
   if(p.hasMultigun && (p.isShootingUp || p.isShootingRight)){
     pos = [p.x + 7, p.y + 7];
-    size = [7, 7];
+    size = [p.bulletSize, p.bulletSize];
     ROOM_LIST[room].bullets.push(Bullet(6, pos, size, p.team, p.color));
   }
 
@@ -304,7 +304,7 @@ function processPowerups(room){
       passed = true;
       var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
       var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-      var type = Math.floor(Math.random() * (5));
+      var type = Math.floor(Math.random() * (POWERUP_COLORS.length));
       var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
       for(k in ROOM_LIST[room].blocks){
         if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
@@ -338,6 +338,12 @@ function Update(){
         for(var k in ROOM_LIST[i].blocks){
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].blocks[k]);
           if(collider == null) continue;
+          if(ROOM_LIST[i].bullets[j].isCluster){
+            var b = ROOM_LIST[i].bullets[j];
+            for(var dir = 0; dir < 7; dir++){
+              ROOM_LIST[i].bullets.push(Bullet(dir, [b.x, b.y], [b.width / 2, b.height / 2], b.team, b.color, false));
+            }
+          }
           ROOM_LIST[i].bullets.splice(j, 1);
           continue loop;
         }
@@ -345,12 +351,16 @@ function Update(){
           if(!ROOM_LIST[i].players[k].alive) continue;
           var collider = ROOM_LIST[i].bullets[j].checkForCollision(ROOM_LIST[i].players[k]);
           if(collider == null) continue;
-          if(collider.team != ROOM_LIST[i].bullets[j].team){
-            if(!collider.hasShield)
-              collider.hp -= ROOM_LIST[i].bullets[j].dmg;
-              ROOM_LIST[i].bullets.splice(j, 1);
-              continue loop;
-          }
+          if(!collider.hasShield)
+            collider.hp -= ROOM_LIST[i].bullets[j].dmg;
+            if(ROOM_LIST[i].bullets[j].isCluster){
+              var b = ROOM_LIST[i].bullets[j];
+              for(var dir = 0; dir < 7; dir++){
+                ROOM_LIST[i].bullets.push(Bullet(dir, [b.x, b.y], [b.width / 2, b.height / 2], b.team, b.color, false));
+              }
+            }
+            ROOM_LIST[i].bullets.splice(j, 1);
+            continue loop;
         }
       }
       for(var k = 0; k < ROOM_LIST[i].players.length; k++){

@@ -30,7 +30,7 @@ function draw(data){
 
     for(var k in data[i].playerPowerups){
       if(data[i].playerPowerups[k] == 2){
-        canvas.fillStyle = "#000000";
+        canvas.fillStyle = "DarkGrey";
         canvas.fillRect(data[i].x - 5, data[i].y - 5, 30, 30);
       }
     }
