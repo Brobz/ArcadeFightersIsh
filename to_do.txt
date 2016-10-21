@@ -1,8 +1,11 @@
-TO ADD:
-  1. More Powerups
-    -> Cluster Shot Powerup
-    -> Bigger Bullets Powerup
+TO DO:
 
+  1. Add Some Sort of a Progression System
+    -> Player Level?
+    -> Currency?
+    -> Runes / Masteries - like system?
+    -> Customizable Skins for character / bullets?
+    
   2. Add Lobby Customization
 
   3. Make Sprites and animation for everyhing
