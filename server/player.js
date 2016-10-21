@@ -69,7 +69,6 @@ exports.Player = function(id, name, color){
     else if(type == 5){
       if(self.powerUpsActive.indexOf(type) == -1){
         self.hasClusterGun = true;
-        self.shootingDelay = 15;
         self.powerUpsActive.push(type);
         self.powerUpsTime.push(60 * 3);
       }
@@ -103,7 +102,6 @@ exports.Player = function(id, name, color){
         }
         else if(self.powerUpsActive[i] == 5){
           self.hasClusterGun = false;
-          self.shootingDelay = 8;
         }
         else if(self.powerUpsActive[i] == 6){
           self.bulletSize = 7;

@@ -154,7 +154,7 @@ signButton.onclick = function(){
 
     signedText.innerHTML = "Signing Up...";
 
-    socket.emit("signUpInfo", {username:nameInput.value, password:passInput.value, ign:ignInput.value});
+    socket.emit("signUpInfo", {username:nameInput.value.toLowerCase(), password:passInput.value, ign:ignInput.value});
 
     socket.on("signUpSuccessfull", function(data){
       signedText.innerHTML = data.msg;
@@ -172,7 +172,7 @@ connectButton.onclick = function(){
 
     connectedText.innerHTML = "Connecting...";
 
-    socket.emit("logInInfo", {username:nameInput.value, password:passInput.value});
+    socket.emit("logInInfo", {username:nameInput.value.toLowerCase(), password:passInput.value});
 
     socket.on("connected", function(data){connected(data)});
 

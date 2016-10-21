@@ -21,7 +21,7 @@ server.listen(process.env.PORT || 2000);
 
 console.log("Server Ready!");
 
-var POWERUP_COLORS = ["Green", "Red", "DarkGrey", "Yellow", "CornflowerBlue", "Coral", "DarkMagenta"];
+var POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 var POWERUP_DELAY = 60 * 5;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
@@ -51,7 +51,7 @@ MAP = function(){
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [360, 20], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735"]),
+var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
                  Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
                  Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 
@@ -81,8 +81,12 @@ io.sockets.on("connection", function(socket){
     socket.on("logInInfo", function(data){
         db.accounts.find({username:data.username, password:data.password}, function(err, res){
           if(res.length > 0){
+            if(data.username in SOCKET_LIST){
+              socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
+              return;
+            }
 
-            socket.id = Math.random();
+            socket.id = data.username;
             SOCKET_LIST[socket.id] = socket;
 
             p = Player(socket.id, res[0].ign, null);
@@ -382,11 +386,11 @@ function Update(){
           if(ROOM_LIST[i].bullets[j].isCluster){
             var b = ROOM_LIST[i].bullets[j];
             for(var dir = 0; dir < 8; dir++){
-              ROOM_LIST[i].bullets.push(Bullet(dir, b.dmg / 2, [b.x, b.y], [b.width, b.height], b.team, b.color, false, true));
+              ROOM_LIST[i].bullets.push(Bullet(dir, b.dmg / 1.5, [b.x, b.y], [b.width, b.height], b.team, b.color, false, true));
             }
           }
           ROOM_LIST[i].bullets.splice(j, 1);
-          continue loop;
+          continue loop;a
         }
         if(ROOM_LIST[i].bullets[j].isChild && !ROOM_LIST[i].bullets[j].hasShrinked)
           ROOM_LIST[i].bullets[j].shrink();
