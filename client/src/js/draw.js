@@ -1,8 +1,8 @@
 canvas.scale(1.25, 1.25);
 var powerupBlur = 0;
 var dPupBlur = 1;
-var pupMax = 50;
-var pupRate = 0.8;
+var pupMax = 60;
+var pupRate = 1;
 
 function draw(data){
   canvas.clearRect(0, 0, 500, 500);
