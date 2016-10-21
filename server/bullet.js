@@ -13,7 +13,11 @@ exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
     hasShrinked : false,
     isCluster : cluster,
     isChild : child,
-    team : team
+    team : team,
+    trailCounter : 0,
+    trailMax : 8,
+    lastX : pos[0],
+    lastY : pos[1]
   }
 
   self.normalize = function(){
@@ -28,18 +32,37 @@ exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
   }
 
   self.updatePosition = function(){
-    if(self.dir == 0 || self.dir == 4 || self.dir == 6)
+    if(self.dir == 0 || self.dir == 4 || self.dir == 6){
       self.y -= self.speed;
-    if(self.dir == 1 || self.dir == 5 || self.dir == 7)
+      if(self.trailCounter >= self.trailMax){
+        self.lastY -= self.speed;
+      }
+    }
+    if(self.dir == 1 || self.dir == 5 || self.dir == 7){
       self.y += self.speed;
-    if(self.dir == 2 || self.dir == 4 || self.dir == 7)
+      if(self.trailCounter >= self.trailMax){
+        self.lastY += self.speed;
+      }
+    }
+    if(self.dir == 2 || self.dir == 4 || self.dir == 7){
       self.x -= self.speed;
-    if(self.dir == 3 || self.dir == 5 || self.dir == 6)
+      if(self.trailCounter >= self.trailMax){
+        self.lastX -= self.speed;
+      }
+    }
+    if(self.dir == 3 || self.dir == 5 || self.dir == 6){
       self.x += self.speed;
+      if(self.trailCounter >= self.trailMax){
+        self.lastX += self.speed;
+      }
+    }
 
 
     if(self.dir > 3 && !self.hasNormalized)
       self.normalize();
+
+    if(self.trailCounter < self.trailMax)
+      self.trailCounter += 1;
 
 
   }

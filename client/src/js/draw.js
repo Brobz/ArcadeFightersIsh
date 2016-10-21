@@ -1,9 +1,10 @@
 canvas.scale(1.25, 1.25);
+var powerupBlur = 0;
+var dPupBlur = 1;
+var pupMax = 50;
+var pupRate = 0.8;
 
 function draw(data){
-  var hasDrawBullets = false;
-  var hasDrawnBlocks = false;
-  var hasDrawunPUPS = false;
   canvas.clearRect(0, 0, 500, 500);
   canvas.strokeStyle = "#000000";
   for(var i = data.length - 1; i > -1; i--){
@@ -11,20 +12,41 @@ function draw(data){
       continue;
 
     if(data[i].blocks != null){
+
+      if(powerupBlur == 0)
+        dPupBlur = 1;
+      if(powerupBlur == pupMax)
+        dPupBlur = -1;
+
+      powerupBlur += pupRate * dPupBlur;
+
       canvas.drawImage(ring_borders_img, 0, 0);
       for(var k in data[i].powerups){
+        canvas.shadowBlur = powerupBlur;
+        canvas.shadowColor = data[i].powerups[k].color;
         canvas.fillStyle = data[i].powerups[k].color;
         canvas.fillRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
         canvas.strokeRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
       }
 
+      canvas.shadowBlur = 0;
+
 
       for(var k in data[i].bullets){
         canvas.fillStyle = data[i].bullets[k].color;
+        canvas.strokeStyle = data[i].bullets[k].color;
+        canvas.globalAlpha = 0.3;
+        canvas.lineWidth = data[i].bullets[k].width;
+        canvas.beginPath();
+        canvas.moveTo(data[i].bullets[k].lastX + data[i].bullets[k].width / 2, data[i].bullets[k].lastY + data[i].bullets[k].height / 2);
+        canvas.lineTo(data[i].bullets[k].x + data[i].bullets[k].width / 2, data[i].bullets[k].y + data[i].bullets[k].height / 2);
+        canvas.stroke();
+        canvas.globalAlpha = 1;
+        canvas.lineWidth = 1;
+        canvas.strokeStyle = "black";
         canvas.fillRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
         canvas.strokeRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
       }
-
 
       for(var k = 3; k < data[i].blocks.length; k++){
         canvas.drawImage(block_img, data[i].blocks[k].x, data[i].blocks[k].y);
