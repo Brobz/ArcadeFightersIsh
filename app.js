@@ -32,16 +32,18 @@ var Powerup = require('./server/powerup.js').Powerup;
 
 MAP = function(){
   var blocks = []
-  blocks.push(Block([0, 0], [400, 20], "#100074"));
-  blocks.push(Block([0, 0], [20, 400], "#100074"));
-  blocks.push(Block([380, 0], [20, 400], "#100074"));
-  blocks.push(Block([0, 380], [400, 20], "#100074"));
+  for(var x = 0; x < 20; x++){
+    for(var y = 0; y < 20; y++){
+      if(!x || !y || x == 19 || y == 19){
+        blocks.push(Block([x * 20, y * 20], [20, 20], "#100074"));
+      }
+    }
+  }
 
-  for(var i = 0; i < 8; i++){
+  for(var i = 0; i < 10; i++){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    //var width = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
-    //var height = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+
     blocks.push(Block([x, y], [20, 20], "#100074"));
   }
 
@@ -51,7 +53,7 @@ MAP = function(){
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
+var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
                  Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
                  Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 

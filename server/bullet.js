@@ -15,7 +15,7 @@ exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
     isChild : child,
     team : team,
     trailCounter : 0,
-    trailMax : 8,
+    trailMax : 5,
     lastX : pos[0],
     lastY : pos[1]
   }

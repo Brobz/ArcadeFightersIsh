@@ -20,7 +20,7 @@ function draw(data){
 
       powerupBlur += pupRate * dPupBlur;
 
-      canvas.drawImage(ring_borders_img, 0, 0);
+      //canvas.drawImage(ring_borders_img, 0, 0);
       for(var k in data[i].powerups){
         canvas.shadowBlur = powerupBlur;
         canvas.shadowColor = data[i].powerups[k].color;
@@ -48,8 +48,14 @@ function draw(data){
         canvas.strokeRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
       }
 
-      for(var k = 3; k < data[i].blocks.length; k++){
-        canvas.drawImage(block_img, data[i].blocks[k].x, data[i].blocks[k].y);
+      for(var k = 0; k < data[i].blocks.length; k++){
+        //canvas.drawImage(block_img, data[i].blocks[k].x, data[i].blocks[k].y);
+
+        canvas.fillStyle = data[i].blocks[k].color;
+        canvas.lineWidth = 3;
+        canvas.fillRect(data[i].blocks[k].x, data[i].blocks[k].y, 20, 20);
+        canvas.strokeRect(data[i].blocks[k].x, data[i].blocks[k].y, 20, 20);
+        canvas.lineWidth = 1;
       }
     }
 

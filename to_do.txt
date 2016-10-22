@@ -5,10 +5,13 @@ TO DO:
     -> Currency?
     -> Runes / Masteries - like system?
     -> Customizable Skins for character / bullets?
-    
-  2. Add Lobby Customization
+    -> Elo?
 
-  3. Make Sprites and animation for everyhing
+  2. Add Lobby Customization
+    -> Chat
+    -> Online Matchmaking?
+
+  3. Make Sprites and animation for everything (Maybe? Why not just shapes and colors?)
 
   4. Add CSS Style to the page
 
