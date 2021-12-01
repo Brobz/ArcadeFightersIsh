@@ -138,6 +138,9 @@ io.sockets.on("connection", function(socket){
         return;
       }
       ROOM_LIST[data.room].removePlayer(PLAYER_LIST[data.player_id]);
+      if (ROOM_LIST[data.room].players.length <= 0){
+        delete ROOM_LIST[data.room];
+      }
       for(var i in SOCKET_LIST){
         var s = SOCKET_LIST[i];
         s.emit("roomUpdate", {
