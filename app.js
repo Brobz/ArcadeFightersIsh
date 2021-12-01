@@ -74,56 +74,13 @@ var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
     var p;
     socket.on("signUpInfo", function(data){
-      db.collection("accounts").find({username:data.username}, async function(err, res){
-        var results = await res.toArray();
-        if(results.length > 0){
-          socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
-          return;
-        }else{
-          console.log(data.ign);
-          db.collection("accounts").find({ign:data.ign}, async function(err, res){
-            var results = await res.toArray();
-            if(results.length > 0){
-              socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
-              return;
-            }else{
-              db.collection("accounts").save({username: data.username, password: data.password, ign: data.ign});
-              socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
-              return;
-            }
-          });
-        }
-      });
+      var res = db.collection("accounts").find({username:data.username});
+      process_signup(data, res, socket);
     });
     socket.on("logInInfo", function(data){
       console.log(data);
-        db.collection("accounts").find({username:data.username, password:data.password}, async function(err, res){
-          var results = await res.toArray();
-          if(results.length > 0){
-            if(data.username in SOCKET_LIST){
-              socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
-              return;
-            }
-
-            socket.id = data.username;
-            SOCKET_LIST[socket.id] = socket;
-
-            p = Player(socket.id, results[0].ign, null);
-            PLAYER_LIST[socket.id] = p;
-
-            socket.emit("connected", {
-              msg: "Logged in as " + p.name,
-              id: socket.id
-            });
-
-            socket.emit("roomUpdate", {
-              rooms : ROOM_LIST,
-            });
-          }else{
-            socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
-            return;
-          }
-        });
+        var res = db.collection("accounts").find({username:data.username, password:data.password});
+        process_login(data, res, socket);
     });
 
     socket.on("setName", function(data){p.name = data.name;});
@@ -193,6 +150,58 @@ io.sockets.on("connection", function(socket){
     socket.on("disconnect", function(){Disconnected(socket.id)});
 
 });
+
+async function process_signup(data, res, socket){
+  var results = await res.toArray();
+  if(results.length > 0){
+    socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+    return;
+  }else{
+    console.log(data.ign);
+    var res = db.collection("accounts").find({ign:data.ign});
+    process_signup_helper(data, res, socket);
+  }
+}
+
+async function process_signup_helper(data, res, socket){
+  var results = await res.toArray();
+  if(results.length > 0){
+    socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+    return;
+  }else{
+    db.collection("accounts").insert({username: data.username, password: data.password, ign: data.ign});
+    socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
+    return;
+  }
+}
+
+async function process_login(data, res, socket){
+  var results = await res.toArray();
+  if(results.length > 0){
+    if(data.username in SOCKET_LIST){
+      socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
+      return;
+    }
+
+    socket.id = data.username;
+    SOCKET_LIST[socket.id] = socket;
+
+    p = Player(socket.id, results[0].ign, null);
+    PLAYER_LIST[socket.id] = p;
+
+    socket.emit("connected", {
+      msg: "Logged in as " + p.name,
+      id: socket.id
+    });
+
+    socket.emit("roomUpdate", {
+      rooms : ROOM_LIST,
+    });
+  }else{
+    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
+    return;
+  }
+}
 
 function Disconnected(id) {
   for(var i in ROOM_LIST){
