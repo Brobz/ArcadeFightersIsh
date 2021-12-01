@@ -245,6 +245,9 @@ function Disconnected(id) {
 }
 
 function getKeyInput(id, data){
+  let playerExists = id in PLAYER_LIST;
+  if(!playerExists) return;
+
   if(data.input == "d"){
     PLAYER_LIST[id].isMovingRight = data.state;
   }
