@@ -73,14 +73,16 @@ function endGame(data){
   if(!data.room.teamBased){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winnerText.innerHTML = data.room.players[i].name + " Won!!!<br>";
+        winnerText.innerHTML = data.room.players[i].name + " WON!!!<br>";
+        winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
       }
     }
 
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winnerText.innerHTML = "Team " + data.room.players[i].team + " Won!!!<br>";
+        winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!!!<br>";
+        winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
       }
     }
   }
