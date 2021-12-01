@@ -71,8 +71,9 @@ var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20],
                  Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 
 var io = require("socket.io")(server, {});
+var p;
+
 io.sockets.on("connection", function(socket){
-    var p;
     socket.on("signUpInfo", function(data){
       var res = db.collection("accounts").find({username:data.username});
       process_signup(data, res, socket);
