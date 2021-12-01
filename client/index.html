@@ -30,26 +30,20 @@
   </div>
   <p id="connectedText"></p>
   <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
+  <input type="text" id="roomNameInput" placeholder="room id" style="display:none;">
+  <button id = "joinRoomButton" onclick="joinRoom()" style="display:none;">Join Room</button>
+  <button id = "createRoomButton" onclick="createRoom()" style="display:none;">Create Room</button>
+  <br>
+  <p id="roomErrorText"></p>
   <div id="roomsDiv" style="display: none;">
-    <div id="room1Div">
-      Room 1 - FFA <button id = "joinRoom1Button" onclick="joinRoom(0)">Join</button> <button id = "startGame1" onclick="callForGameStart(0)">Start Game</button>
+    <div id="currentRoomDiv">
+      <h3 id="currentRoomTitleText"></h3>
+      <button id = "startGameButton" onclick="callForGameStart()">Start Game</button>
       <br>
-      <p id="room1PlayersText"></p>
+      <h4 id="winnerText"></h4>
+      <p id="currentRoomPlayersText"></p>
       <br>
-    </div>
-    <br>
-    <div id="room2Div">
-      Room 2 - 2v2 <button id = "joinRoom2Button" onclick="joinRoom(1)">Join</button> <button id = "startGame2" onclick="callForGameStart(1)">Start Game</button>
-      <br>
-      <p id="room2PlayersText"></p>
-      <br>
-    </div>
-    <br>
-    <div id="room3Div">
-      Room 3 - 3v3 <button id = "joinRoom3Button" onclick="joinRoom(2)">Join</button> <button id = "startGame3" onclick="callForGameStart(2)">Start Game</button>
-      <br>
-      <p id="room3PlayersText"></p>
-      <br>
+      <button id = "leaveRoomButton" onclick="leaveRoom()">Leave Room</button>
     </div>
   </div>
 

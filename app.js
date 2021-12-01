@@ -66,9 +66,9 @@ MAP = function(){
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
-var ROOM_LIST = [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
-                 Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
-                 Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
+var ROOM_LIST = {}; // [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
+                   // Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
+                   // Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 
 var io = require("socket.io")(server, {});
 var p;
@@ -79,7 +79,6 @@ io.sockets.on("connection", function(socket){
       process_signup(data, res, socket);
     });
     socket.on("logInInfo", function(data){
-      console.log(data);
         var res = db.collection("accounts").find({username:data.username, password:data.password});
         process_login(data, res, socket);
     });
@@ -87,17 +86,25 @@ io.sockets.on("connection", function(socket){
     socket.on("setName", function(data){p.name = data.name;});
 
     socket.on("joinRoom", function(data){
-      let currentPlayer = PLAYER_LIST[data.player_id]
-      if(ROOM_LIST[data.room].players.length >= ROOM_LIST[data.room].maxSize || ROOM_LIST[data.room].inGame)
+      let roomExists = data.room in ROOM_LIST;
+
+      if (!roomExists){
+        socket.emit("roomError404", {room: data.room});
         return;
-
-      for(var i in ROOM_LIST){
-
-        if(ROOM_LIST[i].players.indexOf(currentPlayer) >= 0){
-          ROOM_LIST[i].removePlayer(currentPlayer);
-        }
-
       }
+
+      if (ROOM_LIST[data.room].inGame){
+        socket.emit("roomErrorInGame", {room: data.room});
+        return;
+      }
+
+      let currentPlayer = PLAYER_LIST[data.player_id];
+
+      if(ROOM_LIST[data.room].players.length >= ROOM_LIST[data.room].maxSize){
+        socket.emit("roomErrorFull", {room: data.room});
+        return;
+      }
+
       ROOM_LIST[data.room].addPlayer(currentPlayer);
 
       for(var i in SOCKET_LIST){
@@ -113,12 +120,24 @@ io.sockets.on("connection", function(socket){
     if(p === null)
       return;
 
-    socket.on("leaveRoom", function(data){
-      for(var i in ROOM_LIST){
-        if(ROOM_LIST[i].players.indexOf(p) >= 0){
-          ROOM_LIST[i].removePlayer(p);
+    socket.on("createRoom", function(data){
+        let currentPlayer = PLAYER_LIST[data.player_id];
+        ROOM_LIST[data.room] = Room(2, 2, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
+        ROOM_LIST[data.room].addPlayer(currentPlayer);
+        for(var i in SOCKET_LIST){
+          var s = SOCKET_LIST[i];
+          s.emit("roomUpdate", {
+            rooms : ROOM_LIST,
+          });
         }
+      });
+
+    socket.on("leaveRoom", function(data){
+      let roomExists = data.room in ROOM_LIST;
+      if (!roomExists){
+        return;
       }
+      ROOM_LIST[data.room].removePlayer(PLAYER_LIST[data.player_id]);
       for(var i in SOCKET_LIST){
         var s = SOCKET_LIST[i];
         s.emit("roomUpdate", {
@@ -305,7 +324,7 @@ function resetRoom(room){
 }
 
 function checkForGameEnd(){
-  for(var i = 0; i < ROOM_LIST.length; i++){
+  for(var i in ROOM_LIST){
     if(!ROOM_LIST[i].inGame) continue;
     if(ROOM_LIST[i].checkForWin()){
       ROOM_LIST[i].inGame = false;

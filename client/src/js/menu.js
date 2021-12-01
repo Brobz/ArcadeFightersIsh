@@ -1,6 +1,7 @@
 var socket;
 var id;
 var currentRoom;
+var waitingToJoinRoom = -1;
 var log_sign = document.getElementById("log_sign");
 var nameInput = document.getElementById("nameInput");
 var passInput = document.getElementById("passInput");
@@ -13,23 +14,14 @@ var connectedText = document.getElementById("connectedText");
 var actionText = document.getElementById("actionText");
 var signUpText = document.getElementById("signUpText");
 var roomsDiv = document.getElementById("roomsDiv");
+var roomErrorText = document.getElementById("roomErrorText");
+var roomNameInput = document.getElementById("roomNameInput");
+var currentRoomPlayersText = document.getElementById("currentRoomPlayersText");
+var startGameButton = document.getElementById("startGameButton");
+var currentRoomTitleText = document.getElementById("currentRoomTitleText");
+var createRoomButton = document.getElementById("createRoomButton");
 
-var room1Text = document.getElementById("room1PlayersText");
-var room2Text = document.getElementById("room2PlayersText");
-var room3Text = document.getElementById("room3PlayersText");
-var roomTexts = [room1Text, room2Text, room3Text];
-
-var startGame1 = document.getElementById("startGame1");
-var startGame2 = document.getElementById("startGame2");
-var startGame3 = document.getElementById("startGame3");
-var startGameButtons = [startGame1, startGame2, startGame3];
-
-var joinRoom1Button = document.getElementById("joinRoom1Button");
-var joinRoom2Button = document.getElementById("joinRoom2Button");
-var joinRoom3Button = document.getElementById("joinRoom3Button");
-var joinRoomButtons = [joinRoom1Button, joinRoom2Button, joinRoom3Button];
-
-var winners = ["", "", ""]
+var winnerText = document.getElementById("winnerText");
 
 var canvasElement = document.getElementById("canvas");
 var canvas = document.getElementById("canvas").getContext("2d");
@@ -37,8 +29,30 @@ var canvas = document.getElementById("canvas").getContext("2d");
 canvas.font = "15px Monaco";
 canvas.textAlign = 'center';
 
-function joinRoom(index){
-  socket.emit("joinRoom", {room:index, player_id: id});
+function joinRoom(){
+  roomErrorText.innerHTML = "";
+  socket.emit("joinRoom", {room: roomNameInput.value, player_id: id});
+  waitingToJoinRoom = roomNameInput.value;;
+
+  socket.on("roomError404", function(data){
+    roomErrorText.innerHTML = "Room '" + data.room + "' does not currently exist on the server!!!";
+    waitingToJoinRoom = -1;
+  });
+
+  socket.on("roomErrorInGame", function(data){
+    roomErrorText.innerHTML = "Room '" + data.room + "' is currently in a game!!!";
+    waitingToJoinRoom = -1;
+  });
+
+  socket.on("roomErrorFull", function(data){
+    roomErrorText.innerHTML = "Room '" + data.room + "' is currently full!!!";
+    waitingToJoinRoom = -1;
+  });
+}
+
+function leaveRoom(){
+  socket.emit("leaveRoom", {room: currentRoom, player_id: id});
+  currentRoom = -1;
 }
 
 function startGame(data){
@@ -46,6 +60,7 @@ function startGame(data){
     roomsDiv.style.display = "none";
     connectedText.style.display = "none";
     canvasElement.style.display = "";
+    winnerText.innerHTML = "";
   }
 }
 
@@ -53,14 +68,14 @@ function endGame(data){
   if(!data.room.teamBased){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winners[data.roomIndex] = data.room.players[i].name + " Won!!!<br>";
+        winnerText.innerHTML = data.room.players[i].name + " Won!!!<br>";
       }
     }
 
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winners[data.roomIndex] = "Team " + data.room.players[i].team + " Won!!!<br>";
+        winnerText.innerHTML = "Team " + data.room.players[i].team + " Won!!!<br>";
       }
     }
   }
@@ -71,27 +86,51 @@ function endGame(data){
   }
 }
 
-function callForGameStart(index){
-  socket.emit("callForGameStart", {room: index});
+function callForGameStart(){
+  socket.emit("callForGameStart", {room: currentRoom});
+}
+
+function createRoom(){
+  roomErrorText.innerHTML = "";
+  socket.emit("createRoom", {room: roomNameInput.value, player_id:id});
+  waitingToJoinRoom = roomNameInput.value;
 }
 
 function roomUpdate(data){
-  currentRoom = -1;
+  currentRoomPlayersText.innerHTML = ""
+  if (currentRoom == -1){
+    joinRoomButton.style.display = "";
+    createRoomButton.style.display = "";
+    roomNameInput.style.display = "";
+    roomsDiv.style.display = "none";
+  }
   for(var i in data.rooms){
-    startGameButtons[i].style.display = "none";
-    roomTexts[i].innerHTML = "<br>" + winners[i];
-    joinRoomButtons[i].style.display = "";
-    if(data.rooms[i].inGame || data.rooms[i].players.length >= data.rooms[i].maxSize){
-      joinRoomButtons[i].style.display = "none";
-    }
-    for(var k in data.rooms[i].players){
-      if(data.rooms[i].players[0].id == id && data.rooms[i].players.length >= data.rooms[i].minSize)
-        startGameButtons[i].style.display = "";
-      if(data.rooms[i].players[k].id == id){
-        currentRoom = i;
-        joinRoomButtons[i].style.display = "none";
+    if(waitingToJoinRoom == i){
+      let inRoom = false;
+      for(var k in data.rooms[i].players){
+        if(data.rooms[i].players[k].id == id){
+          inRoom = true;
+        }
       }
-      roomTexts[i].innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
+      if (!inRoom){
+        continue;
+      }
+      roomsDiv.style.display = "";
+      currentRoomTitleText.innerHTML = "Room: " + i;
+      currentRoom = roomNameInput.value;
+      waitingToJoinRoom = -1;
+      joinRoomButton.style.display = "none";
+      createRoomButton.style.display = "none";
+      roomNameInput.style.display = "none";
+    }
+    if(currentRoom == i){
+      startGameButton.style.display = "none";
+      for(var k in data.rooms[i].players){
+        currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
+        if(data.rooms[i].players[0].id == id && data.rooms[i].players.length >= data.rooms[i].minSize){
+          startGameButton.style.display = "";
+        }
+      }
     }
   }
 }
@@ -109,8 +148,9 @@ function connected(data){
   socket.on("endGame", function(data){endGame(data)});
 
   log_sign.style.display = "none";
-  roomsDiv.style.display = "";
-
+  roomNameInput.style.display = "";
+  joinRoomButton.style.display = "";
+  createRoomButton.style.display = "";
 
 }
 
