@@ -43,6 +43,10 @@ var Bullet = require('./server/bullet.js').Bullet;
 var Block = require('./server/block.js').Block;
 var Powerup = require('./server/powerup.js').Powerup;
 
+function getDefaultRoom(){
+  return Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
+}
+
 MAP = function(){
   var blocks = []
   for(var x = 0; x < 20; x++){
@@ -127,7 +131,7 @@ io.sockets.on("connection", function(socket){
           return;
         }
         let currentPlayer = PLAYER_LIST[data.player_id];
-        ROOM_LIST[data.room] = Room(2, 2, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
+        ROOM_LIST[data.room] = getDefaultRoom();
         ROOM_LIST[data.room].addPlayer(currentPlayer);
         for(var i in SOCKET_LIST){
           var s = SOCKET_LIST[i];
