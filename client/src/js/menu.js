@@ -38,7 +38,7 @@ canvas.font = "15px Monaco";
 canvas.textAlign = 'center';
 
 function joinRoom(index){
-  socket.emit("joinRoom", {room:index});
+  socket.emit("joinRoom", {room:index, player_id: id});
 }
 
 function startGame(data){

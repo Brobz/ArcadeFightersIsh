@@ -87,17 +87,18 @@ io.sockets.on("connection", function(socket){
     socket.on("setName", function(data){p.name = data.name;});
 
     socket.on("joinRoom", function(data){
+      let currentPlayer = PLAYER_LIST[data.player_id]
       if(ROOM_LIST[data.room].players.length >= ROOM_LIST[data.room].maxSize || ROOM_LIST[data.room].inGame)
         return;
 
       for(var i in ROOM_LIST){
 
-        if(ROOM_LIST[i].players.indexOf(p) >= 0){
-          ROOM_LIST[i].removePlayer(p);
+        if(ROOM_LIST[i].players.indexOf(currentPlayer) >= 0){
+          ROOM_LIST[i].removePlayer(currentPlayer);
         }
 
       }
-      ROOM_LIST[data.room].addPlayer(p);
+      ROOM_LIST[data.room].addPlayer(currentPlayer);
 
       for(var i in SOCKET_LIST){
         var s = SOCKET_LIST[i];
