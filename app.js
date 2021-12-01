@@ -1,8 +1,22 @@
-console.log("Starting Server...");
+const { MongoClient } = require('mongodb');
 
+const db_uri = "mongodb+srv://afi_admin:afi_admin@afidb.qtnn7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
-var mongojs = require("mongojs");
-var db = mongojs("mongodb://brobz:astecas2012@ds047146.mlab.com:47146/afi", ["accounts", "progress"]);
+console.log(">> Connecting to MongoDB...");
+
+var db;
+MongoClient.connect(db_uri, {}, (err, client) => {
+  if (err) {
+    throw error
+  };
+  db = client.db("AFI_DB");
+  console.log(">> Successfully Connected to MongoDB!");
+});
+
+// AFI_DB_API_KEY
+// 2jYLJGt0b6st5wdky7AyezagHpVcJIHVZvm1GGdTIoylUedvxOmcx1bP2eQ9ujG2
+
+console.log(">> Starting Server...");
 
 var express = require("express");
 var app = express();
@@ -19,7 +33,7 @@ server.listen(process.env.PORT || 2000);
 
 
 
-console.log("Server Ready!");
+console.log(">> Server Ready!");
 
 var POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 var POWERUP_DELAY = 60 * 5;
@@ -61,18 +75,20 @@ var io = require("socket.io")(server, {});
 io.sockets.on("connection", function(socket){
     var p;
     socket.on("signUpInfo", function(data){
-      db.accounts.find({username:data.username}, function(err, res){
-        if(res.length > 0){
+      db.collection("accounts").find({username:data.username}, async function(err, res){
+        var results = await res.toArray();
+        if(results.length > 0){
           socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
           return;
         }else{
           console.log(data.ign);
-          db.accounts.find({ign:data.ign}, function(err, res){
-            if(res.length > 0){
+          db.collection("accounts").find({ign:data.ign}, async function(err, res){
+            var results = await res.toArray();
+            if(results.length > 0){
               socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
               return;
             }else{
-              db.accounts.save({username: data.username, password: data.password, ign: data.ign});
+              db.collection("accounts").save({username: data.username, password: data.password, ign: data.ign});
               socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
               return;
             }
@@ -81,8 +97,10 @@ io.sockets.on("connection", function(socket){
       });
     });
     socket.on("logInInfo", function(data){
-        db.accounts.find({username:data.username, password:data.password}, function(err, res){
-          if(res.length > 0){
+      console.log(data);
+        db.collection("accounts").find({username:data.username, password:data.password}, async function(err, res){
+          var results = await res.toArray();
+          if(results.length > 0){
             if(data.username in SOCKET_LIST){
               socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
               return;
@@ -91,7 +109,7 @@ io.sockets.on("connection", function(socket){
             socket.id = data.username;
             SOCKET_LIST[socket.id] = socket;
 
-            p = Player(socket.id, res[0].ign, null);
+            p = Player(socket.id, results[0].ign, null);
             PLAYER_LIST[socket.id] = p;
 
             socket.emit("connected", {
@@ -103,7 +121,7 @@ io.sockets.on("connection", function(socket){
               rooms : ROOM_LIST,
             });
           }else{
-            socket.emit("connectionFailed", {msg:"Invalide Username/Password"});
+            socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
             return;
           }
         });
@@ -195,6 +213,8 @@ function Disconnected(id) {
 }
 
 function getKeyInput(id, data){
+  if (PLAYER_LIST.length <= 0) return;
+
   if(data.input == "d"){
     PLAYER_LIST[id].isMovingRight = data.state;
   }
