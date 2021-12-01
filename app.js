@@ -29,8 +29,7 @@ app.get("/", function(req, res){
 app.use("/client", express.static(__dirname + "/client"));
 
 
-server.listen(process.env.PORT || 2000);
-
+server.listen(process.env.PORT || 5000);
 
 
 console.log(">> Server Ready!");
