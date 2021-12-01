@@ -121,6 +121,11 @@ io.sockets.on("connection", function(socket){
       return;
 
     socket.on("createRoom", function(data){
+        let roomExists = data.room in ROOM_LIST;
+        if(roomExists){
+          socket.emit("roomErrorAlreadyExists", {room: data.room});
+          return;
+        }
         let currentPlayer = PLAYER_LIST[data.player_id];
         ROOM_LIST[data.room] = Room(2, 2, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
         ROOM_LIST[data.room].addPlayer(currentPlayer);

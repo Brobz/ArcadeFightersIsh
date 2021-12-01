@@ -94,6 +94,11 @@ function createRoom(){
   roomErrorText.innerHTML = "";
   socket.emit("createRoom", {room: roomNameInput.value, player_id:id});
   waitingToJoinRoom = roomNameInput.value;
+
+  socket.on("roomErrorAlreadyExists", function(data){
+    roomErrorText.innerHTML = "Room '" + data.room + "' already exists on this server!!!";
+    waitingToJoinRoom = -1;
+  });
 }
 
 function roomUpdate(data){
