@@ -90,6 +90,10 @@ io.sockets.on("connection", function(socket){
     socket.on("setName", function(data){p.name = data.name;});
 
     socket.on("joinRoom", function(data){
+      if (data.room == ""){
+        socket.emit("roomErrorEmptyNameJoin", {});
+        return;
+      }
       let roomExists = data.room in ROOM_LIST;
 
       if (!roomExists){
@@ -125,6 +129,10 @@ io.sockets.on("connection", function(socket){
       return;
 
     socket.on("createRoom", function(data){
+        if (data.room == ""){
+          socket.emit("roomErrorEmptyNameCreate", {});
+          return;
+        }
         let roomExists = data.room in ROOM_LIST;
         if(roomExists){
           socket.emit("roomErrorAlreadyExists", {room: data.room});

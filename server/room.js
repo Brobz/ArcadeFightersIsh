@@ -10,7 +10,20 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
     teamBased : tb,
     colors : colors,
     player_positions : pPos,
-    inGame : false
+    inGame : false,
+    info : "NO ROOM INFO"
+  }
+
+  self.getInfo = function(){
+    self.info = "Players: " + self.players.length + " / " + self.maxSize
+    if (self.players.length >= self.minSize)
+      self.info += "<br> Game ready to start!";
+    else
+      self.info += "<br> (" + (self.minSize - self.players.length) + " more needed for game start)";
+    if (!self.teamBased)
+      self.info += "<br> Mode: FFA";
+    else
+      self.info += "<br> Mode: TDM";
   }
 
   self.removePlayer = function(player){
@@ -36,6 +49,7 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
 
       self.players[i].color = self.colors[i];
     }
+    self.getInfo();
   }
 
   self.checkForWin = function(){

@@ -20,7 +20,7 @@ var currentRoomPlayersText = document.getElementById("currentRoomPlayersText");
 var startGameButton = document.getElementById("startGameButton");
 var currentRoomTitleText = document.getElementById("currentRoomTitleText");
 var createRoomButton = document.getElementById("createRoomButton");
-
+var currentRoomInfo = document.getElementById("currentRoomInfo");
 var winnerText = document.getElementById("winnerText");
 
 var canvasElement = document.getElementById("canvas");
@@ -46,6 +46,11 @@ function joinRoom(){
 
   socket.on("roomErrorFull", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' is currently full!!!";
+    waitingToJoinRoom = -1;
+  });
+
+  socket.on("roomErrorEmptyNameJoin", function(data){
+    roomErrorText.innerHTML = "Invalid input: empty room name!!!";
     waitingToJoinRoom = -1;
   });
 }
@@ -99,6 +104,11 @@ function createRoom(){
     roomErrorText.innerHTML = "Room '" + data.room + "' already exists on this server!!!";
     waitingToJoinRoom = -1;
   });
+
+  socket.on("roomErrorEmptyNameCreate", function(data){
+    roomErrorText.innerHTML = "Invalid input: empty room name!!!";
+    waitingToJoinRoom = -1;
+  });
 }
 
 function roomUpdate(data){
@@ -130,10 +140,14 @@ function roomUpdate(data){
     }
     if(currentRoom == i){
       startGameButton.style.display = "none";
+      currentRoomInfo.innerHTML = data.rooms[i].info;
       for(var k in data.rooms[i].players){
-        currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team;
-        if(data.rooms[i].players[0].id == id && data.rooms[i].players.length >= data.rooms[i].minSize){
-          startGameButton.style.display = "";
+        currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + " |";
+        if(k == 0){
+          currentRoomPlayersText.innerHTML += "<b> HOST</b> |";
+          if (data.rooms[i].players.length >= data.rooms[i].minSize && data.rooms[i].players[k].id == id){
+            startGameButton.style.display = "";
+          }
         }
       }
     }
