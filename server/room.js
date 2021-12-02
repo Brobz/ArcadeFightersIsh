@@ -16,15 +16,17 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
   }
 
   self.updateInfo = function(){
-    self.info = "Players: " + self.players.length + " / " + self.maxSize
-    if (self.players.length >= self.minSize)
-      self.info += "<br> Game ready to start!";
-    else
-      self.info += "<br> (" + (self.minSize - self.players.length) + " more needed for game start)";
     if (String(self.teamBased).toLowerCase() == "true")
-      self.info += "<br> Mode: TDM";
+      self.info = "Mode: TDM";
     else
-      self.info += "<br> Mode: FFA";
+      self.info = "Mode: FFA";
+
+    self.info += "<br> Players: " + self.players.length + " / " + self.maxSize;
+
+    if (self.players.length >= self.minSize)
+      self.info += '<br> <span class="text-success"> Game ready to start!</span>';
+    else
+      self.info += '<br><span class="text-danger">(' + (self.minSize - self.players.length) + ' more player needed for game start)</span>';
   }
 
   self.removePlayer = function(player){
@@ -42,7 +44,9 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
     for(var i in self.players){
       if(String(self.teamBased).toLowerCase() == "false"){
         self.players[i].team = parseInt(i) + 1;
+        self.minSize = 2;
       }else{
+        self.minSize = self.maxSize / 2 + 1;
         if(i < self.maxSize / 2){
           self.players[i].team = 1;
         }else self.players[i].team = 2

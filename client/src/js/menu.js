@@ -63,6 +63,7 @@ function joinRoom(){
 
 function leaveRoom(){
   socket.emit("leaveRoom", {room: currentRoom, player_id: id});
+  winnerText.innerHTML = "";
   currentRoom = -1;
 }
 
@@ -149,6 +150,10 @@ function roomUpdate(data){
       roomHostControlBlockedText.style.display = "";
       startGameButton.disabled = true;
       currentRoomInfo.innerHTML = data.rooms[i].info;
+      maxPlayerRoomSettingLabel.innerHTML = "Max Players : " + data.rooms[i].maxSize;
+      maxPlayerInput.value = data.rooms[i].maxSize;
+      maxPlayerInput.step = (data.rooms[i].teamBased == "true") ? 2 : 1;
+      gameModeRoomSettingInput.value = data.rooms[i].teamBased;
       for(var k in data.rooms[i].players){
         currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + " |";
         if(k == 0){
@@ -266,8 +271,6 @@ connectButton.onclick = function(){
 
     socket.on("drawEndgameText", function(data){drawEndgameText(data)});
 
-
-
 }
 
 nameInput.onkeypress = passInput.onkeypress = function(e){
@@ -279,14 +282,21 @@ nameInput.onkeypress = passInput.onkeypress = function(e){
     }
 }
 
-
 function updateMaxPlayerRoomSetting(){
-  maxPlayerRoomSettingLabel.innerHTML = "Max Players : " + maxPlayerInput.value;
-  socket.emit("changeRoomSettings", {room: currentRoom, setting: "maxSize", value: maxPlayerInput.value})
+  socket.emit("changeRoomSettings", {room: currentRoom, setting: "maxSize", value: parseInt(maxPlayerInput.value)});
 }
 
 function updateGameModeRoomSetting(){
-  socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value})
+  socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value});
+  if(gameModeRoomSettingInput.value == "true"){
+    if(parseInt(maxPlayerInput.value) % 2){
+      maxPlayerInput.value = Math.min(6, parseInt(maxPlayerInput.value) + 1);
+    }
+    maxPlayerInput.step = 2;
+    updateMaxPlayerRoomSetting();
+  }else{
+    maxPlayerInput.step = 1;
+  }
 }
 
 window.addEventListener("keydown", function(e) {
