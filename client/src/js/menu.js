@@ -2,7 +2,7 @@ var socket;
 var id;
 var currentRoom;
 var waitingToJoinRoom = -1;
-var log_sign = document.getElementById("log_sign");
+var login_SignupDiv = document.getElementById("login_SignupDiv");
 var nameInput = document.getElementById("nameInput");
 var passInput = document.getElementById("passInput");
 var ignInput = document.getElementById("ignInput");
@@ -13,7 +13,7 @@ var backToLoginButton = document.getElementById("backToLoginButton");
 var signedText = document.getElementById("signedText");
 var connectedText = document.getElementById("connectedText");
 var connectingText = document.getElementById("connectingText");
-var actionText = document.getElementById("actionText");
+var landingPageActionText = document.getElementById("landingPageActionText");
 var signUpText = document.getElementById("signUpText");
 var roomsDiv = document.getElementById("roomsDiv");
 var roomErrorText = document.getElementById("roomErrorText");
@@ -24,7 +24,7 @@ var currentRoomTitleText = document.getElementById("currentRoomTitleText");
 var createRoomButton = document.getElementById("createRoomButton");
 var currentRoomInfo = document.getElementById("currentRoomInfo");
 var winnerText = document.getElementById("winnerText");
-
+var profileInfoDiv = document.getElementById("profileInfoDiv");
 var canvasElement = document.getElementById("canvas");
 var canvas = document.getElementById("canvas").getContext("2d");
 
@@ -34,7 +34,7 @@ canvas.textAlign = 'center';
 function joinRoom(){
   roomErrorText.innerHTML = "";
   socket.emit("joinRoom", {room: roomNameInput.value, player_id: id});
-  waitingToJoinRoom = roomNameInput.value;;
+  waitingToJoinRoom = roomNameInput.value;
 
   socket.on("roomError404", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' does not currently exist on the server!";
@@ -65,9 +65,9 @@ function leaveRoom(){
 function startGame(data){
   if(currentRoom == data.room){
     roomsDiv.style.display = "none";
-    connectedText.style.display = "none";
     canvasElement.style.display = "";
     winnerText.innerHTML = "";
+    canvasElement.scrollIntoView();
   }
 }
 
@@ -76,7 +76,7 @@ function endGame(data){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
         winnerText.innerHTML = data.room.players[i].name + " WON!<br>";
-        winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
+        winnerText.innerHTML += "with " + Math.round(data.room.players[i].hp) + " hp left<br>";
       }
     }
 
@@ -133,7 +133,7 @@ function roomUpdate(data){
         continue;
       }
       roomsDiv.style.display = "";
-      currentRoomTitleText.innerHTML = '<span style="color:DarkSlateGrey;">' + i + '</span>';
+      currentRoomTitleText.innerHTML = i;
       currentRoom = roomNameInput.value;
       waitingToJoinRoom = -1;
       roomInputDiv.style.display = "none";
@@ -166,9 +166,9 @@ function connected(data){
 
   socket.on("endGame", function(data){endGame(data)});
 
-  log_sign.style.display = "none";
+  login_SignupDiv.style.display = "none";
   roomInputDiv.style.display = "";
-
+  profileInfoDiv.style.display = "";
 }
 
 function connectionFailed(data){
@@ -179,7 +179,7 @@ backToLoginButton.onclick = function(){
   ignInput.style.display = "none";
   backToLoginButton.style.display = "none";
   connectButton.style.display = "";
-  actionText.innerHTML = "Log In"
+  landingPageActionText.innerHTML = "Log In"
   signUpText.style.display = "";
   signedText.innerHTML = "";
   toSignPageButton.style.display = "";
@@ -199,7 +199,7 @@ toSignPageButton.onclick = function(){
     ignInput.style.display = "";
     backToLoginButton.style.display = "";
     connectButton.style.display = "none";
-    actionText.innerHTML = "Sign Up"
+    landingPageActionText.innerHTML = "Sign Up"
     signUpText.style.display = "none";
     signButton.style.display = "";
     connectingText.innerHTML = "";
@@ -241,7 +241,7 @@ connectButton.onclick = function(){
 
     socket = io();
 
-    connectingText.innerHTML = '<span style="color:DarkSlateGrey;"> Connecting... </span>';
+    connectingText.innerHTML = 'Connecting...';
 
     socket.emit("logInInfo", {username:nameInput.value.toLowerCase(), password:passInput.value});
 

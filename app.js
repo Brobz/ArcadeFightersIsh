@@ -251,7 +251,7 @@ async function process_login(data, results, socket){
   PLAYER_LIST[socket.id] = p;
 
   socket.emit("connected", {
-    msg: '<span style="color:DarkSlateGrey;">' + p.name + '</span>',
+    msg: p.name,
     id: socket.id
   });
 
@@ -381,49 +381,49 @@ function checkForGameEnd(){
 }
 
 function shoot(player, room){
-  if(p.isShootingUp){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(0, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+  if(player.isShootingUp){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(0, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
-  if(p.isShootingDown){
-    pos = [p.x + 7, p.y  + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(1, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+  if(player.isShootingDown){
+    pos = [player.x + 7, player.y  + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(1, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
- if(p.isShootingLeft){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(2, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+ if(player.isShootingLeft){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(2, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
- if(p.isShootingRight){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(3, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
-  }
-
-  if(p.hasMultigun && (p.isShootingUp || p.isShootingLeft)){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(4, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+ if(player.isShootingRight){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(3, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
 
-  if(p.hasMultigun && (p.isShootingDown || p.isShootingRight)){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(5, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+  if(player.hasMultigun && (player.isShootingUp || player.isShootingLeft)){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(4, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
 
-  if(p.hasMultigun && (p.isShootingUp || p.isShootingRight)){
-    pos = [p.x + 7, p.y + 7];
-    size = [p.bulletSize, p.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(6, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+  if(player.hasMultigun && (player.isShootingDown || player.isShootingRight)){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(5, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
 
-  if(p.hasMultigun && (p.isShootingDown || p.isShootingLeft)){
-    pos = [p.x + 7, p.y + 7];
+  if(player.hasMultigun && (player.isShootingUp || player.isShootingRight)){
+    pos = [player.x + 7, player.y + 7];
+    size = [player.bulletSize, player.bulletSize];
+    ROOM_LIST[room].bullets.push(Bullet(6, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+  }
+
+  if(player.hasMultigun && (player.isShootingDown || player.isShootingLeft)){
+    pos = [player.x + 7, player.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(7, p.bulletDmg, pos, size, p.team, p.color, p.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(7, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
   }
 
 }
@@ -478,7 +478,7 @@ function Update(){
             }
           }
           ROOM_LIST[i].bullets.splice(j, 1);
-          continue loop;a
+          continue loop;
         }
         if(ROOM_LIST[i].bullets[j].isChild && !ROOM_LIST[i].bullets[j].hasShrinked)
           ROOM_LIST[i].bullets[j].shrink();
