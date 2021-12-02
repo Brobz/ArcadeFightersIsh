@@ -7,6 +7,7 @@ var nameInput = document.getElementById("nameInput");
 var passInput = document.getElementById("passInput");
 var ignInput = document.getElementById("ignInput");
 var connectButton = document.getElementById("connectButton");
+var toSignPageButton = document.getElementById("toSignPageButton");
 var signButton = document.getElementById("signButton");
 var backToLoginButton = document.getElementById("backToLoginButton");
 var signedText = document.getElementById("signedText");
@@ -186,14 +187,15 @@ backToLoginButton.onclick = function(){
   actionText.innerHTML = "Log In"
   signUpText.style.display = "";
   signedText.innerHTML = "";
+  toSignPageButton.style.display = "";
+  signButton.style.display = "none";
   connectedText.innerHTML = "";
   nameInput.value = "";
   passInput.value = "";
   ignInput.value = "";
 }
 
-signButton.onclick = function(){
-  if(ignInput.style.display == "none"){
+toSignPageButton.onclick = function(){
 
     nameInput.value = "";
     passInput.value = "";
@@ -204,12 +206,26 @@ signButton.onclick = function(){
     connectButton.style.display = "none";
     actionText.innerHTML = "Sign Up"
     signUpText.style.display = "none";
+    signButton.style.display = "";
     connectedText.innerHTML = "";
+    toSignPageButton.style.display = "none";
+}
+signButton.onclick = function(){
 
-  }else{
-
-    if(nameInput.value == "" || passInput.value == "" || ignInput.value == "")
+    if(nameInput.value == ""){
+      signedText.innerHTML = "Invalid input: empty username!!!";
       return;
+    }
+
+    if(passInput.value == ""){
+      signedText.innerHTML = "Invalid input: empty password!!!";
+      return;
+    }
+
+    if(ignInput.value == ""){
+      signedText.innerHTML = "Invalid input: empty in game name!!!";
+      return;
+    }
 
     socket = io();
 
@@ -224,7 +240,6 @@ signButton.onclick = function(){
     socket.on("signUpFailed", function(data){
       signedText.innerHTML = data.msg;
     });
-  }
 }
 
 connectButton.onclick = function(){
