@@ -20,11 +20,11 @@
       <h3 class="display-3" id="landingPageActionText"> Log In </h3>
     </span>
     <br>
-    <input class="form-control text-center" type="text" id="nameInput" placeholder="Username">
+    <input class="form-control text-center" type="text" id="nameInput" maxlength="15" placeholder="Username">
     <br><br>
-    <input class="form-control text-center" type="password" id="passInput" placeholder="Password">
+    <input class="form-control text-center" type="password" id="passInput" maxlength="15" placeholder="Password">
     <br><br>
-    <input class="form-control text-center" type="text" id="ignInput" placeholder="In Game Name" style="display:none;">
+    <input class="form-control text-center" type="text" id="ignInput" maxlength="12" placeholder="In Game Name" style="display:none;">
     <br>
     <button class="btn btn-outline-warning" id = "connectButton">Log In</button>
     <button class="btn btn-outline-warning" id = "signButton" style="display:none;">Sign Up</button>
@@ -53,10 +53,11 @@
       <h3 class="display-3"> Join or Create a Room</h3>
     </span>
     <br>
-    <input class="form-control text-center" type="text" id="roomNameInput" placeholder="Room Name">
+    <input class="form-control text-center" type="text" id="roomNameInput" maxlength="25" placeholder="Room Name">
     <br>
     <button class="btn btn-outline-warning" id = "joinRoomButton" onclick="joinRoom()">Join Room</button>
     <button class="btn btn-outline-warning" id = "createRoomButton" onclick="createRoom()">Create Room</button>
+    <br>
     <h5 class="display-5" id="roomErrorText" style="color:DarkRed"></h5>
   </div>
   <div class="vstack gap-2 col-md-5 mx-auto" id="gameCanvasDiv">

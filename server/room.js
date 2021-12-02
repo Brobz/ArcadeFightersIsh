@@ -11,7 +11,8 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
     colors : colors,
     player_positions : pPos,
     inGame : false,
-    info : "NO ROOM INFO"
+    info : "NO ROOM INFO",
+    winner : undefined
   }
 
   self.getInfo = function(){
@@ -68,12 +69,16 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
       }
     }else{
       if(!self.teamBased){
+        var playerName = "";
         var playersAlive = 0;
         for(var i in self.players){
-          if (self.players[i].alive)
+          if (self.players[i].alive){
             playersAlive += 1;
+            playerName = self.players[i].name;
+          }
         }
         if(playersAlive <= 1){
+          self.winner = playerName;
           return true;
         }
         return false;
@@ -88,7 +93,11 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
             }
         }
 
-        if(team2Alive == 0 || team1Alive == 0){
+        if(team2Alive == 0){
+          self.winner = "Team 1";
+          return true;
+        }else if(team1Alive == 0){
+          self.winner = "Team 2";
           return true;
         }
         return false

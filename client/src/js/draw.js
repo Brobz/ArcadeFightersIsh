@@ -4,7 +4,14 @@ var dPupBlur = 1;
 var pupMax = 60;
 var pupRate = 1;
 
+function drawEndgameText(data){
+  canvas.fillStyle = "Green";
+  canvas.font = "25px monospace";
+  canvas.fillText(data.winner + " is victorious!", 200, 200);
+}
+
 function draw(data){
+  canvas.font = "10px monospace";
   canvas.clearRect(0, 0, 500, 500);
   canvas.strokeStyle = "#000000";
   for(var i = data.length - 1; i > -1; i--){
@@ -80,4 +87,5 @@ function draw(data){
     canvas.strokeRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
 
   }
+
 }

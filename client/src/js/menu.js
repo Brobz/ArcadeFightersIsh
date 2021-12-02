@@ -72,23 +72,24 @@ function startGame(data){
 }
 
 function endGame(data){
-  if(!data.room.teamBased){
-    for(var i in data.room.players){
-      if(data.room.players[i].alive){
-        winnerText.innerHTML = data.room.players[i].name + " WON!<br>";
-        winnerText.innerHTML += "with " + Math.round(data.room.players[i].hp) + " hp left<br>";
+  if(data.roomIndex == currentRoom){
+    if(!data.room.teamBased){
+      for(var i in data.room.players){
+        if(data.room.players[i].alive){
+          winnerText.innerHTML = data.room.players[i].name + " WON!<br>";
+          winnerText.innerHTML += "with " + Math.round(data.room.players[i].hp) + " hp left<br>";
+        }
+      }
+
+    }else{
+      for(var i in data.room.players){
+        if(data.room.players[i].alive){
+          winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!<br>";
+          winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
+        }
       }
     }
 
-  }else{
-    for(var i in data.room.players){
-      if(data.room.players[i].alive){
-        winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!<br>";
-        winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
-      }
-    }
-  }
-  if(data.roomIndex == currentRoom){
     connectedText.style.display = "";
     roomsDiv.style.display = "";
     canvasElement.style.display = "none";
@@ -251,6 +252,7 @@ connectButton.onclick = function(){
 
     socket.on("roomUpdate", function(data){roomUpdate(data)});
 
+    socket.on("drawEndgameText", function(data){drawEndgameText(data)});
 
 
 

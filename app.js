@@ -342,6 +342,7 @@ function resetRoom(room){
   ROOM_LIST[room].bullets = [];
   ROOM_LIST[room].blocks = [];
   ROOM_LIST[room].powerups = [];
+  ROOM_LIST[room].winner = undefined;
   for(var i in ROOM_LIST[room].players){
     ROOM_LIST[room].players[i].x = ROOM_LIST[room].player_positions[i][0];
     ROOM_LIST[room].players[i].y = ROOM_LIST[room].player_positions[i][1];
@@ -367,15 +368,21 @@ function checkForGameEnd(){
       ROOM_LIST[i].inGame = false;
       for(var k in ROOM_LIST[i].players){
           s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
-          s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
+          s.emit("drawEndgameText", {winner: ROOM_LIST[i].winner});
       }
-      resetRoom(i);
-      for(var j in SOCKET_LIST){
-        var s = SOCKET_LIST[j];
-        s.emit("roomUpdate", {
-          rooms : ROOM_LIST,
-        });
-      }
+      setTimeout(() => {
+        for(var k in ROOM_LIST[i].players){
+            s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
+            s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
+        }
+        resetRoom(i);
+        for(var j in SOCKET_LIST){
+          var s = SOCKET_LIST[j];
+          s.emit("roomUpdate", {
+            rooms : ROOM_LIST,
+          });
+        }
+      }, 3000);
     }
   }
 }
@@ -518,7 +525,8 @@ function Update(){
         bullets : ROOM_LIST[i].bullets,
         blocks : ROOM_LIST[i].blocks,
         powerups : ROOM_LIST[i].powerups,
-        room : i
+        room : i,
+        winner : ROOM_LIST[i].winner
       });
     }
   }
