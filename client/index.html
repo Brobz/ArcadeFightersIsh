@@ -49,11 +49,13 @@
     <span class="text-center">
       <h3 class="display-3" id="actionText"> Join or Create a Room</h3>
     </span>
-    <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
     <input class="form-control" type="text" id="roomNameInput" placeholder="room id">
     <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()">Join Room</button>
     <button class="btn btn-outline-dark" id = "createRoomButton" onclick="createRoom()">Create Room</button>
     <h5 class="display-5" id="roomErrorText" style="color:DarkRed"></h5>
+  </div>
+  <div class="vstack gap-2 col-md-5 mx-auto" id="gameCanvasDiv">
+    <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
   </div>
   <br>
   <div class="vstack gap-2 col-md-5 mx-auto" id="roomsDiv" style="display: none;">
