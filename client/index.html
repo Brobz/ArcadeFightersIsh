@@ -10,10 +10,15 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <body>
 
-
-  <h1 class="display-1">Arcade Fighters Ish</h1>
-  <div id="log_sign">
-    <h3 class="display-3" id="actionText"> Log In </h3>
+  <div class="text-center" id="titleDiv">
+    <h1 class="display-1">Arcade Fighters Ish</h1>
+  </div>
+  <br>
+  <div class="vstack gap-2 col-md-5 mx-auto" id="log_sign">
+    <hr>
+    <span class="text-center">
+      <h3 class="display-3" id="actionText"> Log In </h3>
+    </span>
     <input class="form-control" type="text" id="nameInput" placeholder="Username">
     <br><br>
     <input class="form-control" type="password" id="passInput" placeholder="Password">
@@ -21,14 +26,18 @@
     <input class="form-control" type="text" id="ignInput" placeholder="In Game Name" style="display:none;">
     <br>
     <button class="btn btn-outline-dark" id = "connectButton">Log In</button>
+    <br><br>
+    <hr>
+    <span class="text-center">
+      <h5 class="display-5" id="signUpText">No account? Sign Up!</h5>
+    </span>
     <br>
-    <p id="signUpText">No account? Sign Up!</p>
     <button class="btn btn-outline-dark" id = "signButton">Sign Up</button>
     <br><br>
     <button class="btn btn-outline-dark" id = "backToLoginButton" style="display:none;">Back to Login</button>
-    <p id="signedText"></p>
+    <h6 class="display-6" id="signedText"></h6>
   </div>
-  <p id="connectedText"></p>
+  <h5 class="display-5" id="connectedText"></h5>
   <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
   <input class="form-control" type="text" id="roomNameInput" placeholder="room id" style="display:none;">
   <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()" style="display:none;">Join Room</button>
