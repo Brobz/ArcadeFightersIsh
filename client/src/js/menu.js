@@ -142,14 +142,14 @@ function roomUpdate(data){
       roomNameInput.style.display = "none";
     }
     if(currentRoom == i){
-      startGameButton.style.display = "none";
+      startGameButton.disabled = true;
       currentRoomInfo.innerHTML = data.rooms[i].info;
       for(var k in data.rooms[i].players){
         currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + " |";
         if(k == 0){
           currentRoomPlayersText.innerHTML += "<b> HOST</b> |";
           if (data.rooms[i].players.length >= data.rooms[i].minSize && data.rooms[i].players[k].id == id){
-            startGameButton.style.display = "";
+            startGameButton.disabled = false;
           }
         }
       }
@@ -269,3 +269,9 @@ nameInput.onkeypress = passInput.onkeypress = function(e){
         connectButton.onclick();
     }
 }
+
+window.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+}, false);

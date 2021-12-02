@@ -154,8 +154,6 @@ exports.Player = function(id, name, color){
       self.move(-self.speed, 0, blocks);
     if(self.isMovingRight)
       self.move(self.speed, 0, blocks);
-
-
   }
 
   self.updateState = function(){

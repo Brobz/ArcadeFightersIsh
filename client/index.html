@@ -39,22 +39,27 @@
     <h6 class="display-6" id="signedText"></h6>
     <h5 class="display-5" id="connectedText"></h5>
   </div>
-  <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
-  <input class="form-control" type="text" id="roomNameInput" placeholder="room id" style="display:none;">
-  <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()" style="display:none;">Join Room</button>
-  <button class="btn btn-outline-dark" id = "createRoomButton" onclick="createRoom()" style="display:none;">Create Room</button>
+  <div class="vstack gap-2 col-md-5 mx-auto" id="roomInputDiv">
+    <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
+    <input class="form-control" type="text" id="roomNameInput" placeholder="room id" style="display:none;">
+    <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()" style="display:none;">Join Room</button>
+    <button class="btn btn-outline-dark" id = "createRoomButton" onclick="createRoom()" style="display:none;">Create Room</button>
+    <h5 class="display-5" id="roomErrorText" style="color:DarkRed"></h5>
+  </div>
   <br>
-  <p id="roomErrorText"></p>
-  <div id="roomsDiv" style="display: none;">
+  <div class="vstack gap-2 col-md-5 mx-auto" id="roomsDiv" style="display: none;">
     <div id="currentRoomDiv">
       <h3 id="currentRoomTitleText"></h3>
-      <p id="currentRoomInfo"></p>
-      <button class="btn btn-outline-dark" id = "startGameButton" onclick="callForGameStart()">Start Game</button>
-      <br>
+      <hr>
       <h2 id="winnerText" style="color:DarkGreen"></h2>
+      <p id="currentRoomInfo"></p>
+      <hr>
+      <button class="btn btn-outline-dark" id = "startGameButton" onclick="callForGameStart()" disabled>Start Game</button>
+      <br>
+      <hr>
       <h4>Players:</h4>
       <p id="currentRoomPlayersText"></p>
-      <br>
+      <hr>
       <button class="btn btn-outline-dark" id = "leaveRoomButton" onclick="leaveRoom()">Leave Room</button>
     </div>
   </div>
