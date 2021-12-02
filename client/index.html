@@ -37,19 +37,32 @@
     <br><br>
     <button class="btn btn-outline-dark" id = "backToLoginButton" style="display:none;">Back to Login</button>
     <h6 class="display-6" id="signedText"></h6>
-    <h5 class="display-5" id="connectedText"></h5>
   </div>
-  <div class="vstack gap-2 col-md-5 mx-auto" id="roomInputDiv">
+  <div class="vstack gap-2 col-md-5 mx-auto" id="roomInputDiv" style="display:none;">
+    <hr>
+    <p class="h6">Logged in as:
+      <strong>
+        <p class="font-monospace" id="connectedText"></p>
+      </strong>
+    </p>
+    <span class="text-center">
+      <h3 class="display-3" id="actionText"> Join or Create a Room</h3>
+    </span>
     <canvas id="canvas" width = "500" height="500" style="border: 1px solid #000000; display: none;"></canvas><br>
-    <input class="form-control" type="text" id="roomNameInput" placeholder="room id" style="display:none;">
-    <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()" style="display:none;">Join Room</button>
-    <button class="btn btn-outline-dark" id = "createRoomButton" onclick="createRoom()" style="display:none;">Create Room</button>
+    <input class="form-control" type="text" id="roomNameInput" placeholder="room id">
+    <button class="btn btn-outline-dark" id = "joinRoomButton" onclick="joinRoom()">Join Room</button>
+    <button class="btn btn-outline-dark" id = "createRoomButton" onclick="createRoom()">Create Room</button>
     <h5 class="display-5" id="roomErrorText" style="color:DarkRed"></h5>
   </div>
   <br>
   <div class="vstack gap-2 col-md-5 mx-auto" id="roomsDiv" style="display: none;">
+    <hr>
     <div id="currentRoomDiv">
-      <h3 id="currentRoomTitleText"></h3>
+      <h5 class="display-5">Room:
+        <strong>
+          <p class="font-monospace" id="currentRoomTitleText"></p>
+        </strong>
+      </h5>
       <hr>
       <h2 id="winnerText" style="color:DarkGreen"></h2>
       <p id="currentRoomInfo"></p>

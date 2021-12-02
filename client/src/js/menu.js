@@ -117,9 +117,7 @@ function createRoom(){
 function roomUpdate(data){
   currentRoomPlayersText.innerHTML = ""
   if (currentRoom == -1){
-    joinRoomButton.style.display = "";
-    createRoomButton.style.display = "";
-    roomNameInput.style.display = "";
+    roomInputDiv.style.display = "";
     roomsDiv.style.display = "none";
   }
   for(var i in data.rooms){
@@ -134,12 +132,10 @@ function roomUpdate(data){
         continue;
       }
       roomsDiv.style.display = "";
-      currentRoomTitleText.innerHTML = "Room: " + i;
+      currentRoomTitleText.innerHTML = '<span style="color:DarkSlateGrey;">' + i + '</span>';
       currentRoom = roomNameInput.value;
       waitingToJoinRoom = -1;
-      joinRoomButton.style.display = "none";
-      createRoomButton.style.display = "none";
-      roomNameInput.style.display = "none";
+      roomInputDiv.style.display = "none";
     }
     if(currentRoom == i){
       startGameButton.disabled = true;
@@ -170,9 +166,7 @@ function connected(data){
   socket.on("endGame", function(data){endGame(data)});
 
   log_sign.style.display = "none";
-  roomNameInput.style.display = "";
-  joinRoomButton.style.display = "";
-  createRoomButton.style.display = "";
+  roomInputDiv.style.display = "";
 
 }
 

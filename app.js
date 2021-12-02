@@ -251,7 +251,7 @@ async function process_login(data, results, socket){
   PLAYER_LIST[socket.id] = p;
 
   socket.emit("connected", {
-    msg: "Logged in as " + p.name,
+    msg: '<span style="color:DarkSlateGrey;">' + p.name + '</span>',
     id: socket.id
   });
 
