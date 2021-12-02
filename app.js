@@ -13,10 +13,11 @@ MongoClient.connect(db_uri, {}, (err, client) => {
   console.log(">> Successfully Connected to MongoDB!");
 });
 
-// AFI_DB_API_KEY
-// 2jYLJGt0b6st5wdky7AyezagHpVcJIHVZvm1GGdTIoylUedvxOmcx1bP2eQ9ujG2
-
 console.log(">> Starting Server...");
+
+// Bycript settings
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 var express = require("express");
 var app = express();
@@ -83,8 +84,8 @@ io.sockets.on("connection", function(socket){
       process_signup(data, res, socket);
     });
     socket.on("logInInfo", function(data){
-        var res = db.collection("accounts").find({username:data.username, password:data.password});
-        process_login(data, res, socket);
+      var res = db.collection("accounts").find({username:data.username});
+      process_login_res(data, res, socket);
     });
 
     socket.on("setName", function(data){p.name = data.name;});
@@ -192,6 +193,24 @@ io.sockets.on("connection", function(socket){
 
 });
 
+async function process_login_res(data, res, socket){
+  var results = await res.toArray();
+  if (results.length <= 0){
+    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
+    return;
+  }
+  var passwordHash = results[0].password;
+  bcrypt.compare(data.password, passwordHash, function(err, res) {
+    // if res == true, password matched
+    // else wrong password
+    if(!res){
+      socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
+      return;
+    }
+    process_login(data, results, socket);
+  });
+}
+
 async function process_signup(data, res, socket){
   var results = await res.toArray();
   if(results.length > 0){
@@ -210,38 +229,35 @@ async function process_signup_helper(data, res, socket){
     socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
     return;
   }else{
-    db.collection("accounts").insert({username: data.username, password: data.password, ign: data.ign});
+    bcrypt.hash(data.password, saltRounds, (err, hash) => {
+      // Now we can store the password hash in db.
+      db.collection("accounts").insert({username: data.username, password: hash, ign: data.ign});
+    });
     socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
     return;
   }
 }
 
-async function process_login(data, res, socket){
-  var results = await res.toArray();
-  if(results.length > 0){
-    if(data.username in SOCKET_LIST){
-      socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
-      return;
-    }
-
-    socket.id = data.username;
-    SOCKET_LIST[socket.id] = socket;
-
-    p = Player(socket.id, results[0].ign, null);
-    PLAYER_LIST[socket.id] = p;
-
-    socket.emit("connected", {
-      msg: "Logged in as " + p.name,
-      id: socket.id
-    });
-
-    socket.emit("roomUpdate", {
-      rooms : ROOM_LIST,
-    });
-  }else{
-    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
+async function process_login(data, results, socket){
+  if(data.username in SOCKET_LIST){
+    socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
     return;
   }
+
+  socket.id = data.username;
+  SOCKET_LIST[socket.id] = socket;
+
+  p = Player(socket.id, results[0].ign, null);
+  PLAYER_LIST[socket.id] = p;
+
+  socket.emit("connected", {
+    msg: "Logged in as " + p.name,
+    id: socket.id
+  });
+
+  socket.emit("roomUpdate", {
+    rooms : ROOM_LIST,
+  });
 }
 
 function Disconnected(id) {

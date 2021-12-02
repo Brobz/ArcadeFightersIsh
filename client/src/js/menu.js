@@ -177,7 +177,7 @@ function connected(data){
 }
 
 function connectionFailed(data){
-  document.getElementById("connectedText").innerHTML = data.msg;
+  document.getElementById("connectedText").innerHTML = '<span style="color:DarkRed;">' + data.msg + '</span>';
 }
 
 backToLoginButton.onclick = function(){
@@ -234,11 +234,11 @@ signButton.onclick = function(){
     socket.emit("signUpInfo", {username:nameInput.value.toLowerCase(), password:passInput.value, ign:ignInput.value});
 
     socket.on("signUpSuccessfull", function(data){
-      signedText.innerHTML = data.msg;
+      signedText.innerHTML = '<span style="color:DarkGreen;">' + data.msg + '</span>';
     });
 
     socket.on("signUpFailed", function(data){
-      signedText.innerHTML = data.msg;
+      signedText.innerHTML = '<span style="color:DarkRed;">' + data.msg + '</span>';
     });
 }
 
@@ -246,7 +246,7 @@ connectButton.onclick = function(){
 
     socket = io();
 
-    connectedText.innerHTML = "Connecting...";
+    connectedText.innerHTML = '<span style="color:DarkSlateGrey;"> Connecting... </span>';
 
     socket.emit("logInInfo", {username:nameInput.value.toLowerCase(), password:passInput.value});
 
