@@ -37,22 +37,22 @@ function joinRoom(){
   waitingToJoinRoom = roomNameInput.value;;
 
   socket.on("roomError404", function(data){
-    roomErrorText.innerHTML = "Room '" + data.room + "' does not currently exist on the server!!!";
+    roomErrorText.innerHTML = "Room '" + data.room + "' does not currently exist on the server!";
     waitingToJoinRoom = -1;
   });
 
   socket.on("roomErrorInGame", function(data){
-    roomErrorText.innerHTML = "Room '" + data.room + "' is currently in a game!!!";
+    roomErrorText.innerHTML = "Room '" + data.room + "' is currently in a game!";
     waitingToJoinRoom = -1;
   });
 
   socket.on("roomErrorFull", function(data){
-    roomErrorText.innerHTML = "Room '" + data.room + "' is currently full!!!";
+    roomErrorText.innerHTML = "Room '" + data.room + "' is currently full!";
     waitingToJoinRoom = -1;
   });
 
   socket.on("roomErrorEmptyNameJoin", function(data){
-    roomErrorText.innerHTML = "Invalid input: empty room name!!!";
+    roomErrorText.innerHTML = "Invalid input: empty room name!";
     waitingToJoinRoom = -1;
   });
 }
@@ -75,7 +75,7 @@ function endGame(data){
   if(!data.room.teamBased){
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winnerText.innerHTML = data.room.players[i].name + " WON!!!<br>";
+        winnerText.innerHTML = data.room.players[i].name + " WON!<br>";
         winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
       }
     }
@@ -83,7 +83,7 @@ function endGame(data){
   }else{
     for(var i in data.room.players){
       if(data.room.players[i].alive){
-        winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!!!<br>";
+        winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!<br>";
         winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
       }
     }
@@ -105,12 +105,12 @@ function createRoom(){
   waitingToJoinRoom = roomNameInput.value;
 
   socket.on("roomErrorAlreadyExists", function(data){
-    roomErrorText.innerHTML = "Room '" + data.room + "' already exists on this server!!!";
+    roomErrorText.innerHTML = "Room '" + data.room + "' already exists on this server!";
     waitingToJoinRoom = -1;
   });
 
   socket.on("roomErrorEmptyNameCreate", function(data){
-    roomErrorText.innerHTML = "Invalid input: empty room name!!!";
+    roomErrorText.innerHTML = "Invalid input: empty room name!";
     waitingToJoinRoom = -1;
   });
 }
@@ -208,17 +208,17 @@ toSignPageButton.onclick = function(){
 signButton.onclick = function(){
 
     if(nameInput.value == ""){
-      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty username!!!</span>';;
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty username!</span>';;
       return;
     }
 
     if(passInput.value == ""){
-      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty password!!!</span>';
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty password!</span>';
       return;
     }
 
     if(ignInput.value == ""){
-      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty in game name!!!</span>';
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty in-game-name!</span>';
       return;
     }
 

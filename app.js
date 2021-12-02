@@ -214,7 +214,7 @@ async function process_login_res(data, res, socket){
 async function process_signup(data, res, socket){
   var results = await res.toArray();
   if(results.length > 0){
-    socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+    socket.emit("signUpFailed", {msg: "Sign Up failed: Username already taken!"});
     return;
   }else{
     console.log(data.ign);
@@ -226,7 +226,7 @@ async function process_signup(data, res, socket){
 async function process_signup_helper(data, res, socket){
   var results = await res.toArray();
   if(results.length > 0){
-    socket.emit("signUpFailed", {msg: "Sign Up failed. Username/In Game Name already taken."});
+    socket.emit("signUpFailed", {msg: "Sign Up failed: in-game-name already taken!"});
     return;
   }else{
     bcrypt.hash(data.password, saltRounds, (err, hash) => {
