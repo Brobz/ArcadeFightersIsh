@@ -2,31 +2,35 @@ var socket;
 var id;
 var currentRoom;
 var waitingToJoinRoom = -1;
-var login_SignupDiv = document.getElementById("login_SignupDiv");
-var nameInput = document.getElementById("nameInput");
-var passInput = document.getElementById("passInput");
-var ignInput = document.getElementById("ignInput");
-var connectButton = document.getElementById("connectButton");
-var toSignPageButton = document.getElementById("toSignPageButton");
-var signButton = document.getElementById("signButton");
-var backToLoginButton = document.getElementById("backToLoginButton");
-var signedText = document.getElementById("signedText");
-var connectedText = document.getElementById("connectedText");
-var connectingText = document.getElementById("connectingText");
-var landingPageActionText = document.getElementById("landingPageActionText");
-var signUpText = document.getElementById("signUpText");
-var roomsDiv = document.getElementById("roomsDiv");
-var roomErrorText = document.getElementById("roomErrorText");
-var roomNameInput = document.getElementById("roomNameInput");
-var currentRoomPlayersText = document.getElementById("currentRoomPlayersText");
-var startGameButton = document.getElementById("startGameButton");
-var currentRoomTitleText = document.getElementById("currentRoomTitleText");
-var createRoomButton = document.getElementById("createRoomButton");
-var currentRoomInfo = document.getElementById("currentRoomInfo");
-var winnerText = document.getElementById("winnerText");
-var profileInfoDiv = document.getElementById("profileInfoDiv");
-var canvasElement = document.getElementById("canvas");
-var canvas = document.getElementById("canvas").getContext("2d");
+const login_SignupDiv = document.getElementById("login_SignupDiv");
+const nameInput = document.getElementById("nameInput");
+const passInput = document.getElementById("passInput");
+const ignInput = document.getElementById("ignInput");
+const connectButton = document.getElementById("connectButton");
+const toSignPageButton = document.getElementById("toSignPageButton");
+const signButton = document.getElementById("signButton");
+const backToLoginButton = document.getElementById("backToLoginButton");
+const signedText = document.getElementById("signedText");
+const connectedText = document.getElementById("connectedText");
+const connectingText = document.getElementById("connectingText");
+const landingPageActionText = document.getElementById("landingPageActionText");
+const signUpText = document.getElementById("signUpText");
+const roomsDiv = document.getElementById("roomsDiv");
+const roomErrorText = document.getElementById("roomErrorText");
+const roomNameInput = document.getElementById("roomNameInput");
+const currentRoomPlayersText = document.getElementById("currentRoomPlayersText");
+const startGameButton = document.getElementById("startGameButton");
+const currentRoomTitleText = document.getElementById("currentRoomTitleText");
+const createRoomButton = document.getElementById("createRoomButton");
+const currentRoomInfo = document.getElementById("currentRoomInfo");
+const winnerText = document.getElementById("winnerText");
+const profileInfoDiv = document.getElementById("profileInfoDiv");
+const roomHostControlsDiv = document.getElementById("roomHostControlsDiv");
+const roomHostControlBlockedText = document.getElementById("roomHostControlBlockedText");
+const maxPlayerSettingLabel = document.getElementById("maxPlayerSettingLabel");
+const maxPlayerInput = document.getElementById("maxPlayerInput");
+const canvasElement = document.getElementById("canvas");
+const canvas = document.getElementById("canvas").getContext("2d");
 
 canvas.font = "15px Monaco";
 canvas.textAlign = 'center';
@@ -73,11 +77,12 @@ function startGame(data){
 
 function endGame(data){
   if(data.roomIndex == currentRoom){
-    if(!data.room.teamBased){
+    if(String(data.room.teamBased).toLowerCase() == "false"){
       for(var i in data.room.players){
         if(data.room.players[i].alive){
           winnerText.innerHTML = data.room.players[i].name + " WON!<br>";
           winnerText.innerHTML += "with " + Math.round(data.room.players[i].hp) + " hp left<br>";
+          break;
         }
       }
 
@@ -85,7 +90,7 @@ function endGame(data){
       for(var i in data.room.players){
         if(data.room.players[i].alive){
           winnerText.innerHTML = "Team " + data.room.players[i].team + " WON!<br>";
-          winnerText.innerHTML += "with " + data.room.players[i].hp + " hp left<br>";
+          break;
         }
       }
     }
@@ -140,13 +145,20 @@ function roomUpdate(data){
       roomInputDiv.style.display = "none";
     }
     if(currentRoom == i){
+      roomHostControlsDiv.style.display = "none";
+      roomHostControlBlockedText.style.display = "";
       startGameButton.disabled = true;
       currentRoomInfo.innerHTML = data.rooms[i].info;
       for(var k in data.rooms[i].players){
         currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + " |";
         if(k == 0){
+          let playerIsHost = data.rooms[i].players[k].id == id;
+          if(playerIsHost){
+            roomHostControlsDiv.style.display = "";
+            roomHostControlBlockedText.style.display = "none";
+          }
           currentRoomPlayersText.innerHTML += "<b> HOST</b> |";
-          if (data.rooms[i].players.length >= data.rooms[i].minSize && data.rooms[i].players[k].id == id){
+          if (data.rooms[i].players.length >= data.rooms[i].minSize && playerIsHost){
             startGameButton.disabled = false;
           }
         }
@@ -265,6 +277,16 @@ nameInput.onkeypress = passInput.onkeypress = function(e){
       if(connectButton.style.display == "")
         connectButton.onclick();
     }
+}
+
+
+function updateMaxPlayerRoomSetting(){
+  maxPlayerRoomSettingLabel.innerHTML = "Max Players : " + maxPlayerInput.value;
+  socket.emit("changeRoomSettings", {room: currentRoom, setting: "maxSize", value: maxPlayerInput.value})
+}
+
+function updateGameModeRoomSetting(){
+  socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value})
 }
 
 window.addEventListener("keydown", function(e) {

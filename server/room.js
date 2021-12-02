@@ -15,16 +15,16 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
     winner : undefined
   }
 
-  self.getInfo = function(){
+  self.updateInfo = function(){
     self.info = "Players: " + self.players.length + " / " + self.maxSize
     if (self.players.length >= self.minSize)
       self.info += "<br> Game ready to start!";
     else
       self.info += "<br> (" + (self.minSize - self.players.length) + " more needed for game start)";
-    if (!self.teamBased)
-      self.info += "<br> Mode: FFA";
-    else
+    if (String(self.teamBased).toLowerCase() == "true")
       self.info += "<br> Mode: TDM";
+    else
+      self.info += "<br> Mode: FFA";
   }
 
   self.removePlayer = function(player){
@@ -40,7 +40,7 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
 
   self.updateTeams = function(){
     for(var i in self.players){
-      if(!self.teamBased){
+      if(String(self.teamBased).toLowerCase() == "false"){
         self.players[i].team = parseInt(i) + 1;
       }else{
         if(i < self.maxSize / 2){
@@ -50,12 +50,15 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
 
       self.players[i].color = self.colors[i];
     }
-    self.getInfo();
+    self.updateInfo();
   }
 
   self.checkForWin = function(){
     if(self.players.length <= self.winConditionSize){
       if(self.winConditionSize == 1){
+        for(var player in self.players){
+          self.winner = self.players[player].name;
+        }
         return true;
       }else{
         var team = self.players[0].team;
@@ -64,11 +67,11 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
           if(cTeam != team)
             return false
         }
-
+        self.winner = "Team " + team;
         return true;
       }
     }else{
-      if(!self.teamBased){
+      if(String(self.teamBased).toLowerCase() == "fa.se"){
         var playerName = "";
         var playersAlive = 0;
         for(var i in self.players){

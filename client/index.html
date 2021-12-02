@@ -66,17 +66,33 @@
   <div class="vstack gap-2 col-md-5 mx-auto" id="roomsDiv" style="display: none;">
     <hr>
     <div id="currentRoomDiv">
-      <h5 class="display-5">Room:
+      <div class="hstack gap-2">
+        <h5 class="display-5">Room:</h5>
         <strong>
-          <p class="text-danger" id="currentRoomTitleText"></p>
+          <p class="display-5 text-danger" id="currentRoomTitleText"></p>
         </strong>
-      </h5>
+      </div>
       <hr>
-      <h4 class="text-info display-4" id="winnerText"></h4>
+      <h4 class="text-primary display-4" id="winnerText"></h4>
       <p id="currentRoomInfo"></p>
       <hr>
-      <button class="btn btn-outline-warning" id = "startGameButton" onclick="callForGameStart()" disabled>Start Game</button>
-      <br>
+      <div class="hstack gap-2 col-md-12 " id="roomHostControlsDiv">
+        <button class="btn btn-outline-warning" id = "startGameButton" onclick="callForGameStart()" disabled>Start Game</button>
+        <br><br>
+        <div  class="vstack gap-2 col-md-5 ">
+          <label for="customRange3" class="form-label" id="maxPlayerRoomSettingLabel">Max Players : 4</label>
+          <input type="range" class="form-range" value="4" min="2" max="6" step="1" id="maxPlayerInput" onchange="updateMaxPlayerRoomSetting()">
+        </div>
+        <br>
+        <div  class="hstack gap-2 col-md-5 ">
+          <label for="customRange3" class="form-label" id="gameModeRoomSettingLabel">Game Mode : </label>
+          <select class="form-select" aria-label="Game Mode" onchange="updateGameModeRoomSetting()" id="gameModeRoomSettingInput">
+            <option selected value="false">Free For All</option>
+            <option value="true">Team Death Match</option>
+          </select>
+        </div>
+      </div>
+      <p class="text-primary"id="roomHostControlBlockedText" style="display:none;">Only the Room Host can access the Room Control Panel!</p>
       <hr>
       <h4>Players:</h4>
       <p id="currentRoomPlayersText"></p>

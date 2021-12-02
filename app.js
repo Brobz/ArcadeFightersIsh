@@ -45,7 +45,7 @@ var Block = require('./server/block.js').Block;
 var Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(){
-  return Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
+  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
 }
 
 MAP = function(){
@@ -186,6 +186,9 @@ io.sockets.on("connection", function(socket){
         });
       }
     });
+
+
+    socket.on("changeRoomSettings", function(data){changeRoomSettings(data);});
 
     socket.on("keyPress", function(data){getKeyInput(socket.id, data);});
 
@@ -532,6 +535,10 @@ function Update(){
   }
 
   for(var i in ROOM_LIST){
+    if (ROOM_LIST[i].players.length <= 0){
+      delete ROOM_LIST[i];
+      continue;
+    }
     if(ROOM_LIST[i].inGame){
       for(var k = 0; k < ROOM_LIST[i].players.length; k++){
         var s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
@@ -541,6 +548,18 @@ function Update(){
   }
 
 
+}
+
+function changeRoomSettings(data){
+  ROOM_LIST[data.room][data.setting] = data.value;
+  ROOM_LIST[data.room].updateTeams();
+  ROOM_LIST[data.room].updateInfo();
+  for(var i in SOCKET_LIST){
+    var s = SOCKET_LIST[i];
+    s.emit("roomUpdate", {
+      rooms : ROOM_LIST,
+    });
+  }
 }
 
 setInterval(Update, 1000/60);
