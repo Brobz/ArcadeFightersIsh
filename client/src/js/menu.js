@@ -12,6 +12,7 @@ var signButton = document.getElementById("signButton");
 var backToLoginButton = document.getElementById("backToLoginButton");
 var signedText = document.getElementById("signedText");
 var connectedText = document.getElementById("connectedText");
+var connectingText = document.getElementById("connectingText");
 var actionText = document.getElementById("actionText");
 var signUpText = document.getElementById("signUpText");
 var roomsDiv = document.getElementById("roomsDiv");
@@ -171,7 +172,7 @@ function connected(data){
 }
 
 function connectionFailed(data){
-  document.getElementById("connectedText").innerHTML = '<span style="color:DarkRed;">' + data.msg + '</span>';
+  document.getElementById("connectingText").innerHTML = '<span style="color:DarkRed;">' + data.msg + '</span>';
 }
 
 backToLoginButton.onclick = function(){
@@ -201,23 +202,23 @@ toSignPageButton.onclick = function(){
     actionText.innerHTML = "Sign Up"
     signUpText.style.display = "none";
     signButton.style.display = "";
-    connectedText.innerHTML = "";
+    connectingText.innerHTML = "";
     toSignPageButton.style.display = "none";
 }
 signButton.onclick = function(){
 
     if(nameInput.value == ""){
-      signedText.innerHTML = "Invalid input: empty username!!!";
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty username!!!</span>';;
       return;
     }
 
     if(passInput.value == ""){
-      signedText.innerHTML = "Invalid input: empty password!!!";
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty password!!!</span>';
       return;
     }
 
     if(ignInput.value == ""){
-      signedText.innerHTML = "Invalid input: empty in game name!!!";
+      signedText.innerHTML = '<span style="color:DarkRed;">Invalid input: empty in game name!!!</span>';
       return;
     }
 
@@ -240,7 +241,7 @@ connectButton.onclick = function(){
 
     socket = io();
 
-    connectedText.innerHTML = '<span style="color:DarkSlateGrey;"> Connecting... </span>';
+    connectingText.innerHTML = '<span style="color:DarkSlateGrey;"> Connecting... </span>';
 
     socket.emit("logInInfo", {username:nameInput.value.toLowerCase(), password:passInput.value});
 
