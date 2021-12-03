@@ -310,10 +310,10 @@ function updateGameModeRoomSetting(){
   socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value});
   if(gameModeRoomSettingInput.value == "true"){
     if(parseInt(maxPlayerInput.value) % 2){
-      maxPlayerInput.value = Math.min(6, parseInt(maxPlayerInput.value) + 1);
+      maxPlayerInput.value = Math.min(8, parseInt(maxPlayerInput.value) + 1);
     }
+    updateMaxPlayerRoomSetting();
     maxPlayerInput.step = 2;
-    //updateMaxPlayerRoomSetting();
   }else{
     maxPlayerInput.step = 1;
   }

@@ -129,15 +129,7 @@ io.sockets.on("connection", function(socket){
       }
 
       ROOM_LIST[data.room].addPlayer(currentPlayer);
-
-      for(var i in SOCKET_LIST){
-        var s = SOCKET_LIST[i];
-        s.emit("roomUpdate", {
-          rooms : ROOM_LIST,
-        });
-      }
-
-
+      emitRoomUpdateSignal();
     });
 
     if(p === null)
@@ -157,12 +149,7 @@ io.sockets.on("connection", function(socket){
         ROOM_LIST[data.room] = getDefaultRoom(data.room, "#" + ROOM_COUNT);
         ROOM_LIST[data.room].addPlayer(currentPlayer);
         ROOM_COUNT++;
-        for(var i in SOCKET_LIST){
-          var s = SOCKET_LIST[i];
-          s.emit("roomUpdate", {
-            rooms : ROOM_LIST,
-          });
-        }
+        emitRoomUpdateSignal();
       });
 
     socket.on("leaveRoom", function(data){
@@ -174,12 +161,7 @@ io.sockets.on("connection", function(socket){
       if (ROOM_LIST[data.room].players.length <= 0){
         delete ROOM_LIST[data.room];
       }
-      for(var i in SOCKET_LIST){
-        var s = SOCKET_LIST[i];
-        s.emit("roomUpdate", {
-          rooms : ROOM_LIST,
-        });
-      }
+      emitRoomUpdateSignal();
     });
 
     socket.on("callForGameStart", function(data){
@@ -194,12 +176,7 @@ io.sockets.on("connection", function(socket){
         var s = SOCKET_LIST[ROOM_LIST[data.room].players[i].id];
         s.emit("startGame", {room: data.room});
       }
-      for(var i in SOCKET_LIST){
-        var s = SOCKET_LIST[i];
-        s.emit("roomUpdate", {
-          rooms : ROOM_LIST,
-        });
-      }
+      emitRoomUpdateSignal();
     });
 
 
@@ -367,12 +344,7 @@ function checkForGameEnd(){
             s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
         }
         ROOM_LIST[i].reset();
-        for(var j in SOCKET_LIST){
-          var s = SOCKET_LIST[j];
-          s.emit("roomUpdate", {
-            rooms : ROOM_LIST,
-          });
-        }
+        emitRoomUpdateSignal();
       }, 3000);
     }
   }
