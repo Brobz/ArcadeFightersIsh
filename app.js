@@ -37,7 +37,7 @@ console.log(">> Server Ready!");
 
 
 var ROOM_COUNT = 0;
-var POWERUP_DELAY = 60 * 5;
+var POWERUP_DELAY = 60 * 7;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
