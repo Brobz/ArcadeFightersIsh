@@ -29,6 +29,8 @@ const roomHostControlsDiv = document.getElementById("roomHostControlsDiv");
 const roomHostControlBlockedText = document.getElementById("roomHostControlBlockedText");
 const maxPlayerSettingLabel = document.getElementById("maxPlayerSettingLabel");
 const maxPlayerInput = document.getElementById("maxPlayerInput");
+const playerColorText = document.getElementById("playerColorText");
+const playerColorInput = document.getElementById("playerColorInput");
 const canvasElement = document.getElementById("canvas");
 const canvas = document.getElementById("canvas").getContext("2d");
 
@@ -155,14 +157,14 @@ function roomUpdate(data){
       maxPlayerInput.step = (data.rooms[i].teamBased == "true") ? 2 : 1;
       gameModeRoomSettingInput.value = data.rooms[i].teamBased;
       for(var k in data.rooms[i].players){
-        currentRoomPlayersText.innerHTML += "<br>" + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + " |";
+        currentRoomPlayersText.innerHTML += '<br><span style="color:' + data.rooms[i].players[k].color + ';">' + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + "</span>";
         if(k == 0){
           let playerIsHost = data.rooms[i].players[k].id == id;
           if(playerIsHost){
             roomHostControlsDiv.style.display = "";
             roomHostControlBlockedText.style.display = "none";
           }
-          currentRoomPlayersText.innerHTML += "<b> HOST</b> |";
+          currentRoomPlayersText.innerHTML += '<span style="color:' + data.rooms[i].players[k].color + ';">' + "<b> | HOST |</b>";
           if (data.rooms[i].players.length >= data.rooms[i].minSize && playerIsHost){
             startGameButton.disabled = false;
           }
@@ -176,7 +178,10 @@ function connected(data){
 
   id = data.id;
 
-  document.getElementById("connectedText").innerHTML = data.msg;
+  connectedText.innerHTML = data.msg;
+  playerColorText.innerHTML = data.color;
+  playerColorText.style.color = data.color;
+  playerColorInput.value = data.color;
 
   socket.on("update", function(data){update(data)});
 
@@ -297,6 +302,12 @@ function updateGameModeRoomSetting(){
   }else{
     maxPlayerInput.step = 1;
   }
+}
+
+function changePlayerColor(){
+  playerColorText.innerHTML = playerColorInput.value;
+  playerColorText.style.color = playerColorInput.value;
+  socket.emit("changePlayerAttribute", {player:id, attribute:"color", value:playerColorInput.value});
 }
 
 window.addEventListener("keydown", function(e) {

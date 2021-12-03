@@ -1,4 +1,4 @@
-exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
+exports.Room = function(mnS, mxS, wcS, tb, pPos){
   var self = {
     players : [],
     bullets : [],
@@ -8,11 +8,32 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
     minSize : mnS,
     winConditionSize : wcS,
     teamBased : tb,
-    colors : colors,
     player_positions : pPos,
     inGame : false,
     info : "NO ROOM INFO",
     winner : undefined
+  }
+
+  self.reset = function(){
+    self.bullets = [];
+    self.blocks = [];
+    self.powerups = [];
+    self.winner = undefined;
+    for(var i in self.players){
+      self.players[i].x = self.player_positions[i][0];
+      self.players[i].y = self.player_positions[i][1];
+      self.players[i].hp = self.players[i].maxHp;
+      self.players[i].alive = true;
+      self.players[i].powerUpsTime = [];
+      self.players[i].powerUpsActive = [];
+      self.players[i].shootingDelay = 8;
+      self.players[i].speed = 2;
+      self.players[i].hasClusterGun = false;
+      self.players[i].bulletSize = 7;
+      self.players[i].bulletDmg = 5;
+      self.players[i].hasShield = false;
+      self.players[i].hasMultigun = false;
+    }
   }
 
   self.updateInfo = function(){
@@ -51,8 +72,6 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
           self.players[i].team = 1;
         }else self.players[i].team = 2
       }
-
-      self.players[i].color = self.colors[i];
     }
     self.updateInfo();
   }
@@ -75,7 +94,7 @@ exports.Room = function(mnS, mxS, wcS, tb, pPos, colors){
         return true;
       }
     }else{
-      if(String(self.teamBased).toLowerCase() == "fa.se"){
+      if(String(self.teamBased).toLowerCase() == "false"){
         var playerName = "";
         var playersAlive = 0;
         for(var i in self.players){

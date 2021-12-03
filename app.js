@@ -35,7 +35,8 @@ server.listen(process.env.PORT || 5000);
 
 console.log(">> Server Ready!");
 
-var POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
+const DEFAULT_COLOR = "DeepPink";
+const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 var POWERUP_DELAY = 60 * 5;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
@@ -45,7 +46,7 @@ var Block = require('./server/block.js').Block;
 var Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(){
-  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]);
+  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]]);
 }
 
 MAP = function(){
@@ -171,7 +172,7 @@ io.sockets.on("connection", function(socket){
       if(ROOM_LIST[data.room].players.length < ROOM_LIST[data.room].minSize)
         return;
 
-      resetRoom(data.room);
+      ROOM_LIST[data.room].reset();
       buildMap(MAP, data.room);
 
       ROOM_LIST[data.room].inGame = true;
@@ -189,6 +190,8 @@ io.sockets.on("connection", function(socket){
 
 
     socket.on("changeRoomSettings", function(data){changeRoomSettings(data);});
+
+    socket.on("changePlayerAttribute", function(data){changePlayerAttribute(data);});
 
     socket.on("keyPress", function(data){getKeyInput(socket.id, data);});
 
@@ -234,7 +237,7 @@ async function process_signup_helper(data, res, socket){
   }else{
     bcrypt.hash(data.password, saltRounds, (err, hash) => {
       // Now we can store the password hash in db.
-      db.collection("accounts").insert({username: data.username, password: hash, ign: data.ign});
+      db.collection("accounts").insertOne({username: data.username, password: hash, ign: data.ign, color: DEFAULT_COLOR});
     });
     socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
     return;
@@ -250,11 +253,12 @@ async function process_login(data, results, socket){
   socket.id = data.username;
   SOCKET_LIST[socket.id] = socket;
 
-  p = Player(socket.id, results[0].ign, null);
+  p = Player(socket.id, results[0].ign, results[0].color);
   PLAYER_LIST[socket.id] = p;
 
   socket.emit("connected", {
     msg: p.name,
+    color: p.color,
     id: socket.id
   });
 
@@ -269,12 +273,7 @@ function Disconnected(id) {
       ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
     }
   }
-  for(var i in SOCKET_LIST){
-    var s = SOCKET_LIST[i];
-    s.emit("roomUpdate", {
-      rooms : ROOM_LIST,
-    });
-  }
+  emitRoomUpdateSignal();
   delete SOCKET_LIST[id];
   delete PLAYER_LIST[id];
 
@@ -340,30 +339,6 @@ function buildMap(map, room){
   ROOM_LIST[room].blocks = map();
 }
 
-function resetRoom(room){
-  // here also reset powerups
-  ROOM_LIST[room].bullets = [];
-  ROOM_LIST[room].blocks = [];
-  ROOM_LIST[room].powerups = [];
-  ROOM_LIST[room].winner = undefined;
-  for(var i in ROOM_LIST[room].players){
-    ROOM_LIST[room].players[i].x = ROOM_LIST[room].player_positions[i][0];
-    ROOM_LIST[room].players[i].y = ROOM_LIST[room].player_positions[i][1];
-    ROOM_LIST[room].players[i].hp = ROOM_LIST[room].players[i].maxHp;
-    ROOM_LIST[room].players[i].alive = true;
-    ROOM_LIST[room].players[i].powerUpsTime = [];
-    ROOM_LIST[room].players[i].powerUpsActive = [];
-    ROOM_LIST[room].players[i].shootingDelay = 8;
-    ROOM_LIST[room].players[i].speed = 2;
-    ROOM_LIST[room].players[i].hasClusterGun = false;
-    ROOM_LIST[room].players[i].bulletSize = 7;
-    ROOM_LIST[room].players[i].bulletDmg = 5;
-    ROOM_LIST[room].players[i].hasShield = false;
-    ROOM_LIST[room].players[i].hasMultigun = false;
-  }
-
-}
-
 function checkForGameEnd(){
   for(var i in ROOM_LIST){
     if(!ROOM_LIST[i].inGame) continue;
@@ -378,7 +353,7 @@ function checkForGameEnd(){
             s = SOCKET_LIST[ROOM_LIST[i].players[k].id];
             s.emit("endGame", {room : ROOM_LIST[i], roomIndex: i});
         }
-        resetRoom(i);
+        ROOM_LIST[i].reset();
         for(var j in SOCKET_LIST){
           var s = SOCKET_LIST[j];
           s.emit("roomUpdate", {
@@ -521,7 +496,6 @@ function Update(){
             playerPowerups : p.powerUpsActive,
             color : p.color,
             room : i
-
           });
       }
       infoPack.push({
@@ -550,10 +524,25 @@ function Update(){
 
 }
 
+function changePlayerAttribute(data){
+  PLAYER_LIST[data.player][data.attribute] = data.value;
+  emitRoomUpdateSignal();
+  var query = {username: data.player};
+  var newValue = {$set: {color:data.value}};
+  db.collection("accounts").updateOne(query, newValue, function(err, res){
+    if (err) throw err;
+    console.log(data.player + " changes its color to " + data.value);
+  });
+}
+
 function changeRoomSettings(data){
   ROOM_LIST[data.room][data.setting] = data.value;
   ROOM_LIST[data.room].updateTeams();
   ROOM_LIST[data.room].updateInfo();
+  emitRoomUpdateSignal();
+}
+
+function emitRoomUpdateSignal(){
   for(var i in SOCKET_LIST){
     var s = SOCKET_LIST[i];
     s.emit("roomUpdate", {

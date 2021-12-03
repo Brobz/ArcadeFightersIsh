@@ -20,11 +20,11 @@
       <h3 class="display-3" id="landingPageActionText"> Log In </h3>
     </span>
     <br>
-    <input class="form-control text-center" type="text" id="nameInput" maxlength="15" placeholder="Username">
+    <input class="form-control text-center bg-dark text-white font-monospace" type="text" id="nameInput" maxlength="15" placeholder="Username">
     <br><br>
-    <input class="form-control text-center" type="password" id="passInput" maxlength="15" placeholder="Password">
+    <input class="form-control text-center bg-dark text-white font-monospace" type="password" id="passInput" maxlength="15" placeholder="Password">
     <br><br>
-    <input class="form-control text-center" type="text" id="ignInput" maxlength="12" placeholder="In Game Name" style="display:none;">
+    <input class="form-control text-center bg-dark text-white font-monospace" type="text" id="ignInput" maxlength="12" placeholder="In Game Name" style="display:none;">
     <br>
     <button class="btn btn-outline-warning" id = "connectButton">Log In</button>
     <button class="btn btn-outline-warning" id = "signButton" style="display:none;">Sign Up</button>
@@ -40,11 +40,19 @@
     <br><br>
     <button class="btn btn-outline-warning" id = "backToLoginButton" style="display:none;">Back to Login</button>
   </div>
-  <div class="hstack gap-3 col-md-5 mx-auto" id="profileInfoDiv" style="display:none;">
-    <p class="h6 text-success">Logged in as:</p>
-    <strong>
-      <p id="connectedText"></p>
-    </strong>
+  <div id="profileInfoDiv" style="display:none;">
+    <div class="hstack gap-3 col-md-5 mx-auto">
+      <p class="h6 text-success">Logged in as:</p>
+      <strong>
+        <p id="connectedText"></p>
+      </strong>
+    </div>
+    <div class="hstack gap-3 col-md-5 mx-auto">
+      <p class="h6 text-success">Color:
+        <p id="playerColorText"></p>
+        <input type="color" onchange="changePlayerColor()" id="playerColorInput">
+      </p>
+    </div>
   </div>
   <div class="vstack gap-2 col-md-5 mx-auto" id="roomInputDiv" style="display:none;">
     <hr>
@@ -52,7 +60,7 @@
       <h3 class="display-3"> Join or Create a Room</h3>
     </span>
     <br>
-    <input class="form-control text-center" type="text" id="roomNameInput" maxlength="25" placeholder="Room Name">
+    <input class="form-control text-center bg-dark text-white font-monospace" type="text" id="roomNameInput" maxlength="25" placeholder="Room Name">
     <br>
     <button class="btn btn-outline-warning" id = "joinRoomButton" onclick="joinRoom()">Join Room</button>
     <button class="btn btn-outline-warning" id = "createRoomButton" onclick="createRoom()">Create Room</button>
@@ -72,7 +80,7 @@
         </strong>
       </div>
       <hr>
-      <h4 class="text-primary display-4" id="winnerText"></h4>
+      <h4 class="text-secondary display-4" id="winnerText"></h4>
       <p id="currentRoomInfo"></p>
       <hr>
       <div class="hstack gap-2 col-md-12 " id="roomHostControlsDiv">
