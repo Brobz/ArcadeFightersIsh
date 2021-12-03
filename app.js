@@ -36,17 +36,22 @@ server.listen(process.env.PORT || 5000);
 console.log(">> Server Ready!");
 
 
-const DEFAULT_COLOR = "#c61a93";
-const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
-const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 5;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
-var Room = require('./server/room.js').Room;
-var Player = require('./server/player.js').Player;
-var Bullet = require('./server/bullet.js').Bullet;
-var Block = require('./server/block.js').Block;
-var Powerup = require('./server/powerup.js').Powerup;
+var SOCKET_LIST = {};
+var PLAYER_LIST = {};
+var ROOM_LIST = {};
+
+const DEFAULT_COLOR = "#c61a93";
+const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
+const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
+
+const Room = require('./server/room.js').Room;
+const Player = require('./server/player.js').Player;
+const Bullet = require('./server/bullet.js').Bullet;
+const Block = require('./server/block.js').Block;
+const Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(roomName, roomCode){
   return Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
@@ -69,15 +74,8 @@ MAP = function(){
     blocks.push(Block([x, y], [20, 20], "#100074"));
   }
 
-
   return blocks;
 }
-
-var SOCKET_LIST = {};
-var PLAYER_LIST = {};
-var ROOM_LIST = {}; // [Room(2, 6, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]], ["#FA1010", "#1085FA", "#42FA10", "#B5B735", "DarkOrchid", "DarkSalmon"]),
-                   // Room(4, 4, 2, true, [[20,20], [360,360], [20, 360], [360, 20]], ["#FA1010", "#FA1010", "#1085FA", "#1085FA"]),
-                   // Room(6, 6, 3, true, [[20,20], [20, 360], [20, 180], [360,360], [360, 20], [360, 180]], ["#FA1010", "#FA1010", "#FA1010", "#1085FA", "#1085FA", "#1085FA"])];
 
 var io = require("socket.io")(server, {});
 var p;
@@ -131,9 +129,6 @@ io.sockets.on("connection", function(socket){
       ROOM_LIST[data.room].addPlayer(currentPlayer);
       emitRoomUpdateSignal();
     });
-
-    if(p === null)
-      return;
 
     socket.on("createRoom", function(data){
         if (data.room == ""){

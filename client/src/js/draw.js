@@ -5,7 +5,8 @@ var pupMax = 60;
 var pupRate = 1;
 
 function drawEndgameText(data){
-  canvas.fillStyle = "Green";
+  if (data.winner == "Team 1") canvas.fillStyle = "#0096FF";
+  else canvas.fillStyle = "#ff6961";
   canvas.font = "25px monospace";
   canvas.fillText(data.winner + " is victorious!", 200, 200);
 }

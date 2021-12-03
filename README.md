@@ -1,6 +1,6 @@
 
 # Arcade Fighters Ish
-Online multiplayer arcade game developed using node.js, HTML5 Canvas, MongoDB Atlas, Bootstrap, Bycript and Heroku.
+Online multiplayer arcade game developed using node.js, HTML5 Canvas, MongoDB Atlas, Bootstrap, Bcrypt and Heroku.
 Originally conceived in 2016, revived and revamped on late 2021.
 
 # Instructions
