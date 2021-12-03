@@ -36,7 +36,8 @@ server.listen(process.env.PORT || 5000);
 console.log(">> Server Ready!");
 
 
-const DEFAULT_COLOR = "DeepPink";
+const DEFAULT_COLOR = "#c61a93";
+const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 5;
@@ -378,49 +379,50 @@ function checkForGameEnd(){
 }
 
 function shoot(player, room){
+  let bulletColor = (ROOM_LIST[room].teamBased == "true") ? TEAM_COLORS[player.team] : player.color;
   if(player.isShootingUp){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(0, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(0, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
   if(player.isShootingDown){
     pos = [player.x + 7, player.y  + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(1, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(1, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
  if(player.isShootingLeft){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(2, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(2, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
  if(player.isShootingRight){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(3, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(3, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingUp || player.isShootingLeft)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(4, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(4, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingDown || player.isShootingRight)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(5, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(5, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingUp || player.isShootingRight)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(6, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(6, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingDown || player.isShootingLeft)){
     pos = [player.x + 7, player.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(7, player.bulletDmg, pos, size, player.team, player.color, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(Bullet(7, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
 }
@@ -507,7 +509,9 @@ function Update(){
             maxHp : p.maxHp,
             playerPowerups : p.powerUpsActive,
             color : p.color,
-            room : i
+            room : i,
+            team: p.team,
+            teamBased: ROOM_LIST[i].teamBased == "true"
           });
       }
       infoPack.push({

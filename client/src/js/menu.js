@@ -35,6 +35,7 @@ const playerColorInput = document.getElementById("playerColorInput");
 const canvasElement = document.getElementById("canvas");
 const canvas = document.getElementById("canvas").getContext("2d");
 
+const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 canvas.font = "15px Monaco";
 canvas.textAlign = 'center';
 
@@ -159,11 +160,19 @@ function roomUpdate(data){
       currentRoomInfo.innerHTML = data.rooms[i].info;
       maxPlayerRoomSettingLabel.innerHTML = "Max Players : " + data.rooms[i].maxSize;
       maxPlayerInput.value = data.rooms[i].maxSize;
-      maxPlayerInput.min = data.rooms[i].players.length;
-      maxPlayerInput.step = (data.rooms[i].teamBased == "true") ? 2 : 1;
+      if(String(data.rooms[i].teamBased).toLowerCase() == "false" || ((data.rooms[i].players.length % 2) == 0)){
+        maxPlayerInput.min = data.rooms[i].players.length;
+      }else{
+        maxPlayerInput.min = data.rooms[i].players.length + 1;
+      }
+      maxPlayerInput.step = (String(data.rooms[i].teamBased).toLowerCase() == "true") ? 2 : 1;
       gameModeRoomSettingInput.value = data.rooms[i].teamBased;
       for(var k in data.rooms[i].players){
-        currentRoomPlayersText.innerHTML += '<br><span style="color:' + data.rooms[i].players[k].color + ';">' + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + "</span>";
+        if(String(data.rooms[i].teamBased).toLowerCase() == "false"){
+          currentRoomPlayersText.innerHTML += '<br><span style="color:' + data.rooms[i].players[k].color + ';">' + data.rooms[i].players[k].name + " | Team " + data.rooms[i].players[k].team + "</span>";
+        }else{
+          currentRoomPlayersText.innerHTML += '<br><span style="color:' + data.rooms[i].players[k].color + ';">' + data.rooms[i].players[k].name + '</span><span style="color:' + TEAM_COLORS[data.rooms[i].players[k].team] + ';"> | Team ' + data.rooms[i].players[k].team + "</span>";
+        }
         if(k == 0){
           let playerIsHost = data.rooms[i].players[k].id == id;
           if(playerIsHost){
@@ -304,7 +313,7 @@ function updateGameModeRoomSetting(){
       maxPlayerInput.value = Math.min(6, parseInt(maxPlayerInput.value) + 1);
     }
     maxPlayerInput.step = 2;
-    updateMaxPlayerRoomSetting();
+    //updateMaxPlayerRoomSetting();
   }else{
     maxPlayerInput.step = 1;
   }

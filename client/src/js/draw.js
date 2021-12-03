@@ -78,6 +78,12 @@ function draw(data){
     canvas.fillText(data[i].name, data[i].x + 10, data[i].y - 15);
     canvas.strokeRect(data[i].x, data[i].y, 20, 20);
 
+    if(data[i].teamBased){
+      canvas.fillStyle = TEAM_COLORS[data[i].team];
+      canvas.fillRect(data[i].x + 4, data[i].y + 4, 12, 12);
+      canvas.strokeRect(data[i].x + 4, data[i].y + 4, 12, 12);
+    }
+
     canvas.fillStyle = "#FF0000";
     canvas.strokeStyle = "#000000";
     canvas.fillRect(data[i].x - 10, data[i].y - 10, 40, 5);
