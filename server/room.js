@@ -1,5 +1,7 @@
-exports.Room = function(mnS, mxS, wcS, tb, pPos){
+exports.Room = function(_roomName, _roomCode, mnS, mxS, wcS, tb, pPos){
   var self = {
+    roomName: _roomName,
+    roomCode : _roomCode,
     players : [],
     bullets : [],
     blocks : [],

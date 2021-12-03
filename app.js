@@ -35,8 +35,10 @@ server.listen(process.env.PORT || 5000);
 
 console.log(">> Server Ready!");
 
+
 const DEFAULT_COLOR = "DeepPink";
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
+var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 5;
 var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
 var Room = require('./server/room.js').Room;
@@ -45,8 +47,8 @@ var Bullet = require('./server/bullet.js').Bullet;
 var Block = require('./server/block.js').Block;
 var Powerup = require('./server/powerup.js').Powerup;
 
-function getDefaultRoom(){
-  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
+function getDefaultRoom(roomName, roomCode){
+  return Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
 }
 
 MAP = function(){
@@ -99,8 +101,18 @@ io.sockets.on("connection", function(socket){
       let roomExists = data.room in ROOM_LIST;
 
       if (!roomExists){
-        socket.emit("roomError404", {room: data.room});
-        return;
+        for(var i in ROOM_LIST){
+          if(ROOM_LIST[i].roomCode == data.room){
+            // JOINING BY ROOM CODE
+            roomExists = true;
+            data.room = ROOM_LIST[i].roomName;
+            break;
+          }
+        }
+        if(!roomExists){
+          socket.emit("roomError404", {room: data.room});
+          return;
+        }
       }
 
       if (ROOM_LIST[data.room].inGame){
@@ -141,8 +153,9 @@ io.sockets.on("connection", function(socket){
           return;
         }
         let currentPlayer = PLAYER_LIST[data.player_id];
-        ROOM_LIST[data.room] = getDefaultRoom();
+        ROOM_LIST[data.room] = getDefaultRoom(data.room, "#" + ROOM_COUNT);
         ROOM_LIST[data.room].addPlayer(currentPlayer);
+        ROOM_COUNT++;
         for(var i in SOCKET_LIST){
           var s = SOCKET_LIST[i];
           s.emit("roomUpdate", {

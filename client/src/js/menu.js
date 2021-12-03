@@ -19,6 +19,7 @@ const roomsDiv = document.getElementById("roomsDiv");
 const roomErrorText = document.getElementById("roomErrorText");
 const roomNameInput = document.getElementById("roomNameInput");
 const currentRoomPlayersText = document.getElementById("currentRoomPlayersText");
+const currentRoomCodeText = document.getElementById("currentRoomCodeText");
 const startGameButton = document.getElementById("startGameButton");
 const currentRoomTitleText = document.getElementById("currentRoomTitleText");
 const createRoomButton = document.getElementById("createRoomButton");
@@ -131,7 +132,7 @@ function roomUpdate(data){
     roomsDiv.style.display = "none";
   }
   for(var i in data.rooms){
-    if(waitingToJoinRoom == i){
+    if(waitingToJoinRoom == i || waitingToJoinRoom == data.rooms[i].roomCode){
       let inRoom = false;
       for(var k in data.rooms[i].players){
         if(data.rooms[i].players[k].id == id){
@@ -143,7 +144,11 @@ function roomUpdate(data){
       }
       roomsDiv.style.display = "";
       currentRoomTitleText.innerHTML = i;
-      currentRoom = roomNameInput.value;
+      currentRoomCodeText.innerHTML = "Room " + data.rooms[i].roomCode;
+      if (waitingToJoinRoom == i)
+        currentRoom = waitingToJoinRoom;
+      else
+        currentRoom = i;
       waitingToJoinRoom = -1;
       roomInputDiv.style.display = "none";
     }
