@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const db_uri = "mongodb+srv://afi_admin:afi_admin@afidb.qtnn7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const db_uri = process.env.DATABASE_URI;
 
 console.log(">> Connecting to MongoDB...");
 
