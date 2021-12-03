@@ -154,6 +154,7 @@ function roomUpdate(data){
       currentRoomInfo.innerHTML = data.rooms[i].info;
       maxPlayerRoomSettingLabel.innerHTML = "Max Players : " + data.rooms[i].maxSize;
       maxPlayerInput.value = data.rooms[i].maxSize;
+      maxPlayerInput.min = data.rooms[i].players.length;
       maxPlayerInput.step = (data.rooms[i].teamBased == "true") ? 2 : 1;
       gameModeRoomSettingInput.value = data.rooms[i].teamBased;
       for(var k in data.rooms[i].players){

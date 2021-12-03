@@ -46,7 +46,7 @@ var Block = require('./server/block.js').Block;
 var Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(){
-  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180]]);
+  return Room(2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
 }
 
 MAP = function(){
@@ -223,7 +223,6 @@ async function process_signup(data, res, socket){
     socket.emit("signUpFailed", {msg: "Sign Up failed: Username already taken!"});
     return;
   }else{
-    console.log(data.ign);
     var res = db.collection("accounts").find({ign:data.ign});
     process_signup_helper(data, res, socket);
   }
@@ -531,7 +530,6 @@ function changePlayerAttribute(data){
   var newValue = {$set: {color:data.value}};
   db.collection("accounts").updateOne(query, newValue, function(err, res){
     if (err) throw err;
-    console.log(data.player + " changes its color to " + data.value);
   });
 }
 
