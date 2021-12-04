@@ -165,6 +165,7 @@ function roomUpdate(data){
       }else{
         maxPlayerInput.min = data.rooms[i].players.length + 1;
       }
+      if (maxPlayerInput.min == 1) maxPlayerInput.min += 1; // Disallow maxPlayer = 1... its just counter intuitive
       maxPlayerInput.step = (String(data.rooms[i].teamBased).toLowerCase() == "true") ? 2 : 1;
       gameModeRoomSettingInput.value = data.rooms[i].teamBased;
       for(var k in data.rooms[i].players){
