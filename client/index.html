@@ -50,7 +50,7 @@
     <div class="hstack gap-3 col-md-5 mx-auto">
       <p class="h6 text-success">Color:
         <p id="playerColorText"></p>
-        <input type="color" onchange="changePlayerColor()" id="playerColorInput">
+        <input type="color" id="playerColorInput">
       </p>
     </div>
   </div>
@@ -62,8 +62,8 @@
     <br>
     <input class="form-control text-center bg-dark text-white font-monospace" type="text" id="roomNameInput" maxlength="25" placeholder="Room Name">
     <br>
-    <button class="btn btn-outline-warning" id = "joinRoomButton" onclick="joinRoom()">Join Room</button>
-    <button class="btn btn-outline-warning" id = "createRoomButton" onclick="createRoom()">Create Room</button>
+    <button class="btn btn-outline-warning" id = "joinRoomButton">Join Room</button>
+    <button class="btn btn-outline-warning" id = "createRoomButton">Create Room</button>
     <br>
     <h5 class="display-5" id="roomErrorText" style="color:DarkRed"></h5>
   </div>
@@ -84,7 +84,7 @@
       <p id="currentRoomInfo"></p>
       <hr>
       <div class="hstack gap-2 col-md-12 " id="roomHostControlsDiv">
-        <button class="btn btn-outline-success" id = "startGameButton" onclick="callForGameStart()" disabled>Start Game</button>
+        <button class="btn btn-outline-success" id = "startGameButton" disabled>Start Game</button>
         <br><br>
         <div  class="vstack gap-2 col-md-5 ">
           <label for="customRange3" class="form-label" id="maxPlayerRoomSettingLabel">Max Players : 4</label>
@@ -93,7 +93,7 @@
         <br>
         <div  class="hstack gap-2 col-md-5 ">
           <label for="customRange3" class="form-label" id="gameModeRoomSettingLabel">Game Mode : </label>
-          <select class="form-select" aria-label="Game Mode" onchange="updateGameModeRoomSetting()" id="gameModeRoomSettingInput">
+          <select class="form-select" aria-label="Game Mode" id="gameModeRoomSettingInput">
             <option selected value="false">Free For All</option>
             <option value="true">Team Death Match</option>
           </select>
@@ -104,7 +104,7 @@
       <h4>Players:</h4>
       <p id="currentRoomPlayersText"></p>
       <hr>
-      <button class="btn btn-outline-danger" id = "leaveRoomButton" onclick="leaveRoom()">Leave Room</button>
+      <button class="btn btn-outline-danger" id = "leaveRoomButton">Leave Room</button>
     </div>
   </div>
 
