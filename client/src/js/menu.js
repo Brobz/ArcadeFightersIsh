@@ -97,7 +97,7 @@ const startGameButton = document.getElementById("startGameButton");
 function callForGameStart(){
   socket.emit("callForGameStart", {room: currentRoom});
 }
-startGame.onclick = callForGameStart;
+startGameButton.onclick = callForGameStart;
 const createRoomButton = document.getElementById("createRoomButton");
 function createRoom(){
   roomErrorText.innerHTML = "";
