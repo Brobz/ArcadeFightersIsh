@@ -1,6 +1,7 @@
 import Player from './server/player';
 import Block from './server/block';
 import Bullet from './server/bullet';
+import PowerUp from './server/powerup';
 
 const { MongoClient } = require('mongodb');
 
@@ -52,7 +53,6 @@ const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 const Room = require('./server/room.js').Room;
-const Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(roomName, roomCode){
   return Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
@@ -402,7 +402,7 @@ function createPowerup(room) {
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var type = Math.floor(Math.random() * (POWERUP_COLORS.length));
-    pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
+    pUP = new Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
     const foundElement = room.blocks.find(pUP.checkForCollision);
     passed = foundElement != null;
   }
