@@ -8,7 +8,7 @@ var db;
 MongoClient.connect(db_uri, {}, (err, client) => {
   if (err) {
     throw error
-  };
+  }
   db = client.db("AFI_DB");
   console.log(">> Successfully Connected to MongoDB!");
 });
