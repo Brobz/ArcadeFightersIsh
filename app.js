@@ -38,7 +38,7 @@ console.log(">> Server Ready!");
 
 var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 7;
-var TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
+var TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var ROOM_LIST = {};
@@ -394,32 +394,35 @@ function shoot(player, room){
 
 }
 
-function processPowerups(room){
-  TIME_UNTILL_NEXT_POWERUP -= 1;
-  if(TIME_UNTILL_NEXT_POWERUP <= 0){
-    var passed = false
-    var pUP;
-    while(!passed){
-      passed = true;
-      var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-      var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-      var type = Math.floor(Math.random() * (POWERUP_COLORS.length));
-      var pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
-      for(k in ROOM_LIST[room].blocks){
-        if(pUP.checkForCollision(ROOM_LIST[room].blocks[k]))
-          passed = false;
-      }
-    }
-    ROOM_LIST[room].powerups.push(pUP);
-    TIME_UNTILL_NEXT_POWERUP = POWERUP_DELAY;
+function createPowerup(room) {
+  var passed = false
+  var pUP;
+  while(!passed){
+    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    var type = Math.floor(Math.random() * (POWERUP_COLORS.length));
+    pUP = Powerup([x, y], [15, 15], POWERUP_COLORS[type], type);
+    const foundElement = room.blocks.find(pUP.checkForCollision);
+    passed = foundElement != null;
+  }
+  room.powerups.push(pUP);
+  TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
+}
+
+function processPowerups(room_id){
+  TIME_UNTIL_NEXT_POWERUP -= 1;
+  const room = ROOM_LIST[room_id];
+
+  if(TIME_UNTIL_NEXT_POWERUP <= 0) {
+    createPowerup(room);
   }
 
-  for(var i = ROOM_LIST[room].powerups.length - 1; i > -1; i--){
-    for(var k in ROOM_LIST[room].players){
-      if(!ROOM_LIST[room].powerups[i]) continue;
-      if(ROOM_LIST[room].powerups[i].checkForCollision(ROOM_LIST[room].players[k])){
-        ROOM_LIST[room].players[k].powerUp(ROOM_LIST[room].powerups[i].type, ROOM_LIST[room].powerups[i].value);
-        ROOM_LIST[room].powerups.splice(i, 1);
+  for(var i = room.powerups.length - 1; i > -1; i--){
+    for(var k in room.players){
+      if(!room.powerups[i]) continue;
+      if(room.powerups[i].checkForCollision(room.players[k])){
+        room.players[k].powerUp(room.powerups[i].type);
+        room.powerups.splice(i, 1);
       }
     }
   }

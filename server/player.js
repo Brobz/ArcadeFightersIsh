@@ -1,3 +1,13 @@
+const POWERUP_TYPES = {
+  HEAL: 0,
+  SPEED: 1,
+  SHIELD: 2,
+  INCREASED_FIRE_RATE: 3,
+  MULTI_GUN: 4,
+  CLUSTER_GUN: 5,
+  BIG_BULLETS: 6,
+}
+
 exports.Player = function(id, name, color){
   var self = {
     x : 250,
@@ -32,55 +42,49 @@ exports.Player = function(id, name, color){
 
   }
 
-  self.powerUp = function(type, value){
-    if(type == 0){
+  self.powerUp = function(type){
+    const value = Math.random();
+    if(type == POWERUP_TYPES.HEAL){
       self.hp = self.maxHp;
+      return;
     }
-    else if(type == 1){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.speed *= 1.5;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 4);
-      }
+    const isActive = self.powerUpsActive.indexOf(type) != -1;
+    if (isActive) {
+      return;
     }
-    else if(type == 2){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.hasShield = true;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 3);
-      }
+    if(type == POWERUP_TYPES.SPEED){
+      const speedIncrease = value;
+      self.speed *= (1 + speedIncrease);
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 4);
     }
-    else if(type == 3){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.shootingDelay = 3;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 3);
-      }
+    else if(type == POWERUP_TYPES.SHIELD){
+      self.hasShield = true;
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 3);
     }
-
-    else if(type == 4){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.hasMultigun = true;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 3);
-      }
+    else if(type == POWERUP_TYPES.INCREASED_FIRE_RATE){
+      const reducedDelay = (value * 2) + 4;
+      self.shootingDelay -= reducedDelay; // Range of values: (2, 4)
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 3);
     }
-
-    else if(type == 5){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.hasClusterGun = true;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 3);
-      }
+    else if(type == POWERUP_TYPES.MULTI_GUN){
+      self.hasMultigun = true;
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 3);
     }
-
-    else if(type == 6){
-      if(self.powerUpsActive.indexOf(type) == -1){
-        self.bulletSize = 10;
-        self.bulletDmg = 8;
-        self.powerUpsActive.push(type);
-        self.powerUpsTime.push(60 * 4);
-      }
+    else if(type == POWERUP_TYPES.CLUSTER_GUN){
+      self.hasClusterGun = true;
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 3);
+    }
+    else if(type == POWERUP_TYPES.BIG_BULLETS){
+      self.bulletSize = 10;
+      const increasedDamage = (value * 2) + 3;
+      self.bulletDmg += increasedDamage; // Range of values: (7, 9)
+      self.powerUpsActive.push(type);
+      self.powerUpsTime.push(60 * 4);
     }
   }
 
