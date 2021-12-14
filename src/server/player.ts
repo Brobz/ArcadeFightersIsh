@@ -3,184 +3,183 @@ const INITIAL_SHOOTING_DELAY = 8;
 const INITIAL_BULLET_SIZE = 5;
 const INITIAL_BULLET_DMG = 5;
 
-exports.Player = function(id: string, name: string, color: string){
-  const team: Team = null;
-  const powerUpsActive: PowerUpType[] = []
-  const powerUpsTime: number[] = []
-  const powerUp = function(type: PowerUpType){
+class Player implements Entity {
+    x = 250;
+    y = 250;
+    width = 20;
+    height = 20;
+    alive = true;
+    maxHp = 40;
+    hp = 40;
+    isMovingLeft = 0;
+    isMovingRight = 0;
+    isMovingUp = 0;
+    isMovingDown = 0;
+    isShootingLeft = 0;
+    isShootingRight = 0;
+    isShootingUp = 0;
+    isShootingDown = 0;
+    shootingDelay = INITIAL_SHOOTING_DELAY;
+    timeUntilNextShot = 8;
+    hasShield = false;
+    hasMultigun = false;
+    hasClusterGun = false;
+    bulletSize = INITIAL_BULLET_SIZE;
+    bulletDmg = INITIAL_BULLET_DMG;
+    speed = INITIAL_SPEED;
+
+    powerUpsActive: PowerUpType[] = [];
+    powerUpsTime: number[] = [];
+    team: Team = null;
+
+    id: string;
+    name: string;
+    color: string;
+
+    constructor(id: string, name: string, color: string) {
+      this.id = id;
+      this.name = name;
+      this.color = color;
+    }
+
+  powerUp = (type: PowerUpType) => {
     const value = Math.random();
     if(type == PowerUpType.HEAL){
-      self.hp = self.maxHp;
+      this.hp = this.maxHp;
       return;
     }
-    const isActive = self.powerUpsActive.indexOf(type) != -1;
+    const isActive = this.powerUpsActive.indexOf(type) != -1;
     if (isActive) {
       return;
     }
     if(type == PowerUpType.SPEED){
       const speedIncrease = value;
-      self.speed *= (1 + speedIncrease);
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 4);
+      this.speed *= (1 + speedIncrease);
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 4);
     }
     else if(type == PowerUpType.SHIELD){
-      self.hasShield = true;
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 3);
+      this.hasShield = true;
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 3);
     }
     else if(type == PowerUpType.INCREASED_FIRE_RATE){
       const reducedDelay = (value * 2) + 4;
-      self.shootingDelay -= reducedDelay; // Range of values: (2, 4)
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 3);
+      this.shootingDelay -= reducedDelay; // Range of values: (2, 4)
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 3);
     }
     else if(type == PowerUpType.MULTI_GUN){
-      self.hasMultigun = true;
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 3);
+      this.hasMultigun = true;
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 3);
     }
     else if(type == PowerUpType.CLUSTER_GUN){
-      self.hasClusterGun = true;
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 3);
+      this.hasClusterGun = true;
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 3);
     }
     else if(type == PowerUpType.BIG_BULLETS){
-      self.bulletSize = 10;
+      this.bulletSize = 10;
       const increasedDamage = (value * 2) + 3;
-      self.bulletDmg += increasedDamage; // Range of values: (7, 9)
-      self.powerUpsActive.push(type);
-      self.powerUpsTime.push(60 * 4);
+      this.bulletDmg += increasedDamage; // Range of values: (7, 9)
+      this.powerUpsActive.push(type);
+      this.powerUpsTime.push(60 * 4);
     }
   }
 
-  const updatePowerUps = function(){
-    for(let i in self.powerUpsTime){
-      self.powerUpsTime[i] -= 1;
-      const powerUpIsActive = self.powerUpsTime[i] > 0;
+  updatePowerUps = () => {
+    for(let i in this.powerUpsTime){
+      this.powerUpsTime[i] -= 1;
+      const powerUpIsActive = this.powerUpsTime[i] > 0;
       if (powerUpIsActive) {
         continue;
       }
-      switch (self.powerUpsActive[i]) {
+      switch (this.powerUpsActive[i]) {
         case PowerUpType.SPEED:
-          self.speed = INITIAL_SPEED;
+          this.speed = INITIAL_SPEED;
           break;
         case PowerUpType.SHIELD:
-          self.hasShield = false;
+          this.hasShield = false;
           break;
         case PowerUpType.INCREASED_FIRE_RATE:
-          self.shootingDelay = INITIAL_SHOOTING_DELAY;
+          this.shootingDelay = INITIAL_SHOOTING_DELAY;
           break;
         case PowerUpType.MULTI_GUN:
-          self.hasMultigun = false;
+          this.hasMultigun = false;
           break;
         case PowerUpType.CLUSTER_GUN:
-          self.hasClusterGun = false;
+          this.hasClusterGun = false;
           break;
         case PowerUpType.BIG_BULLETS:
-          self.bulletSize = INITIAL_BULLET_SIZE;
-          self.bulletDmg = INITIAL_BULLET_DMG;
+          this.bulletSize = INITIAL_BULLET_SIZE;
+          this.bulletDmg = INITIAL_BULLET_DMG;
           break;
       }
       const index = parseInt(i);
 
-      self.powerUpsTime.splice(index, 1);
-      self.powerUpsActive.splice(index, 1);
+      this.powerUpsTime.splice(index, 1);
+      this.powerUpsActive.splice(index, 1);
     }
   }
 
-  const checkForCollision = function(
+  move = (x: number, y: number, blocks: Entity[]) => {
+    this.x += x;
+    this.y += y;
+
+    this.checkForCollision(blocks, x, y);
+  }
+
+  checkForCollision = (
     entities: Entity[],
     x: number,
     y: number
-  ) {
+  ) => {
     for(const entity of entities) {
-      if(!(entity.x >= self.x + self.width || entity.x + entity.width <= self.x || entity.y >= self.y + self.height || entity.y + entity.height <= self.y)){
+      if(!(entity.x >= this.x + this.width || entity.x + entity.width <= this.x || entity.y >= this.y + this.height || entity.y + entity.height <= this.y)){
         if(y < 0){
-          self.y = entity.y + entity.height;
+          this.y = entity.y + entity.height;
         }
         if(y > 0){
-          self.y = entity.y - self.height;
+          this.y = entity.y - this.height;
         }
         if(x < 0){
-          self.x = entity.x + entity.width;
+          this.x = entity.x + entity.width;
         }
         if(x > 0){
-          self.x = entity.x - self.width;
+          this.x = entity.x - this.width;
         }
       }
     }
   }
 
-  const move = function(x: number, y: number, blocks: Entity[]){
-    self.x += x;
-    self.y += y;
-
-    self.checkForCollision(blocks, x, y);
+  updatePosition = (blocks: Entity[]) => {
+    if(this.isMovingUp)
+      this.move(0, -this.speed, blocks);
+    if(this.isMovingDown)
+      this.move(0, this.speed, blocks);
+    if(this.isMovingLeft)
+      this.move(-this.speed, 0, blocks);
+    if(this.isMovingRight)
+      this.move(this.speed, 0, blocks);
   }
 
-  const updatePosition = function(blocks: Entity[]){
-    if(self.isMovingUp)
-      self.move(0, -self.speed, blocks);
-    if(self.isMovingDown)
-      self.move(0, self.speed, blocks);
-    if(self.isMovingLeft)
-      self.move(-self.speed, 0, blocks);
-    if(self.isMovingRight)
-      self.move(self.speed, 0, blocks);
+  updateState = () => {
+    this.alive = this.hp <= 0;
   }
 
-  const updateState = function(){
-    self.alive = self.hp <= 0;
-  }
-
-  const updateShooting = function(){
-    self.timeUntilNextShot -= 1;
-    const canShoot = self.timeUntilNextShot <= 0;
-    const isShooting = self.isShootingUp || self.isShootingDown || self.isShootingLeft || self.isShootingRight;
+  updateShooting = () => {
+    this.timeUntilNextShot -= 1;
+    const canShoot = this.timeUntilNextShot <= 0;
+    const isShooting = this.isShootingUp || this.isShootingDown || this.isShootingLeft || this.isShootingRight;
     if (canShoot && isShooting) {
-      self.timeUntilNextShot = self.shootingDelay;
+      this.timeUntilNextShot = this.shootingDelay;
       return true;
     }
     return false;
   }
 
-  let self = {
-    x: 250,
-    y: 250,
-    width: 20,
-    height: 20,
-    alive: true,
-    name: name,
-    maxHp: 40,
-    hp: 40,
-    color,
-    isMovingLeft: 0,
-    isMovingRight: 0,
-    isMovingUp: 0,
-    isMovingDown: 0,
-    isShootingLeft: 0,
-    isShootingRight: 0,
-    isShootingUp: 0,
-    isShootingDown: 0,
-    shootingDelay: INITIAL_SHOOTING_DELAY,
-    timeUntilNextShot: 8,
-    powerUpsActive,
-    powerUpsTime,
-    hasShield: false,
-    hasMultigun: false,
-    hasClusterGun: false,
-    bulletSize: INITIAL_BULLET_SIZE,
-    bulletDmg: INITIAL_BULLET_DMG,
-    speed: INITIAL_SPEED,
-    team,
-    id,
-    powerUp,
-    updatePowerUps,
-    checkForCollision,
-    move,
-    updateState,
-    updateShooting,
-  }
-
-  return self;
 }
+
+export default Player;
+exports.Player = Player;

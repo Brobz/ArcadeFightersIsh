@@ -1,3 +1,4 @@
+import Player from './server/player';
 const { MongoClient } = require('mongodb');
 
 const db_uri = process.env.DATABASE_URI;
@@ -48,7 +49,6 @@ const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 const Room = require('./server/room.js').Room;
-const Player = require('./server/player').Player;
 const Bullet = require('./server/bullet').Bullet;
 const Block = require('./server/block').Block;
 const Powerup = require('./server/powerup.js').Powerup;
@@ -238,7 +238,7 @@ async function process_login(data, results, socket){
   socket.id = data.username;
   SOCKET_LIST[socket.id] = socket;
 
-  p = Player(socket.id, results[0].ign, results[0].color);
+  p = new Player(socket.id, results[0].ign, results[0].color);
   PLAYER_LIST[socket.id] = p;
 
   socket.emit("connected", {
