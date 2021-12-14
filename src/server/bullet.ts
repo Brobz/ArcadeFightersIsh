@@ -1,97 +1,96 @@
-exports.Bullet = function(
-  dir: number,
-  damage: number,
-  pos: Position,
-  size: Dimensions,
-  team: Team,
-  color: string,
-  cluster: boolean,
-  child: boolean
-){
-  const normalize = function(){
-    self.speed *= 1 / Math.sqrt(2);
-    self.hasNormalized = true;
+import Block from './block';
+
+class Bullet extends Block {
+  speed = 5;
+  hasNormalized = false;
+  hasShrinked = false;
+  trailCounter = 0;
+  trailMax = 5;
+
+  dmg: number;
+  dir: number;
+  isCluster: boolean;
+  isChild: boolean;
+  lastX: number;
+  lastY: number;
+
+  constructor(
+    pos: Position,
+    size: Dimensions,
+    color: string,
+    team: Team,
+    dir: number,
+    damage: number,
+    cluster: boolean,
+    child: boolean
+  ) {
+    super(pos, size, color);
+    this.dmg = damage;
+    this.dir = dir;
+    this.isCluster = cluster;
+    this.isChild = child;
+    this.team = team;
+    [this.lastX, this.lastY] = pos;
   }
 
-  const shrink = function(){
-    self.width *= 0.5;
-    self.height *= 0.5;
-    self.hasShrinked = true;
+  normalize = () => {
+    this.speed *= 1 / Math.sqrt(2);
+    this.hasNormalized = true;
   }
 
-  const updatePosition = function(){
-    if(self.dir == 0 || self.dir == 4 || self.dir == 6){
-      self.y -= self.speed;
-      if(self.trailCounter >= self.trailMax){
-        self.lastY -= self.speed;
-      }
-    }
-    if(self.dir == 1 || self.dir == 5 || self.dir == 7){
-      self.y += self.speed;
-      if(self.trailCounter >= self.trailMax){
-        self.lastY += self.speed;
-      }
-    }
-    if(self.dir == 2 || self.dir == 4 || self.dir == 7){
-      self.x -= self.speed;
-      if(self.trailCounter >= self.trailMax){
-        self.lastX -= self.speed;
-      }
-    }
-    if(self.dir == 3 || self.dir == 5 || self.dir == 6){
-      self.x += self.speed;
-      if(self.trailCounter >= self.trailMax){
-        self.lastX += self.speed;
-      }
-    }
-
-    if(self.dir > 3 && !self.hasNormalized)
-      self.normalize();
-
-    if(self.trailCounter < self.trailMax)
-      self.trailCounter += 1;
+  shrink = () => {
+    this.width *= 0.5;
+    this.height *= 0.5;
+    this.hasShrinked = true;
   }
 
-  const isAlive = function(){
-    return self.hp > 0;
+  updatePosition = () => {
+    if(this.dir == 0 || this.dir == 4 || this.dir == 6){
+      this.y -= this.speed;
+      if(this.trailCounter >= this.trailMax){
+        this.lastY -= this.speed;
+      }
+    }
+    if(this.dir == 1 || this.dir == 5 || this.dir == 7){
+      this.y += this.speed;
+      if(this.trailCounter >= this.trailMax){
+        this.lastY += this.speed;
+      }
+    }
+    if(this.dir == 2 || this.dir == 4 || this.dir == 7){
+      this.x -= this.speed;
+      if(this.trailCounter >= this.trailMax){
+        this.lastX -= this.speed;
+      }
+    }
+    if(this.dir == 3 || this.dir == 5 || this.dir == 6){
+      this.x += this.speed;
+      if(this.trailCounter >= this.trailMax){
+        this.lastX += this.speed;
+      }
+    }
+
+    if(this.dir > 3 && !this.hasNormalized)
+      this.normalize();
+
+    if(this.trailCounter < this.trailMax)
+      this.trailCounter += 1;
   }
 
-  const checkForCollision = function(entity: Entity | null){
+  isAlive = () => {
+    return this.hp > 0;
+  }
+
+  checkForCollision = (entity: Entity | null) => {
     if(!entity)
       return;
-    if(!(entity.x >= self.x + self.width ||  entity.x + entity.width <= self.x || entity.y >= self.y + self.height || entity.y + entity.height <= self.y)
-        && entity.team != self.team){
+    if(!(entity.x >= this.x + this.width ||  entity.x + entity.width <= this.x || entity.y >= this.y + this.height || entity.y + entity.height <= this.y)
+        && entity.team != this.team){
       return entity;
     }
     return null;
   }
 
-  let self = {
-    x : pos[0],
-    y : pos[1],
-    width : size[0],
-    height : size[1],
-    hp : 1,
-    dmg : damage,
-    color : color,
-    dir : dir,
-    speed : 5,
-    hasNormalized : false,
-    hasShrinked : false,
-    isCluster : cluster,
-    isChild : child,
-    team,
-    trailCounter : 0,
-    trailMax : 5,
-    lastX : pos[0],
-    lastY : pos[1],
-    normalize,
-    shrink,
-    updatePosition,
-    isAlive,
-    checkForCollision
-  }
-
-
-  return self;
 }
+
+export default Bullet;

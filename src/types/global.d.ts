@@ -9,6 +9,9 @@ declare interface Entity {
   height: number;
   color: string;
   team: Team;
+  hp: number;
+  maxHp: number;
+  alive: boolean;
 }
 
 declare enum PowerUpType {

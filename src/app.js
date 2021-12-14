@@ -1,5 +1,6 @@
 import Player from './server/player';
 import Block from './server/block';
+import Bullet from './server/bullet';
 
 const { MongoClient } = require('mongodb');
 
@@ -51,7 +52,6 @@ const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 const Room = require('./server/room.js').Room;
-const Bullet = require('./server/bullet').Bullet;
 const Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(roomName, roomCode){
@@ -351,46 +351,46 @@ function shoot(player, room){
   if(player.isShootingUp){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(0, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(0, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
   if(player.isShootingDown){
     pos = [player.x + 7, player.y  + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(1, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(1, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
  if(player.isShootingLeft){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(2, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(2, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
  if(player.isShootingRight){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(3, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(3, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingUp || player.isShootingLeft)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(4, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(4, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingDown || player.isShootingRight)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(5, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(5, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingUp || player.isShootingRight)){
     pos = [player.x + 7, player.y + 7];
     size = [player.bulletSize, player.bulletSize];
-    ROOM_LIST[room].bullets.push(Bullet(6, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(6, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
   if(player.hasMultigun && (player.isShootingDown || player.isShootingLeft)){
     pos = [player.x + 7, player.y + 7];
     size = [7, 7];
-    ROOM_LIST[room].bullets.push(Bullet(7, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
+    ROOM_LIST[room].bullets.push(new Bullet(7, player.bulletDmg, pos, size, player.team, bulletColor, player.hasClusterGun, false));
   }
 
 }
@@ -444,7 +444,7 @@ function Update(){
           if(ROOM_LIST[i].bullets[j].isCluster){
             var b = ROOM_LIST[i].bullets[j];
             for(var dir = 0; dir < 8; dir++){
-              ROOM_LIST[i].bullets.push(Bullet(dir, b.dmg / 1.5, [b.x, b.y], [b.width, b.height], b.team, b.color, false, true));
+              ROOM_LIST[i].bullets.push(new Bullet(dir, b.dmg / 1.5, [b.x, b.y], [b.width, b.height], b.team, b.color, false, true));
             }
           }
           ROOM_LIST[i].bullets.splice(j, 1);

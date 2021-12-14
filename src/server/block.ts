@@ -17,3 +17,5 @@ class Block implements Entity {
     this.color = color;
   }
 }
+
+export default Block;
