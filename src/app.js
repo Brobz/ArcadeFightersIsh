@@ -1,4 +1,6 @@
 import Player from './server/player';
+import Block from './server/block';
+
 const { MongoClient } = require('mongodb');
 
 const db_uri = process.env.DATABASE_URI;
@@ -50,7 +52,6 @@ const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "Cornflow
 
 const Room = require('./server/room.js').Room;
 const Bullet = require('./server/bullet').Bullet;
-const Block = require('./server/block').Block;
 const Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(roomName, roomCode){
@@ -62,7 +63,7 @@ MAP = function(){
   for(var x = 0; x < 20; x++){
     for(var y = 0; y < 20; y++){
       if(!x || !y || x == 19 || y == 19){
-        blocks.push(Block([x * 20, y * 20], [20, 20], "#100074"));
+        blocks.push(new Block([x * 20, y * 20], [20, 20], "#100074"));
       }
     }
   }
@@ -71,7 +72,7 @@ MAP = function(){
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
 
-    blocks.push(Block([x, y], [20, 20], "#100074"));
+    blocks.push(new Block([x, y], [20, 20], "#100074"));
   }
 
   return blocks;
