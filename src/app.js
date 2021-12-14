@@ -50,7 +50,7 @@ const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "Cornflow
 const Room = require('./server/room.js').Room;
 const Player = require('./server/player.js').Player;
 const Bullet = require('./server/bullet.js').Bullet;
-const Block = require('./server/block.js').Block;
+const Block = require('./server/block').Block;
 const Powerup = require('./server/powerup.js').Powerup;
 
 function getDefaultRoom(roomName, roomCode){
