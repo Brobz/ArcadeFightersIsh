@@ -48,7 +48,7 @@ const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 const Room = require('./server/room.js').Room;
-const Player = require('./server/player.js').Player;
+const Player = require('./server/player').Player;
 const Bullet = require('./server/bullet').Bullet;
 const Block = require('./server/block').Block;
 const Powerup = require('./server/powerup.js').Powerup;
