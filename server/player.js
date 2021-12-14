@@ -8,6 +8,11 @@ const POWERUP_TYPES = {
   BIG_BULLETS: 6,
 }
 
+const INITIAL_SPEED = 2;
+const INITIAL_SHOOTING_DELAY = 8;
+const INITIAL_BULLET_SIZE = 5;
+const INITIAL_BULLET_DMG = 5;
+
 exports.Player = function(id, name, color){
   var self = {
     x : 250,
@@ -27,16 +32,16 @@ exports.Player = function(id, name, color){
     isShootingRight : 0,
     isShootingUp : 0,
     isShootingDown : 0,
-    shootingDelay : 8,
+    shootingDelay : INITIAL_SHOOTING_DELAY,
     timeUntilNextShot : 8,
     powerUpsActive : [],
     powerUpsTime : [],
     hasShield : false,
     hasMultigun : false,
     hasClusterGun : false,
-    bulletSize : 7,
-    bulletDmg : 5,
-    speed : 2,
+    bulletSize : INITIAL_BULLET_SIZE,
+    bulletDmg : INITIAL_BULLET_DMG,
+    speed : INITIAL_SPEED,
     team : null,
     id : id
 
@@ -89,35 +94,35 @@ exports.Player = function(id, name, color){
   }
 
   self.updatePowerUps = function(){
-    for(i in self.powerUpsTime){
+    for(let i in self.powerUpsTime){
       self.powerUpsTime[i] -= 1;
-      if(self.powerUpsTime[i] <= 0){
-        if(self.powerUpsActive[i] == 1){
-          self.speed = self.speed / 1.5;
-        }
-        else if(self.powerUpsActive[i] == 2){
-          self.hasShield = false;
-        }
-        else if(self.powerUpsActive[i] == 3){
-          self.shootingDelay = 8;
-        }
-        else if(self.powerUpsActive[i] == 4){
-          self.hasMultigun = false;
-        }
-        else if(self.powerUpsActive[i] == 5){
-          self.hasClusterGun = false;
-        }
-        else if(self.powerUpsActive[i] == 6){
-          self.bulletSize = 7;
-          self.bulletDmg = 5;
-        }
-
-        self.powerUpsTime.splice(i, 1);
-        self.powerUpsActive.splice(i, 1);
+      const powerUpIsActive = self.powerUpsTime[i] > 0;
+      if (powerUpIsActive) {
+        continue;
       }
-    }
+      if(self.powerUpsActive[i] == 1){
+        self.speed = INITIAL_SPEED;
+      }
+      else if(self.powerUpsActive[i] == 2){
+        self.hasShield = false;
+      }
+      else if(self.powerUpsActive[i] == 3){
+        self.shootingDelay = INITIAL_SHOOTING_DELAY;
+      }
+      else if(self.powerUpsActive[i] == 4){
+        self.hasMultigun = false;
+      }
+      else if(self.powerUpsActive[i] == 5){
+        self.hasClusterGun = false;
+      }
+      else if(self.powerUpsActive[i] == 6){
+        self.bulletSize = INITIAL_BULLET_SIZE;
+        self.bulletDmg = INITIAL_BULLET_DMG;
+      }
 
-
+      self.powerUpsTime.splice(i, 1);
+      self.powerUpsActive.splice(i, 1);
+      }
   }
 
   self.checkForCollision = function(entities, x, y){
@@ -126,15 +131,12 @@ exports.Player = function(id, name, color){
         if(y < 0){
           self.y = entities[i].y + entities[i].height;
         }
-
         if(y > 0){
           self.y = entities[i].y - self.height;
         }
-
         if(x < 0){
           self.x = entities[i].x + entities[i].width;
         }
-
         if(x > 0){
           self.x = entities[i].x - self.width;
         }
@@ -161,14 +163,14 @@ exports.Player = function(id, name, color){
   }
 
   self.updateState = function(){
-    if(self.hp <= 0){
-      self.alive = false;
-    }
+    self.alive = self.hp <= 0;
   }
 
   self.updateShooting = function(){
     self.timeUntilNextShot -= 1;
-    if (self.timeUntilNextShot <= 0 && (self.isShootingUp || self.isShootingDown || self.isShootingLeft || self.isShootingRight)) {
+    const canShoot = self.timeUntilNextShot <= 0;
+    const isShooting = self.isShootingUp || self.isShootingDown || self.isShootingLeft || self.isShootingRight;
+    if (canShoot && isShooting) {
       self.timeUntilNextShot = self.shootingDelay;
       return true;
     }
