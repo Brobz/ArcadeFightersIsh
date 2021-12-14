@@ -66,11 +66,9 @@ exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
 
 
   }
+
   self.isAlive = function(){
-    if(self.hp > 0){
-      return true;
-    }
-    return false;
+    return self.hp > 0;
   }
 
   self.checkForCollision = function(entity){
@@ -80,29 +78,8 @@ exports.Bullet = function(dir, damage, pos, size, team, color, cluster, child){
     if(!(entity.x >= self.x + self.width ||  entity.x + entity.width <= self.x || entity.y >= self.y + self.height || entity.y + entity.height <= self.y)
         && entity.team != self.team){
 
-      /*
-      if(dir == 0){
-        self.y = entity.y + entity.height;
-      }
-
-      if(dir == 1){
-        self.y = entity.y - self.height;
-      }
-
-      if(dir == 2){
-        self.x = entity.x + entity.width;
-      }
-
-      if(dir == 3){
-        self.x = entity.x - self.width;
-      }
-      */
-
       return entity;
     }
-    /*
-
-    */
     return null;
   }
 
