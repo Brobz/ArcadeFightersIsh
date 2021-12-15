@@ -2,6 +2,7 @@ import Player from './server/player';
 import Block from './server/block';
 import Bullet from './server/bullet';
 import PowerUp from './server/powerup';
+import Room from './server/room';
 
 const { MongoClient } = require('mongodb');
 
@@ -34,12 +35,9 @@ app.get("/", function(req, res){
 
 app.use("/client", express.static(__dirname + "/client"));
 
-
 server.listen(process.env.PORT || 5000);
 
-
 console.log(">> Server Ready!");
-
 
 var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 7;
@@ -52,10 +50,8 @@ const DEFAULT_COLOR = "#c61a93";
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
-const Room = require('./server/room.js').Room;
-
 function getDefaultRoom(roomName, roomCode){
-  return Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
+  return new Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
 }
 
 MAP = function(){
@@ -82,6 +78,7 @@ var io = require("socket.io")(server, {});
 var p;
 
 io.sockets.on("connection", function(socket){
+
     socket.on("signUpInfo", function(data){
       var res = db.collection("accounts").find({username:data.username});
       process_signup(data, res, socket);

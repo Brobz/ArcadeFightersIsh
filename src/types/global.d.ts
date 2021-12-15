@@ -1,6 +1,6 @@
 declare type Position = [number, number];
 declare type Dimensions = [number, number];
-declare type Team = string | null;
+declare type Team = number | null;
 
 declare interface Entity {
   x: number;
