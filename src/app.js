@@ -4,28 +4,14 @@ import Bullet from './server/bullet';
 import PowerUp from './server/powerup';
 import Room from './server/room';
 import connectToDatabase from './database';
+import createServer from './server';
 
-const db = await connectToDatabase()
+const db = await connectToDatabase();
+const server = createServer();
 
-console.log(">> Starting Server...");
-
-// Bycript settings
+// Bcrypt settings
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
-var express = require("express");
-var app = express();
-var server = require("http").Server(app);
-
-app.get("/", function(req, res){
-    res.sendFile(__dirname + "/client/index.html");
-});
-
-app.use("/client", express.static(__dirname + "/client"));
-
-server.listen(process.env.PORT || 5000);
-
-console.log(">> Server Ready!");
 
 var ROOM_COUNT = 0;
 var POWERUP_DELAY = 60 * 7;

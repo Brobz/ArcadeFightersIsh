@@ -24,6 +24,8 @@
     "node": "17.x"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8"
   }
