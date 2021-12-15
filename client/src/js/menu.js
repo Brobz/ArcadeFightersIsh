@@ -170,7 +170,7 @@ function changePlayerColor(){
 playerColorInput.onchange = changePlayerColor;
 
 const canvasElement = document.getElementById("canvas");
-const canvas = document.getElementById("canvas").getContext("2d");
+const canvas = canvasElement.getContext("2d");
 
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 canvas.font = "15px Monaco";
@@ -190,9 +190,9 @@ function endGame(data){
   if (data.roomIndex != currentRoom) {
     return;
   }
-  const player = data.room.players.find(player => player.alive);
-  const isTeamMatch = String(data.room.teamBased).toLowerCase() == "true";
-  if (isTeamMatch) {
+  const players = data.room.players;
+  const player = players.find(player => player.alive);
+  if (!data.room.teamBased) {
     winnerText.innerHTML = player.name + " WON!<br>";
     winnerText.innerHTML += "with " + Math.round(player.hp) + " hp left<br>";
   } else {
@@ -269,7 +269,6 @@ function roomUpdate(data){
 }
 
 function connected(data){
-
   id = data.id;
 
   connectedText.innerHTML = data.msg;
@@ -277,11 +276,11 @@ function connected(data){
   playerColorText.style.color = data.color;
   playerColorInput.value = data.color;
 
-  socket.on("update", function(data){update(data)});
+  socket.on("update", draw);
 
-  socket.on("startGame", function(data){startGame(data)});
+  socket.on("startGame", startGame);
 
-  socket.on("endGame", function(data){endGame(data)});
+  socket.on("endGame", endGame);
 
   login_SignupDiv.style.display = "none";
   roomInputDiv.style.display = "";

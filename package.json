@@ -7,16 +7,27 @@
     "bcrypt": "^5.0.1",
     "express": "^4.14.0",
     "mongodb": "^4.2.0",
-    "socket.io": "^1.5.0"
+    "socket.io": "^4.4.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "npm run dev",
+    "build": "tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
+    "lint": "eslint . & echo 'lint complete'",
+    "dev": "ts-node-dev --respawn ./src/app.js",
+    "run-node": "node --experimental-modules --es-module-specifier-resolution=node",
+    "prod": "npm run build && npm run run-node ./built/app.js",
+    "debug": "npm run build && npm run run-node --inspect ./built//app.js"
   },
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "14.x"
+    "node": "17.x"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8"
   }
 }
