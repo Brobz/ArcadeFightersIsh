@@ -12,11 +12,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run dev",
-    "build": "tsc",
+    "build": "tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
     "lint": "eslint . & echo 'lint complete'",
     "dev": "ts-node-dev --respawn ./src/app.js",
-    "prod": "tsc && node ./built/src/app.js",
-    "debug": "tsc && node --inspect ./built/src/app.js"
+    "prod": "npm run build && node ./built/app.js",
+    "debug": "npm run build && node --inspect ./built//app.js"
   },
   "author": "",
   "license": "ISC",

@@ -54,7 +54,7 @@ function getDefaultRoom(roomName, roomCode){
   return new Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
 }
 
-MAP = function(){
+const MAP = function(){
   var blocks = []
   for(var x = 0; x < 20; x++){
     for(var y = 0; y < 20; y++){
