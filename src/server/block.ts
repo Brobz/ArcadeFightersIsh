@@ -19,7 +19,7 @@ class Block implements Entity {
 
   hasCollided = (entity: Entity) => {
     return entity.x < this.x + this.width &&
-      entity.x + entity.width > this.width &&
+      entity.x + entity.width > this.x &&
       entity.y < this.y + this.height &&
       entity.y + entity.height > this.y;
   }
