@@ -15,8 +15,9 @@
     "build": "tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
     "lint": "eslint . & echo 'lint complete'",
     "dev": "ts-node-dev --respawn ./src/app.js",
-    "prod": "npm run build && node ./built/app.js",
-    "debug": "npm run build && node --inspect ./built//app.js"
+    "run-node": "node --experimental-modules --es-module-specifier-resolution=node",
+    "prod": "npm run build && npm run run-node ./built/app.js",
+    "debug": "npm run build && npm run run-node --inspect ./built//app.js"
   },
   "author": "",
   "license": "ISC",
