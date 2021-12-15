@@ -81,14 +81,14 @@ class Player extends Block {
       if(!this.hasCollided(entity)) {
         continue;
       }
-      if(y < 0){
+      if (y < 0){
         this.y = entity.y + entity.height;
-      } else {
+      } else if (y > 0) {
         this.y = entity.y - this.height;
       }
-      if(x < 0){
+      if (x < 0){
         this.x = entity.x + entity.width;
-      } else {
+      } else if (x > 0) {
         this.x = entity.x - this.width;
       }
     }
