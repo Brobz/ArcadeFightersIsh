@@ -9,6 +9,7 @@ import Room from './server/room';
 import Block from './server/block';
 import {changeRoomSettings} from './update_room_properties';
 import {changePlayerAttribute} from './update_player_properties';
+import {getKeyInput} from './handle_input';
 
 export function emitRoomUpdateSignal(){
   for (const socket of Object.values(SOCKET_LIST)) {
@@ -50,6 +51,18 @@ const generateRandomBlocks = function(){
 
 function buildMap(room_id: string){
   ROOM_LIST[room_id].blocks = generateRandomBlocks();
+}
+
+function onDisconnect(id: string) {
+  for(var i in ROOM_LIST){
+    if(ROOM_LIST[i].players.indexOf(PLAYER_LIST[id]) >= 0){
+      ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
+    }
+  }
+  emitRoomUpdateSignal();
+  delete SOCKET_LIST[id];
+  delete PLAYER_LIST[id];
+
 }
 
 function onConnection(socket: Socket, db: Db) {
@@ -145,15 +158,13 @@ function onConnection(socket: Socket, db: Db) {
 
   socket.on("changePlayerAttribute", (data) => changePlayerAttribute(data, db));
 
-  socket.on("keyPress", function(data){getKeyInput(socket.id, data);});
+  socket.on("keyPress", (data) => getKeyInput(socket.data.id, data));
 
-  socket.on("disconnect", function(){Disconnected(socket.id)});
-
+  socket.on("disconnect", () => onDisconnect(socket.data.id));
 }
 
 export default function createIOSocket(server: HTTPServer, db: Db) {
   const io = new Server(server);
   const handleConnection = (socket: Socket) => onConnection(socket, db);
   io.sockets.on('connection', handleConnection);
-  return io;
 }

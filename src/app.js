@@ -5,92 +5,17 @@ import PowerUp from './server/powerup';
 import Room from './server/room';
 import connectToDatabase from './database';
 import createServer from './server';
+import createIOSocket from './socket';
 
 const db = await connectToDatabase();
 const server = createServer();
-
-// Bcrypt settings
-const bcrypt = require('bcrypt');
+createIOSocket(server, db);
 
 const POWERUP_DELAY = 60 * 7;
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 let TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
-
-var io = require("socket.io")(server, {});
-var p;
-
-io.sockets.on("connection", function(socket){
-});
-
-function Disconnected(id) {
-  for(var i in ROOM_LIST){
-    if(ROOM_LIST[i].players.indexOf(PLAYER_LIST[id]) >= 0){
-      ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
-    }
-  }
-  emitRoomUpdateSignal();
-  delete SOCKET_LIST[id];
-  delete PLAYER_LIST[id];
-
-}
-
-function getKeyInput(id, data){
-  let playerExists = id in PLAYER_LIST;
-  if(!playerExists) return;
-
-  if(data.input == "d"){
-    PLAYER_LIST[id].isMovingRight = data.state;
-  }
-  if(data.input == "s"){
-    PLAYER_LIST[id].isMovingDown = data.state;
-  }
-  if(data.input == "a"){
-    PLAYER_LIST[id].isMovingLeft = data.state;
-  }
-  if(data.input == "w"){
-    PLAYER_LIST[id].isMovingUp = data.state;
-  }
-
-  if(data.input == "shoot0"){
-    PLAYER_LIST[id].isShootingLeft = data.state;
-
-    if(data.state){
-      PLAYER_LIST[id].isShootingRight = false;
-      PLAYER_LIST[id].isShootingDown = false;
-      PLAYER_LIST[id].isShootingUp = false;
-    }
-  }
-  if(data.input == "shoot1"){
-    PLAYER_LIST[id].isShootingUp = data.state;
-
-    if(data.state){
-      PLAYER_LIST[id].isShootingRight = false;
-      PLAYER_LIST[id].isShootingDown = false;
-      PLAYER_LIST[id].isShootingLeft = false;
-    }
-  }
-  if(data.input == "shoot2"){
-    PLAYER_LIST[id].isShootingRight = data.state;
-
-    if(data.state){
-      PLAYER_LIST[id].isShootingLeft = false;
-      PLAYER_LIST[id].isShootingDown = false;
-      PLAYER_LIST[id].isShootingUp = false;
-    }
-  }
-  if(data.input == "shoot3"){
-    PLAYER_LIST[id].isShootingDown = data.state;
-
-    if(data.state){
-      PLAYER_LIST[id].isShootingRight = false;
-      PLAYER_LIST[id].isShootingLeft = false;
-      PLAYER_LIST[id].isShootingUp = false;
-    }
-  }
-
-}
 
 function checkForGameEnd(){
   for(var i in ROOM_LIST){

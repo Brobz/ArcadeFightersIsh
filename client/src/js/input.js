@@ -1,46 +1,33 @@
-document.onkeydown = function(event){
-
+function handleKeyEvents(event, state) {
   if(socket == null) return;
 
+  const input = [];
   if(event.keyCode == 68)
-    socket.emit("keyPress", {input:"d", state:1});
+    input.push("d");
   if(event.keyCode == 83)
-    socket.emit("keyPress", {input:"s", state:1});
+    input.push("s");
   if(event.keyCode == 65)
-    socket.emit("keyPress", {input:"a", state:1});
+    input.push("a");
   if(event.keyCode == 87)
-    socket.emit("keyPress", {input:"w", state:1});
+    input.push("w");
 
+  if(event.keyCode == 37){
+    input.push("shoot0");
+  } else if(event.keyCode == 38) {
+    input.push("shoot1");
+  } else if(event.keyCode == 39) {
+    input.push("shoot2");
+  } else if(event.keyCode == 40) {
+    input.push("shoot3");
+  }
 
-  if(event.keyCode == 37)
-    socket.emit("keyPress", {input:"shoot0", state:1});
-  if(event.keyCode == 38)
-    socket.emit("keyPress", {input:"shoot1", state:1});
-  if(event.keyCode == 39)
-    socket.emit("keyPress", {input:"shoot2", state:1});
-  if(event.keyCode == 40)
-    socket.emit("keyPress", {input:"shoot3", state:1});
+  socket.emit("keyPress", {input: input, state: state});
 }
 
+document.onkeydown = function(event){
+  handleKeyEvents(event, true);
+}
 
 document.onkeyup = function(event){
-  if(socket == null) return;
-
-  if(event.keyCode == 68)
-    socket.emit("keyPress", {input:"d", state:0});
-  if(event.keyCode == 83)
-    socket.emit("keyPress", {input:"s", state:0});
-  if(event.keyCode == 65)
-    socket.emit("keyPress", {input:"a", state:0});
-  if(event.keyCode == 87)
-    socket.emit("keyPress", {input:"w", state:0});
-
-  if(event.keyCode == 37)
-    socket.emit("keyPress", {input:"shoot0", state:0});
-  if(event.keyCode == 38)
-    socket.emit("keyPress", {input:"shoot1", state:0});
-  if(event.keyCode == 39)
-    socket.emit("keyPress", {input:"shoot2", state:0});
-  if(event.keyCode == 40)
-    socket.emit("keyPress", {input:"shoot3", state:0});
+  handleKeyEvents(event, false);
 }
