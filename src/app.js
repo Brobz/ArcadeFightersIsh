@@ -3,21 +3,9 @@ import Block from './server/block';
 import Bullet from './server/bullet';
 import PowerUp from './server/powerup';
 import Room from './server/room';
+import connectToDatabase from './database';
 
-const { MongoClient } = require('mongodb');
-
-const db_uri = process.env.DATABASE_URI;
-
-console.log(">> Connecting to MongoDB...");
-
-var db;
-MongoClient.connect(db_uri, {}, (err, client) => {
-  if (err) {
-    throw error
-  }
-  db = client.db("AFI_DB");
-  console.log(">> Successfully Connected to MongoDB!");
-});
+const db = await connectToDatabase()
 
 console.log(">> Starting Server...");
 
