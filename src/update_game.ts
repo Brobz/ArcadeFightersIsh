@@ -26,10 +26,11 @@ function finishGameForRoom(room: Room, i: string) {
 }
 
 function checkForGameEnd(){
-  const currentRooms = Object.values(ROOM_LIST);
-  for (const i in currentRooms) {
-    const room = currentRooms[i];
-    if(!room.inGame) continue;
+  for (const i in ROOM_LIST) {
+    const room = ROOM_LIST[i];
+    if(!room.inGame) {
+      continue
+    };
     const thereIsAWinner = room.checkForWin();
     if (!thereIsAWinner) {
       continue;
@@ -136,8 +137,7 @@ function updateGame() {
       continue;
     }
     processPowerups(i);
-    loop:
-      for(let j = room.bullets.length - 1; j > -1; j--){
+    for(let j = room.bullets.length - 1; j > -1; j--){
       const b = room.bullets[j];
       b.updatePosition();
       for(const k in room.blocks){
@@ -158,7 +158,7 @@ function updateGame() {
           }
         }
         room.bullets.splice(j, 1);
-        continue loop;
+        continue;
       }
       if(b.isChild && !b.hasShrinked) {
         b.shrink();
@@ -173,7 +173,7 @@ function updateGame() {
           collider.hp -= b.dmg;
         }
         room.bullets.splice(j, 1);
-        continue loop;
+        continue;
       }
     }
     for(const p of room.players){

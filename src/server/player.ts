@@ -165,7 +165,7 @@ class Player implements Entity {
   }
 
   updateState = () => {
-    this.alive = this.hp <= 0;
+    this.alive = this.hp > 0;
   }
 
   updateShooting = () => {

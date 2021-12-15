@@ -112,18 +112,15 @@ export default class Room {
   }
 
   checkForWin = () => {
-    if(this.players.length <= this.winConditionSize){
-      if(this.winConditionSize == 1){
-        for(const player in this.players){
-          this.winner = this.players[player].name;
-        }
+    if(this.players.length <= this.winConditionSize) {
+      if(this.winConditionSize == 1) {
+        this.winner = this.players[this.players.length - 1].name;
         return true;
       }
       const team = this.players[0].team;
-      for(const i in this.players) {
-        const cTeam = this.players[i].team;
-        if(cTeam != team)
-          return false
+      const otherTeam = this.players.find(player => player.team != team);
+      if (otherTeam != null) {
+        return false;
       }
       this.winner = "Team " + team;
       return true;
@@ -159,7 +156,7 @@ export default class Room {
       playersAlive += 1;
       playerName = player.name;
     }
-    if(playersAlive <= 1){
+    if(playersAlive == 1){
       this.winner = playerName;
       return true;
     }

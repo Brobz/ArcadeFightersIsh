@@ -49,10 +49,6 @@ const generateRandomBlocks = function(){
   return blocks;
 }
 
-function buildMap(room_id: string){
-  ROOM_LIST[room_id].blocks = generateRandomBlocks();
-}
-
 function onDisconnect(id: string) {
   for(var i in ROOM_LIST){
     if(ROOM_LIST[i].players.indexOf(PLAYER_LIST[id]) >= 0){
@@ -140,17 +136,17 @@ function onConnection(socket: Socket, db: Db) {
   });
 
   socket.on("callForGameStart", function(data){
-    if(ROOM_LIST[data.room].players.length < ROOM_LIST[data.room].minSize)
+    const room = ROOM_LIST[data.room];
+    if(room.players.length < room.minSize)
       return;
 
-    ROOM_LIST[data.room].reset();
-    buildMap(data.room);
+    room.reset();
+    room.blocks = generateRandomBlocks();
+    room.inGame = true;
 
-    ROOM_LIST[data.room].inGame = true;
-    for(var i in ROOM_LIST[data.room].players){
-      var s = SOCKET_LIST[ROOM_LIST[data.room].players[i].id];
-      s.emit("startGame", {room: data.room});
-    }
+    room.players.forEach(
+      player => SOCKET_LIST[player.id].emit('startGame', {room: data.room})
+    );
     emitRoomUpdateSignal();
   });
 

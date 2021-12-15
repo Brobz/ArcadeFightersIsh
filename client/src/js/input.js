@@ -1,5 +1,11 @@
 function handleKeyEvents(event, state) {
-  if(socket == null) return;
+  if (canvasElement.style.display == "none") {
+    return;
+  }
+  if(socket == null) {
+    console.log('Socket is null');
+    return;
+  }
 
   const input = [];
   if(event.keyCode == 68)
