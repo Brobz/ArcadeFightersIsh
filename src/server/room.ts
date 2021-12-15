@@ -1,7 +1,7 @@
-import Player from './player';
-import Block from './block';
-import Bullet from './bullet';
-import PowerUp from './powerup';
+import type Player from './player';
+import type Block from './block';
+import type Bullet from './bullet';
+import type PowerUp from './powerup';
 
 export default class Room {
   players: Player[] = [];

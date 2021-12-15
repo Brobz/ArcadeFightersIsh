@@ -99,10 +99,10 @@ function createPowerup(room: Room) {
   let passed = false
   let pUP;
   while(!passed){
-    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var type = Math.floor(Math.random() * (POWERUP_COLORS.length));
-    pUP = new PowerUp([x, y], [15, 15], POWERUP_COLORS[type], type);
+    const x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const type = Math.floor(Math.random() * (POWERUP_COLORS.length));
+    pUP = new PowerUp([x, y], POWERUP_COLORS[type], type);
     const foundElement = room.blocks.find(pUP.checkForCollision);
     passed = foundElement != null;
   }

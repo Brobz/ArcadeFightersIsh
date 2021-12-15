@@ -1,46 +1,41 @@
+import Block from "./block";
+
 const INITIAL_SPEED = 2;
 const INITIAL_SHOOTING_DELAY = 8;
 const INITIAL_BULLET_SIZE = 5;
 const INITIAL_BULLET_DMG = 5;
 
-class Player implements Entity {
-    x = 250;
-    y = 250;
-    width = 20;
-    height = 20;
-    alive = true;
-    maxHp = 40;
-    hp = 40;
-    isMovingLeft = false;
-    isMovingRight = false;
-    isMovingUp = false;
-    isMovingDown = false;
-    isShootingLeft = false;
-    isShootingRight = false;
-    isShootingUp = false;
-    isShootingDown = false;
-    shootingDelay = INITIAL_SHOOTING_DELAY;
-    timeUntilNextShot = 8;
-    hasShield = false;
-    hasMultigun = false;
-    hasClusterGun = false;
-    bulletSize = INITIAL_BULLET_SIZE;
-    bulletDmg = INITIAL_BULLET_DMG;
-    speed = INITIAL_SPEED;
+class Player extends Block {
+  maxHp = 40;
+  hp = 40;
+  isMovingLeft = false;
+  isMovingRight = false;
+  isMovingUp = false;
+  isMovingDown = false;
+  isShootingLeft = false;
+  isShootingRight = false;
+  isShootingUp = false;
+  isShootingDown = false;
+  shootingDelay = INITIAL_SHOOTING_DELAY;
+  timeUntilNextShot = 8;
+  hasShield = false;
+  hasMultigun = false;
+  hasClusterGun = false;
+  bulletSize = INITIAL_BULLET_SIZE;
+  bulletDmg = INITIAL_BULLET_DMG;
+  speed = INITIAL_SPEED;
 
-    powerUpsActive: PowerUpType[] = [];
-    powerUpsTime: number[] = [];
-    team: Team = null;
+  powerUpsActive: PowerUpType[] = [];
+  powerUpsTime: number[] = [];
 
-    id: string;
-    name: string;
-    color: string;
+  id: string;
+  name: string;
 
-    constructor(id: string, name: string, color: string) {
-      this.id = id;
-      this.name = name;
-      this.color = color;
-    }
+  constructor(id: string, name: string, color: string) {
+    super([250, 250], [20, 20], color)
+    this.id = id;
+    this.name = name;
+  }
 
   powerUp = (type: PowerUpType) => {
     const value = Math.random();
@@ -136,19 +131,18 @@ class Player implements Entity {
     y: number
   ) => {
     for(const entity of entities) {
-      if(!(entity.x >= this.x + this.width || entity.x + entity.width <= this.x || entity.y >= this.y + this.height || entity.y + entity.height <= this.y)){
-        if(y < 0){
-          this.y = entity.y + entity.height;
-        }
-        if(y > 0){
-          this.y = entity.y - this.height;
-        }
-        if(x < 0){
-          this.x = entity.x + entity.width;
-        }
-        if(x > 0){
-          this.x = entity.x - this.width;
-        }
+      if(!this.hasCollided(entity)) {
+        continue;
+      }
+      if(y < 0){
+        this.y = entity.y + entity.height;
+      } else {
+        this.y = entity.y - this.height;
+      }
+      if(x < 0){
+        this.x = entity.x + entity.width;
+      } else {
+        this.x = entity.x - this.width;
       }
     }
   }
@@ -185,4 +179,3 @@ class Player implements Entity {
 }
 
 export default Player;
-exports.Player = Player;

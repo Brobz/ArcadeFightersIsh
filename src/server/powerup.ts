@@ -5,17 +5,16 @@ class PowerUp extends Block {
 
   constructor(
     pos: Position,
-    size: Dimensions,
     color: string,
     type: PowerUpType
   ) {
-    super(pos, size, color);
+    super(pos, [15, 15], color);
     this.type = type;
   }
 
   checkForCollision = (entity: Entity) => {
     if(entity == this) return null;
-    if(!(entity.x > this.x + this.width ||  entity.x + entity.width < this.x || entity.y > this.y + this.height || entity.y + entity.height < this.y)){
+    if(this.hasCollided(entity)){
       return entity;
     }
     return null;
