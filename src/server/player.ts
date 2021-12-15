@@ -1,4 +1,6 @@
 import Block from "./block";
+import ActivePowerUp from "./power_up/active_power_up";
+import PowerUp from "./power_up/power_up";
 
 const INITIAL_SPEED = 2;
 const INITIAL_SHOOTING_DELAY = 8;
@@ -25,8 +27,7 @@ class Player extends Block {
   bulletDmg = INITIAL_BULLET_DMG;
   speed = INITIAL_SPEED;
 
-  powerUpsActive: PowerUpType[] = [];
-  powerUpsTime: number[] = [];
+  powerUps: ActivePowerUp[] = [];
 
   id: string;
   name: string;
@@ -37,85 +38,31 @@ class Player extends Block {
     this.name = name;
   }
 
-  powerUp = (type: PowerUpType) => {
-    const value = Math.random();
-    if(type == PowerUpType.HEAL){
-      this.hp = this.maxHp;
+  reset = (pos: Position) => {
+    [this.x, this.y] = pos;
+    this.hp = this.maxHp;
+    this.alive = true;
+    this.powerUps = [];
+    this.shootingDelay = INITIAL_SHOOTING_DELAY;
+    this.speed = INITIAL_SPEED;
+    this.bulletSize = INITIAL_BULLET_SIZE;
+    this.bulletDmg = INITIAL_BULLET_DMG;
+    this.hasClusterGun = false;
+    this.hasShield = false
+    this.hasMultigun = false;
+  }
+
+  powerUp = (powerUp: PowerUp) => {
+    const time = 60 * (Math.random() * 3 + 1) // (60, 240)
+    powerUp.turnOnEffectFor(this, time);
+    if (!(powerUp instanceof ActivePowerUp)) {
       return;
     }
-    const isActive = this.powerUpsActive.indexOf(type) != -1;
-    if (isActive) {
-      return;
-    }
-    if(type == PowerUpType.SPEED){
-      const speedIncrease = value;
-      this.speed *= (1 + speedIncrease);
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 4);
-    }
-    else if(type == PowerUpType.SHIELD){
-      this.hasShield = true;
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 3);
-    }
-    else if(type == PowerUpType.INCREASED_FIRE_RATE){
-      const reducedDelay = (value * 2) + 4;
-      this.shootingDelay -= reducedDelay; // Range of values: (2, 4)
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 3);
-    }
-    else if(type == PowerUpType.MULTI_GUN){
-      this.hasMultigun = true;
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 3);
-    }
-    else if(type == PowerUpType.CLUSTER_GUN){
-      this.hasClusterGun = true;
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 3);
-    }
-    else if(type == PowerUpType.BIG_BULLETS){
-      this.bulletSize = 10;
-      const increasedDamage = (value * 2) + 3;
-      this.bulletDmg += increasedDamage; // Range of values: (7, 9)
-      this.powerUpsActive.push(type);
-      this.powerUpsTime.push(60 * 4);
-    }
+    this.powerUps.push(powerUp);
   }
 
   updatePowerUps = () => {
-    for(let i in this.powerUpsTime){
-      this.powerUpsTime[i] -= 1;
-      const powerUpIsActive = this.powerUpsTime[i] > 0;
-      if (powerUpIsActive) {
-        continue;
-      }
-      switch (this.powerUpsActive[i]) {
-        case PowerUpType.SPEED:
-          this.speed = INITIAL_SPEED;
-          break;
-        case PowerUpType.SHIELD:
-          this.hasShield = false;
-          break;
-        case PowerUpType.INCREASED_FIRE_RATE:
-          this.shootingDelay = INITIAL_SHOOTING_DELAY;
-          break;
-        case PowerUpType.MULTI_GUN:
-          this.hasMultigun = false;
-          break;
-        case PowerUpType.CLUSTER_GUN:
-          this.hasClusterGun = false;
-          break;
-        case PowerUpType.BIG_BULLETS:
-          this.bulletSize = INITIAL_BULLET_SIZE;
-          this.bulletDmg = INITIAL_BULLET_DMG;
-          break;
-      }
-      const index = parseInt(i);
-
-      this.powerUpsTime.splice(index, 1);
-      this.powerUpsActive.splice(index, 1);
-    }
+    this.powerUps = this.powerUps.filter(powerUp => powerUp.updatePowerUp());
   }
 
   move = (x: number, y: number, blocks: Entity[]) => {

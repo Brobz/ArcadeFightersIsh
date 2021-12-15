@@ -1,6 +1,7 @@
-import Block from './block';
+import Block from '../block';
+import {PowerUpType} from './power_up_type';
 
-class PowerUp extends Block {
+class PowerUpBlock extends Block {
   type: PowerUpType;
 
   constructor(
@@ -21,4 +22,4 @@ class PowerUp extends Block {
   }
 }
 
-export default PowerUp;
+export default PowerUpBlock;

@@ -1,13 +1,12 @@
 import {ROOM_LIST, SOCKET_LIST} from './global_data';
 import Bullet from './server/bullet';
 import Player from './server/player';
-import PowerUp from './server/powerup';
+import {AVAILABLE_POWER_UPS} from './server/power_up';
 import Room from './server/room';
 import {emitRoomUpdateSignal} from './socket';
 
 const POWERUP_DELAY = 60 * 7;
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
-const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
 let TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
 
@@ -101,8 +100,8 @@ function createPowerup(room: Room) {
   while(!passed){
     const x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    const type = Math.floor(Math.random() * (POWERUP_COLORS.length));
-    pUP = new PowerUp([x, y], POWERUP_COLORS[type], type);
+    const type = Math.floor(Math.random() * (AVAILABLE_POWER_UPS.length));
+    pUP = new AVAILABLE_POWER_UPS[type]([x, y])
     const foundElement = room.blocks.find(pUP.checkForCollision);
     passed = foundElement != null;
   }
@@ -118,15 +117,14 @@ function processPowerups(room_id: string){
     createPowerup(room);
   }
 
-  for(let i = room.powerups.length - 1; i > -1; i--){
-    for(let player of room.players) {
-      if(!room.powerups[i]) continue;
-      if(room.powerups[i].checkForCollision(player)) {
-        player.powerUp(room.powerups[i].type);
-        room.powerups.splice(i, 1);
-      }
+  room.powerups = room.powerups.filter(powerUp => {
+    const collidedPlayer = room.players.find(powerUp.checkForCollision);
+    if (collidedPlayer == null) {
+      return true;
     }
-  }
+    collidedPlayer.powerUp(powerUp);
+    return false;
+  })
 }
 
 function updateGame() {
@@ -190,7 +188,7 @@ function updateGame() {
         y : p.y,
         hp : p.hp,
         maxHp : p.maxHp,
-        playerPowerups : p.powerUpsActive,
+        playerPowerups : p.powerUps,
         color : p.color,
         room : i,
         team: p.team,
