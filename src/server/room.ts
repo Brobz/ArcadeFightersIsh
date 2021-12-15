@@ -3,7 +3,7 @@ import Block from './block';
 import Bullet from './bullet';
 import PowerUp from './powerup';
 
-class Room {
+export default class Room {
   players: Player[] = [];
   bullets: Bullet[] = [];
   blocks: Block[] = [];
@@ -164,5 +164,13 @@ class Room {
       return true;
     }
     return false;
+  }
+
+  setMaxSize = (maxSize: number) => {
+    this.maxSize = maxSize;
+  }
+
+  setTeamBased = (teamBased: boolean) => {
+    this.teamBased = teamBased;
   }
 }

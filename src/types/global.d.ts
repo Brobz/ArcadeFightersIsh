@@ -1,3 +1,4 @@
+
 declare type Position = [number, number];
 declare type Dimensions = [number, number];
 declare type Team = number | null;

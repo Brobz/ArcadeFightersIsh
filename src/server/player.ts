@@ -179,6 +179,9 @@ class Player implements Entity {
     return false;
   }
 
+  setColor = (color: string) => {
+    this.color = color;
+  }
 }
 
 export default Player;

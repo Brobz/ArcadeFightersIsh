@@ -11,218 +11,18 @@ const server = createServer();
 
 // Bcrypt settings
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
-var ROOM_COUNT = 0;
-var POWERUP_DELAY = 60 * 7;
-var TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
-var SOCKET_LIST = {};
-var PLAYER_LIST = {};
-var ROOM_LIST = {};
-
-const DEFAULT_COLOR = "#c61a93";
+const POWERUP_DELAY = 60 * 7;
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
 const POWERUP_COLORS = ["Green", "Red", "DarkSlateGrey", "GoldenRod", "CornflowerBlue", "DeepPink", "DarkMagenta"];
 
-function getDefaultRoom(roomName, roomCode){
-  return new Room(roomName, roomCode, 2, 4, 1, false, [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]);
-}
-
-const MAP = function(){
-  var blocks = []
-  for(var x = 0; x < 20; x++){
-    for(var y = 0; y < 20; y++){
-      if(!x || !y || x == 19 || y == 19){
-        blocks.push(new Block([x * 20, y * 20], [20, 20], "#100074"));
-      }
-    }
-  }
-
-  for(var i = 0; i < 10; i++){
-    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-
-    blocks.push(new Block([x, y], [20, 20], "#100074"));
-  }
-
-  return blocks;
-}
+let TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
 
 var io = require("socket.io")(server, {});
 var p;
 
 io.sockets.on("connection", function(socket){
-
-    socket.on("signUpInfo", function(data){
-      var res = db.collection("accounts").find({username:data.username});
-      process_signup(data, res, socket);
-    });
-    socket.on("logInInfo", function(data){
-      var res = db.collection("accounts").find({username:data.username});
-      process_login_res(data, res, socket);
-    });
-
-    socket.on("setName", function(data){p.name = data.name;});
-
-    socket.on("joinRoom", function(data){
-      if (data.room == ""){
-        socket.emit("roomErrorEmptyNameJoin", {});
-        return;
-      }
-      let roomExists = data.room in ROOM_LIST;
-
-      if (!roomExists){
-        for(var i in ROOM_LIST){
-          if(ROOM_LIST[i].roomCode == data.room){
-            // JOINING BY ROOM CODE
-            roomExists = true;
-            data.room = ROOM_LIST[i].roomName;
-            break;
-          }
-        }
-        if(!roomExists){
-          socket.emit("roomError404", {room: data.room});
-          return;
-        }
-      }
-
-      if (ROOM_LIST[data.room].inGame){
-        socket.emit("roomErrorInGame", {room: data.room});
-        return;
-      }
-
-      let currentPlayer = PLAYER_LIST[data.player_id];
-
-      if(ROOM_LIST[data.room].players.length >= ROOM_LIST[data.room].maxSize){
-        socket.emit("roomErrorFull", {room: data.room});
-        return;
-      }
-
-      ROOM_LIST[data.room].addPlayer(currentPlayer);
-      emitRoomUpdateSignal();
-    });
-
-    socket.on("createRoom", function(data){
-        if (data.room == ""){
-          socket.emit("roomErrorEmptyNameCreate", {});
-          return;
-        }
-        let roomExists = data.room in ROOM_LIST;
-        if(roomExists){
-          socket.emit("roomErrorAlreadyExists", {room: data.room});
-          return;
-        }
-        let currentPlayer = PLAYER_LIST[data.player_id];
-        ROOM_LIST[data.room] = getDefaultRoom(data.room, "#" + ROOM_COUNT);
-        ROOM_LIST[data.room].addPlayer(currentPlayer);
-        ROOM_COUNT++;
-        emitRoomUpdateSignal();
-      });
-
-    socket.on("leaveRoom", function(data){
-      let roomExists = data.room in ROOM_LIST;
-      if (!roomExists){
-        return;
-      }
-      ROOM_LIST[data.room].removePlayer(PLAYER_LIST[data.player_id]);
-      if (ROOM_LIST[data.room].players.length <= 0){
-        delete ROOM_LIST[data.room];
-      }
-      emitRoomUpdateSignal();
-    });
-
-    socket.on("callForGameStart", function(data){
-      if(ROOM_LIST[data.room].players.length < ROOM_LIST[data.room].minSize)
-        return;
-
-      ROOM_LIST[data.room].reset();
-      buildMap(MAP, data.room);
-
-      ROOM_LIST[data.room].inGame = true;
-      for(var i in ROOM_LIST[data.room].players){
-        var s = SOCKET_LIST[ROOM_LIST[data.room].players[i].id];
-        s.emit("startGame", {room: data.room});
-      }
-      emitRoomUpdateSignal();
-    });
-
-
-    socket.on("changeRoomSettings", function(data){changeRoomSettings(data);});
-
-    socket.on("changePlayerAttribute", function(data){changePlayerAttribute(data);});
-
-    socket.on("keyPress", function(data){getKeyInput(socket.id, data);});
-
-    socket.on("disconnect", function(){Disconnected(socket.id)});
-
 });
-
-async function process_login_res(data, res, socket){
-  var results = await res.toArray();
-  if (results.length <= 0){
-    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
-    return;
-  }
-  var passwordHash = results[0].password;
-  bcrypt.compare(data.password, passwordHash, function(err, res) {
-    // if res == true, password matched
-    // else wrong password
-    if(!res){
-      socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
-      return;
-    }
-    process_login(data, results, socket);
-  });
-}
-
-async function process_signup(data, res, socket){
-  var results = await res.toArray();
-  if(results.length > 0){
-    socket.emit("signUpFailed", {msg: "Sign Up failed: Username already taken!"});
-    return;
-  }else{
-    var res = db.collection("accounts").find({ign:data.ign});
-    process_signup_helper(data, res, socket);
-  }
-}
-
-async function process_signup_helper(data, res, socket){
-  var results = await res.toArray();
-  if(results.length > 0){
-    socket.emit("signUpFailed", {msg: "Sign Up failed: in-game-name already taken!"});
-    return;
-  }else{
-    bcrypt.hash(data.password, saltRounds, (err, hash) => {
-      // Now we can store the password hash in db.
-      db.collection("accounts").insertOne({username: data.username, password: hash, ign: data.ign, color: DEFAULT_COLOR});
-    });
-    socket.emit("signUpSuccessfull", {msg: "Account Created Successfully!"});
-    return;
-  }
-}
-
-async function process_login(data, results, socket){
-  if(data.username in SOCKET_LIST){
-    socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
-    return;
-  }
-
-  socket.id = data.username;
-  SOCKET_LIST[socket.id] = socket;
-
-  p = new Player(socket.id, results[0].ign, results[0].color);
-  PLAYER_LIST[socket.id] = p;
-
-  socket.emit("connected", {
-    msg: p.name,
-    color: p.color,
-    id: socket.id
-  });
-
-  socket.emit("roomUpdate", {
-    rooms : ROOM_LIST,
-  });
-}
 
 function Disconnected(id) {
   for(var i in ROOM_LIST){
@@ -290,10 +90,6 @@ function getKeyInput(id, data){
     }
   }
 
-}
-
-function buildMap(map, room){
-  ROOM_LIST[room].blocks = map();
 }
 
 function checkForGameEnd(){
@@ -480,32 +276,6 @@ function Update(){
   }
 
 
-}
-
-function changePlayerAttribute(data){
-  PLAYER_LIST[data.player][data.attribute] = data.value;
-  emitRoomUpdateSignal();
-  var query = {username: data.player};
-  var newValue = {$set: {color:data.value}};
-  db.collection("accounts").updateOne(query, newValue, function(err, res){
-    if (err) throw err;
-  });
-}
-
-function changeRoomSettings(data){
-  ROOM_LIST[data.room][data.setting] = data.value;
-  ROOM_LIST[data.room].updateTeams();
-  ROOM_LIST[data.room].updateInfo();
-  emitRoomUpdateSignal();
-}
-
-function emitRoomUpdateSignal(){
-  for(var i in SOCKET_LIST){
-    var s = SOCKET_LIST[i];
-    s.emit("roomUpdate", {
-      rooms : ROOM_LIST,
-    });
-  }
 }
 
 setInterval(Update, 1000/60);
