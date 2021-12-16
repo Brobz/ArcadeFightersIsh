@@ -1,5 +1,6 @@
 import AvoidBlocks from "./avoid_blocks";
 import BigBullets from "./big_bullets";
+import BigGuy from "./big_guy";
 import ClusterGun from "./cluster_gun";
 import Heal from "./heal";
 import IncreasedFireRate from "./increased_fire_rate";
@@ -11,6 +12,7 @@ import Speed from "./speed";
 export const AVAILABLE_POWER_UPS = [
   AvoidBlocks,
   BigBullets,
+  BigGuy,
   ClusterGun,
   Heal,
   IncreasedFireRate,
