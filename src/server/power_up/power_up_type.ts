@@ -6,4 +6,5 @@ export enum PowerUpType {
   MULTI_GUN,
   CLUSTER_GUN,
   BIG_BULLETS,
+  AVOID_BLOCKS,
 }

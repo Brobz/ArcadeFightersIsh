@@ -6,10 +6,11 @@ import {Server} from 'socket.io';
 import {processLoginRes, processSignUp} from './login_management';
 import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
 import Room from './server/room';
-import Block from './server/block';
 import {changeRoomSettings} from './update_room_properties';
 import {changePlayerAttribute} from './update_player_properties';
 import {getKeyInput} from './handle_input';
+import WallBlock from './server/wall_block';
+import ObstacleBlock from './server/obstacle_block';
 
 export function emitRoomUpdateSignal(){
   for (const socket of Object.values(SOCKET_LIST)) {
@@ -29,23 +30,25 @@ function getDefaultRoom(roomName: string, roomCode: string){
   );
 }
 
-const generateRandomBlocks = function(){
+function generateRandomBlocks() {
   const blocks = []
-  for(let x = 0; x < 20; x++){
-    for(let y = 0; y < 20; y++){
-      if(!x || !y || x == 19 || y == 19){
-        blocks.push(new Block([x * 20, y * 20], [20, 20], "#100074"));
+  for(let x = 0; x < 20; x++) {
+    if (x == 0 || x == 19) {
+      continue;
+    }
+    for(let y = 0; y < 20; y++) {
+      if (y == 0 || y == 19) {
+        continue;
       }
+      blocks.push(new WallBlock([x * 20, y * 20]));
     }
   }
-
-  for(let i = 0; i < 10; i++){
+  for(let i = 0; i < 10; i++) {
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
 
-    blocks.push(new Block([x, y], [20, 20], "#100074"));
+    blocks.push(new ObstacleBlock([x, y]));
   }
-
   return blocks;
 }
 
