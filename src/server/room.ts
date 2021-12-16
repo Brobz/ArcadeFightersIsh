@@ -1,7 +1,10 @@
 import type Player from './player';
-import type Block from './block';
 import type Bullet from './bullet';
 import type PowerUp from './power_up/power_up';
+import type WallBlock from './wall_block';
+import type ObstacleBlock from './obstacle_block';
+
+type Block = WallBlock | ObstacleBlock;
 
 export default class Room {
   players: Player[] = [];

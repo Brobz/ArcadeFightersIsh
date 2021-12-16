@@ -1,4 +1,5 @@
 import Block from "./block";
+import Bullet from "./bullet";
 import ActivePowerUp from "./power_up/active_power_up";
 import PowerUp from "./power_up/power_up";
 
@@ -23,6 +24,7 @@ class Player extends Block {
   hasShield = false;
   hasMultigun = false;
   hasClusterGun = false;
+  shootThroughBlocks = false;
   bulletSize = INITIAL_BULLET_SIZE;
   bulletDmg = INITIAL_BULLET_DMG;
   speed = INITIAL_SPEED;
@@ -50,6 +52,7 @@ class Player extends Block {
     this.hasClusterGun = false;
     this.hasShield = false
     this.hasMultigun = false;
+    this.shootThroughBlocks = false;
   }
 
   powerUp = (powerUp: PowerUp) => {
@@ -118,6 +121,33 @@ class Player extends Block {
       return true;
     }
     return false;
+  }
+
+  getShootingDir = () => {
+    if (this.isShootingUp) {
+      return 0;
+    } if (this.isShootingDown) {
+      return 1;
+    } if (this.isShootingLeft) {
+      return 2;
+    } if (this.isShootingRight) {
+      return 3;
+    }
+  }
+
+  createBullet = (color: string, dir?: number) => {
+    dir = dir ?? this.getShootingDir();
+    return new Bullet(
+      [this.x + 7, this.y + 7],
+      [this.bulletSize, this.bulletSize],
+      color,
+      this.team,
+      dir,
+      this.bulletDmg,
+      this.hasClusterGun,
+      false,
+      this.shootThroughBlocks,
+    )
   }
 
   setColor = (color: string) => {

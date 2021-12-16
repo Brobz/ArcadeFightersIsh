@@ -1,4 +1,5 @@
 import Block from './block';
+import ObstacleBlock from './obstacle_block';
 
 class Bullet extends Block {
   speed = 5;
@@ -11,6 +12,7 @@ class Bullet extends Block {
   dir: number;
   isCluster: boolean;
   isChild: boolean;
+  canPassThroughWalls: boolean;
   lastX: number;
   lastY: number;
 
@@ -22,7 +24,8 @@ class Bullet extends Block {
     dir: number,
     damage: number,
     cluster: boolean,
-    child: boolean
+    child: boolean,
+    canPassThroughWalls: boolean,
   ) {
     super(pos, size, color);
     this.dmg = damage;
@@ -31,6 +34,7 @@ class Bullet extends Block {
     this.isChild = child;
     this.team = team;
     [this.lastX, this.lastY] = pos;
+    this.canPassThroughWalls = canPassThroughWalls;
   }
 
   normalize = () => {
@@ -83,13 +87,29 @@ class Bullet extends Block {
 
   checkForCollision = <T extends Entity>(entity: T | null) => {
     if(!entity)
-      return;
-    if(this.hasCollided(entity) && entity.team != this.team){
-      return entity;
+      return null;
+    if(!this.hasCollided(entity) || entity.team == this.team){
+      return null;
     }
-    return null;
+    if (this.canPassThroughWalls && entity instanceof ObstacleBlock) {
+      return null;
+    }
+    return entity;
   }
 
+  createClusterBullet = (dir: number) => {
+    return new Bullet(
+      [this.x, this.y],
+      [this.width, this.height],
+      this.color,
+      this.team,
+      dir,
+      this.dmg / 1.5,
+      false,
+      true,
+      this.canPassThroughWalls,
+    );
+  }
 }
 
 export default Bullet;

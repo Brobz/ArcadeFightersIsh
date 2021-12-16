@@ -39,16 +39,6 @@ function checkForGameEnd(){
 }
 
 function getShootingDir(player: Player) {
-  if (player.isShootingUp) {
-    return 0;
-  } if (player.isShootingDown) {
-    return 1;
-  } if (player.isShootingLeft) {
-    return 2;
-  } if (player.isShootingRight) {
-    return 3;
-  }
-  return null;
 }
 
 function shoot(player: Player, room_id: string){
@@ -56,39 +46,21 @@ function shoot(player: Player, room_id: string){
   const bulletColor = room.teamBased ?
     TEAM_COLORS[player.team]:
     player.color;
-  const size: Dimensions = [player.bulletSize, player.bulletSize];
-  const pos: Position = [player.x + 7, player.y + 7];
-  const dir = getShootingDir(player);
-  if (dir == null) {
-    return;
-  }
-  const createBullet = (dir: number) => new Bullet(
-    pos,
-    size,
-    bulletColor,
-    player.team,
-    dir,
-    player.bulletDmg,
-    player.hasClusterGun,
-    false
-  )
-  room.bullets.push(createBullet(dir));
+  room.bullets.push(player.createBullet(bulletColor));
   if (!player.hasMultigun) {
     return;
   }
 
+  const createBullet = (dir: number) => player.createBullet(bulletColor, dir);
   if(player.isShootingUp || player.isShootingLeft){
     room.bullets.push(createBullet(4));
   }
-
   if(player.isShootingDown || player.isShootingRight){
     room.bullets.push(createBullet(5));
   }
-
   if(player.isShootingUp || player.isShootingRight){
     room.bullets.push(createBullet(6));
   }
-
   if(player.isShootingDown || player.isShootingLeft){
     room.bullets.push(createBullet(7));
   }
@@ -137,17 +109,8 @@ function updateGame() {
         const collider = b.checkForCollision(room.blocks[k]);
         if(collider == null) continue;
         if(b.isCluster) {
-          for(let dir = 0; dir < 8; dir++){
-            room.bullets.push(new Bullet(
-              [b.x, b.y],
-              [b.width, b.height],
-              b.color,
-              b.team,
-              dir,
-              b.dmg / 1.5,
-              false,
-              true
-            ));
+          for(let dir = 0; dir < 8; dir++) {
+            room.bullets.push(b.createClusterBullet(dir));
           }
         }
         room.bullets.splice(j, 1);
