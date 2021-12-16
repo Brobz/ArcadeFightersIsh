@@ -13,6 +13,8 @@ import WallBlock from './server/wall_block';
 import ObstacleBlock from './server/obstacle_block';
 
 export function emitRoomUpdateSignal(){
+  // TODO: Update roomUpdate so that it only sends the information of
+  // the desired room, not every single one of them
   for (const socket of Object.values(SOCKET_LIST)) {
     socket.emit('roomUpdate', {rooms: ROOM_LIST});
   }
@@ -82,9 +84,7 @@ function onConnection(socket: Socket, db: Db) {
       socket.emit("roomErrorEmptyNameJoin", {});
       return;
     }
-    let roomExists = data.room in ROOM_LIST;
-
-    if (!roomExists) {
+    if (!(data.room in ROOM_LIST)) {
       const foundRoom = Object.values(ROOM_LIST).find(room => room.roomCode == data.room);
       if (foundRoom == null) {
         socket.emit("roomError404", {room: data.room});
@@ -92,20 +92,17 @@ function onConnection(socket: Socket, db: Db) {
       }
       data.room = foundRoom.roomName;
     }
-
-    if (ROOM_LIST[data.room].inGame){
+    const room = ROOM_LIST[data.room];
+    if (room.inGame){
       socket.emit("roomErrorInGame", {room: data.room});
       return;
     }
-
-    let currentPlayer = PLAYER_LIST[data.player_id];
-
-    if(ROOM_LIST[data.room].players.length >= ROOM_LIST[data.room].maxSize){
+    const currentPlayer = PLAYER_LIST[data.player_id];
+    if(room.players.length >= room.maxSize){
       socket.emit("roomErrorFull", {room: data.room});
       return;
     }
-
-    ROOM_LIST[data.room].addPlayer(currentPlayer);
+    room.addPlayer(currentPlayer);
     emitRoomUpdateSignal();
   });
 
@@ -114,12 +111,12 @@ function onConnection(socket: Socket, db: Db) {
       socket.emit("roomErrorEmptyNameCreate", {});
       return;
     }
-    let roomExists = data.room in ROOM_LIST;
+    const roomExists = data.room in ROOM_LIST;
     if(roomExists){
       socket.emit("roomErrorAlreadyExists", {room: data.room});
       return;
     }
-    let currentPlayer = PLAYER_LIST[data.player_id];
+    const currentPlayer = PLAYER_LIST[data.player_id];
     const roomCount = Object.keys(ROOM_LIST).length;
     ROOM_LIST[data.room] = getDefaultRoom(data.room, "#" + roomCount);
     ROOM_LIST[data.room].addPlayer(currentPlayer);
@@ -163,6 +160,7 @@ function onConnection(socket: Socket, db: Db) {
 }
 
 export default function createIOSocket(server: HTTPServer, db: Db) {
+  // TODO: Update for better typescript support
   const io = new Server(server);
   const handleConnection = (socket: Socket) => onConnection(socket, db);
   io.sockets.on('connection', handleConnection);
