@@ -17,7 +17,7 @@ function finishGameForRoom(room: Room, i: string) {
   }
   setTimeout(() => {
     for(const player of room.players){
-      SOCKET_LIST[player.id].emit("endGame", {room : room, roomIndex: i});
+      SOCKET_LIST[player.id].emit("endGame", {room: room, roomIndex: i});
     }
     room.reset();
     emitRoomUpdateSignal();
@@ -54,7 +54,7 @@ function getShootingDir(player: Player) {
 function shoot(player: Player, room_id: string){
   const room = ROOM_LIST[room_id];
   const bulletColor = room.teamBased ?
-    TEAM_COLORS[player.team] :
+    TEAM_COLORS[player.team]:
     player.color;
   const size: Dimensions = [player.bulletSize, player.bulletSize];
   const pos: Position = [player.x + 7, player.y + 7];
@@ -94,7 +94,7 @@ function shoot(player: Player, room_id: string){
   }
 }
 
-function createPowerup(room: Room) {
+function createPowerUp(room: Room) {
   let passed = false
   let pUP;
   while(!passed){
@@ -103,38 +103,33 @@ function createPowerup(room: Room) {
     const type = Math.floor(Math.random() * (AVAILABLE_POWER_UPS.length));
     pUP = new AVAILABLE_POWER_UPS[type]([x, y])
     const foundElement = room.blocks.find(pUP.checkForCollision);
-    passed = foundElement != null;
+    passed = foundElement == null;
   }
   room.powerups.push(pUP);
   TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
 }
 
-function processPowerups(room_id: string){
+function processPowerUps(room_id: string){
   TIME_UNTIL_NEXT_POWERUP -= 1;
   const room = ROOM_LIST[room_id];
 
   if(TIME_UNTIL_NEXT_POWERUP <= 0) {
-    createPowerup(room);
+    createPowerUp(room);
   }
-
-  room.powerups = room.powerups.filter(powerUp => {
-    const collidedPlayer = room.players.find(powerUp.checkForCollision);
-    if (collidedPlayer == null) {
-      return true;
-    }
-    collidedPlayer.powerUp(powerUp);
-    return false;
-  })
+  room.processPowerUps();
 }
 
 function updateGame() {
-  const infoPack = [];
-  for(let i in ROOM_LIST) {
+  for(const i in ROOM_LIST) {
     const room = ROOM_LIST[i];
+    if (room.players.length <= 0){
+      delete ROOM_LIST[i];
+      continue;
+    }
     if (!room.inGame) {
       continue;
     }
-    processPowerups(i);
+    processPowerUps(i);
     for(let j = room.bullets.length - 1; j > -1; j--){
       const b = room.bullets[j];
       b.updatePosition();
@@ -174,52 +169,41 @@ function updateGame() {
         continue;
       }
     }
+    const playersData = [];
     for(const p of room.players){
       p.updateState();
       p.updatePowerUps();
       if(!p.alive) continue;
-      p .updatePosition(room.blocks);
+      p.updatePosition(room.blocks);
       if(p.updateShooting()){
         shoot(p, i);
       }
-      infoPack.push({
-        name : p.name,
-        x : p.x,
-        y : p.y,
-        hp : p.hp,
-        maxHp : p.maxHp,
-        playerPowerups : p.powerUps,
-        color : p.color,
-        room : i,
+      playersData.push({
+        name: p.name,
+        x: p.x,
+        y: p.y,
+        hp: p.hp,
+        maxHp: p.maxHp,
+        color: p.color,
         team: p.team,
-        teamBased: room.teamBased
+        teamBased: room.teamBased,
+        hasShield: p.hasShield,
       });
     }
-    infoPack.push({
-      bullets : room.bullets,
-      blocks : room.blocks,
-      powerups : room.powerups,
-      room : i,
-      winner : room.winner
-    });
+    const information = {
+      bullets: room.bullets,
+      blocks: room.blocks,
+      powerups: room.powerups,
+      winner: room.winner,
+      playersData,
+    };
+    for(const player of room.players){
+      SOCKET_LIST[player.id].emit("update", information);
+    }
   }
-  return infoPack;
 }
 
 export default function update(){
   checkForGameEnd();
-  const infoPack = updateGame();
-  for(const i in ROOM_LIST){
-    const room =  ROOM_LIST[i];
-    if (room.players.length <= 0){
-      delete ROOM_LIST[i];
-      continue;
-    }
-    if(!room.inGame){
-      continue
-    }
-    for(const player of room.players){
-      SOCKET_LIST[player.id].emit("update", infoPack);
-    }
-  }
+  updateGame();
 }

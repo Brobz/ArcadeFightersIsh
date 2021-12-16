@@ -35,10 +35,10 @@ connectButton.onclick = function(){
   socket = io();
   connectingText.innerHTML = 'Connecting...';
   socket.emit("logInInfo", {username:nameInput.value.toLowerCase(), password:passInput.value});
-  socket.on("connected", function(data){connected(data)});
-  socket.on("connectionFailed", function(data){connectionFailed(data)});
-  socket.on("roomUpdate", function(data){roomUpdate(data)});
-  socket.on("drawEndgameText", function(data){drawEndgameText(data)});
+  socket.on("connected", connected);
+  socket.on("connectionFailed", connectionFailed);
+  socket.on("roomUpdate", roomUpdate);
+  socket.on("drawEndgameText", drawEndgameText);
 }
 const signButton = document.getElementById("signButton");
 signButton.onclick = function(){
@@ -109,7 +109,7 @@ function createRoom(){
     waitingToJoinRoom = -1;
   });
 
-  socket.on("roomErrorEmptyNameCreate", function(data){
+  socket.on("roomErrorEmptyNameCreate", function(){
     roomErrorText.innerHTML = "Invalid input: empty room name!";
     waitingToJoinRoom = -1;
   });
@@ -135,7 +135,7 @@ function joinRoom(){
     waitingToJoinRoom = -1;
   });
 
-  socket.on("roomErrorEmptyNameJoin", function(data){
+  socket.on("roomErrorEmptyNameJoin", function(){
     roomErrorText.innerHTML = "Invalid input: empty room name!";
     waitingToJoinRoom = -1;
   });
@@ -170,11 +170,8 @@ function changePlayerColor(){
 playerColorInput.onchange = changePlayerColor;
 
 const canvasElement = document.getElementById("canvas");
-const canvas = canvasElement.getContext("2d");
 
 const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
-canvas.font = "15px Monaco";
-canvas.textAlign = 'center';
 
 function startGame(data){
   if (currentRoom != data.room) {

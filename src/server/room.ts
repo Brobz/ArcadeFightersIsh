@@ -158,4 +158,20 @@ export default class Room {
   setTeamBased = (teamBased: boolean) => {
     this.teamBased = teamBased;
   }
+
+  setPowerUps = (powerUps: PowerUp[]) => {
+    this.powerups = powerUps;
+  }
+
+  processPowerUps = () => {
+    const newPowerUps = this.powerups.filter(powerUp => {
+      const collidedPlayer = this.players.find(powerUp.checkForCollision);
+      if (collidedPlayer == null) {
+        return true;
+      }
+      collidedPlayer.powerUp(powerUp);
+      return false;
+    });
+    this.setPowerUps(newPowerUps);
+  }
 }
