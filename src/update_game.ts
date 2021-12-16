@@ -1,5 +1,4 @@
 import {ROOM_LIST, SOCKET_LIST} from './global_data';
-import Bullet from './server/bullet';
 import Player from './server/player';
 import {AVAILABLE_POWER_UPS} from './server/power_up';
 import Room from './server/room';
