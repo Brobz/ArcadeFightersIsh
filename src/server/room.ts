@@ -1,7 +1,7 @@
-import Player from './player';
-import Block from './block';
-import Bullet from './bullet';
-import PowerUp from './powerup';
+import type Player from './player';
+import type Block from './block';
+import type Bullet from './bullet';
+import type PowerUp from './power_up/power_up';
 
 export default class Room {
   players: Player[] = [];
@@ -42,21 +42,9 @@ export default class Room {
     this.blocks = [];
     this.powerups = [];
     this.winner = undefined;
-    for(const i in this.players){
-      this.players[i].x = this.playerPositions[i][0];
-      this.players[i].y = this.playerPositions[i][1];
-      this.players[i].hp = this.players[i].maxHp;
-      this.players[i].alive = true;
-      this.players[i].powerUpsTime = [];
-      this.players[i].powerUpsActive = [];
-      this.players[i].shootingDelay = 8;
-      this.players[i].speed = 2;
-      this.players[i].hasClusterGun = false;
-      this.players[i].bulletSize = 7;
-      this.players[i].bulletDmg = 5;
-      this.players[i].hasShield = false;
-      this.players[i].hasMultigun = false;
-    }
+    this.players.forEach((player, index) => {
+      player.reset(this.playerPositions[index])
+    })
   }
 
   updateInfo = () => {
@@ -169,5 +157,21 @@ export default class Room {
 
   setTeamBased = (teamBased: boolean) => {
     this.teamBased = teamBased;
+  }
+
+  setPowerUps = (powerUps: PowerUp[]) => {
+    this.powerups = powerUps;
+  }
+
+  processPowerUps = () => {
+    const newPowerUps = this.powerups.filter(powerUp => {
+      const collidedPlayer = this.players.find(powerUp.checkForCollision);
+      if (collidedPlayer == null) {
+        return true;
+      }
+      collidedPlayer.powerUp(powerUp);
+      return false;
+    });
+    this.setPowerUps(newPowerUps);
   }
 }

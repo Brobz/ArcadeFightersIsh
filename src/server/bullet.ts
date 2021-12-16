@@ -84,8 +84,7 @@ class Bullet extends Block {
   checkForCollision = <T extends Entity>(entity: T | null) => {
     if(!entity)
       return;
-    if(!(entity.x >= this.x + this.width ||  entity.x + entity.width <= this.x || entity.y >= this.y + this.height || entity.y + entity.height <= this.y)
-        && entity.team != this.team){
+    if(this.hasCollided(entity) && entity.team != this.team){
       return entity;
     }
     return null;
