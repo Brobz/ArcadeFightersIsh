@@ -8,7 +8,7 @@ export default class ClusterGun extends ActivePowerUp{
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
-    super.turnOnEffectFor(player, time);
+    this.setValues(player, time);
     player.hasClusterGun = true;
   }
 

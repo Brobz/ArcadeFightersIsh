@@ -8,7 +8,7 @@ export default class MultiGun extends ActivePowerUp{
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
-    super.turnOnEffectFor(player, time);
+    this.setValues(player, time);
     player.hasMultigun = true;
   }
 

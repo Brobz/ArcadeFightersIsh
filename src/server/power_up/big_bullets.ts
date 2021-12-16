@@ -11,7 +11,7 @@ export default class BigBullets extends ActivePowerUp {
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
-    super.turnOnEffectFor(player, time);
+    this.setValues(player, time);
     this.originalBulletDmg = player.bulletDmg;
     this.originalBulletSize = player.bulletSize;
     player.bulletSize = 10;

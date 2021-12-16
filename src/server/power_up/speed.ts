@@ -10,7 +10,7 @@ export default class Speed extends ActivePowerUp{
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
-    super.turnOnEffectFor(player, time);
+    this.setValues(player, time);
     this.originalSpeed = player.speed;
     player.speed *= (1 + Math.random());
   }

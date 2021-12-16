@@ -6,10 +6,12 @@ export default class ActivePowerUp extends PowerUpBlock implements PowerUp {
   player: Player;
   time: number;
 
-  turnOnEffectFor = (player: Player, time: number) => {
+  setValues = (player: Player, time: number) => {
     this.player = player;
     this.time = time;
   }
+
+  turnOnEffectFor = (player: Player, time: number) => {}
 
   setOriginal = () => {}
 

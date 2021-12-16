@@ -10,7 +10,7 @@ export default class IncreasedFireRate extends ActivePowerUp{
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
-    super.turnOnEffectFor(player, time);
+    this.setValues(player, time);
     this.originalShootingDelay = player.shootingDelay
     const reducedDelay = (Math.random() * 2) + 4;
     player.shootingDelay -= reducedDelay; // Range of values: (2, 4)
