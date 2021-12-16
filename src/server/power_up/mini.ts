@@ -7,7 +7,7 @@ export default class Mini extends ActivePowerUp{
   originalHeight: number;
 
   constructor(pos: Position) {
-    super(pos, 'Red', PowerUpType.SPEED);
+    super(pos, 'Brown', PowerUpType.SPEED);
   }
 
   turnOnEffectFor = (player: Player, time: number) => {
