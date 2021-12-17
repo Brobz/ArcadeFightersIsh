@@ -11,6 +11,7 @@ const INITIAL_BULLET_DMG = 5;
 class Player extends Block implements EntityWithTeam {
   maxHp = 40;
   hp = 40;
+  alive = true;
   isMovingLeft = false;
   isMovingRight = false;
   isMovingUp = false;

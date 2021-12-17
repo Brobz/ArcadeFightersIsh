@@ -1,6 +1,5 @@
 import Block from './block';
 import ObstacleBlock from './obstacle_block';
-import Player from './player';
 
 function isEntityWithTeam(entity: Entity): entity is EntityWithTeam {
   return Object.prototype.hasOwnProperty.call(entity, 'team');
@@ -90,10 +89,6 @@ class Bullet extends Block implements EntityWithTeam {
     if(this.trailCounter < this.trailMax) {
       this.trailCounter += 1;
     }
-  }
-
-  isAlive = () => {
-    return this.hp > 0;
   }
 
   checkForCollision = <T extends Entity>(entity: T | null) => {

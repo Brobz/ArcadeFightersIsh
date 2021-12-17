@@ -1,8 +1,4 @@
 abstract class Block implements Entity {
-  alive = true;
-  maxHp = 25;
-  hp = 25;
-
   x: number;
   y: number;
   width: number;
