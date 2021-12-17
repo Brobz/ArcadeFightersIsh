@@ -3,6 +3,7 @@ import type Bullet from './bullet';
 import type PowerUp from './power_up/power_up';
 import type WallBlock from './wall_block';
 import type ObstacleBlock from './obstacle_block';
+import {SOCKET_LIST} from 'src/global_data';
 
 type Block = WallBlock | ObstacleBlock;
 
@@ -176,5 +177,30 @@ export default class Room {
       return false;
     });
     this.setPowerUps(newPowerUps);
+  }
+
+  showEndOfGame = () => {
+    this.inGame = false;
+    this.players.forEach(player => {
+      SOCKET_LIST[player.id].emit("drawEndgameText", {winner: this.winner})
+    });
+  }
+
+  finishGame = () => {
+    this.players.forEach(player => {
+      SOCKET_LIST[player.id].emit(
+        "endGame", {room: this, roomIndex: this.roomName}
+      );
+    });
+    this.reset();
+  }
+
+  collidesWithBlocks = <T extends Entity>(entity: T) => (
+    this.blocks.some(entity.hasCollided)
+  )
+
+  getObjectCollidedWithBullet = (bullet: Bullet) => {
+    return this.blocks.find(bullet.checkForCollision) ??
+      this.players.find(bullet.checkForCollision);
   }
 }

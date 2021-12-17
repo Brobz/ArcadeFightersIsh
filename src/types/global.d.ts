@@ -8,8 +8,11 @@ declare interface Entity {
   width: number;
   height: number;
   color: string;
+  // TODO: Check if we can remove these attributes
   team: Team;
   hp: number;
   maxHp: number;
   alive: boolean;
+
+  hasCollided: (entity: Entity) => boolean;
 }

@@ -112,7 +112,7 @@ class Player extends Block {
     this.alive = this.hp > 0;
   }
 
-  updateShooting = () => {
+  isShooting = () => {
     this.timeUntilNextShot -= 1;
     const canShoot = this.timeUntilNextShot <= 0;
     const isShooting = this.isShootingUp || this.isShootingDown || this.isShootingLeft || this.isShootingRight;

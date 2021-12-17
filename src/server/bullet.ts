@@ -11,6 +11,8 @@ class Bullet extends Block {
   dmg: number;
   dir: number;
   isCluster: boolean;
+  // TODO: Consider create a class that extends bullet but is only
+  // for child bullets
   isChild: boolean;
   canPassThroughWalls: boolean;
   lastX: number;
