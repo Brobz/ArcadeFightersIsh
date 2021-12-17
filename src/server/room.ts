@@ -3,7 +3,7 @@ import type Bullet from './bullet';
 import type PowerUp from './power_up/power_up';
 import type WallBlock from './wall_block';
 import type ObstacleBlock from './obstacle_block';
-import {SOCKET_LIST} from 'src/global_data';
+import {SOCKET_LIST} from '../global_data';
 
 type Block = WallBlock | ObstacleBlock;
 
