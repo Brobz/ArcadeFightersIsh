@@ -110,6 +110,11 @@ class Player extends Block {
 
   updateState = () => {
     this.alive = this.hp > 0;
+    if (!this.alive) {
+      return false;
+    }
+    this.updatePowerUps();
+    return true;
   }
 
   isShooting = () => {

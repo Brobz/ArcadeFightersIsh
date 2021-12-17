@@ -102,9 +102,7 @@ function updateRoomBullets(room: Room) {
 }
 
 function updateRoomPlayer(room: Room, player: Player) {
-    player.updateState();
-    player.updatePowerUps();
-    if(!player.alive) {
+    if(!player.updateState()) {
       return null;
     }
     player.updatePosition(room.blocks);
@@ -142,9 +140,7 @@ function updateGame() {
       winner: room.winner,
       playersData,
     };
-    for(const player of room.players){
-      SOCKET_LIST[player.id].emit("update", information);
-    }
+    room.players.forEach(player => SOCKET_LIST[player.id].emit("update", information));
   }
 }
 

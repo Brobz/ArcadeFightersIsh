@@ -9,6 +9,7 @@ class Bullet extends Block {
   trailMax = 5;
 
   dmg: number;
+  // TODO: Maybe make dir an enum so that it can be more explicit
   dir: number;
   isCluster: boolean;
   // TODO: Consider create a class that extends bullet but is only
@@ -57,7 +58,7 @@ class Bullet extends Block {
         this.lastY -= this.speed;
       }
     }
-    if(this.dir == 1 || this.dir == 5 || this.dir == 7){
+    else if(this.dir == 1 || this.dir == 5 || this.dir == 7){
       this.y += this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastY += this.speed;
@@ -69,18 +70,20 @@ class Bullet extends Block {
         this.lastX -= this.speed;
       }
     }
-    if(this.dir == 3 || this.dir == 5 || this.dir == 6){
+    else if(this.dir == 3 || this.dir == 5 || this.dir == 6){
       this.x += this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastX += this.speed;
       }
     }
 
-    if(this.dir > 3 && !this.hasNormalized)
+    if(this.dir > 3 && !this.hasNormalized) {
       this.normalize();
+    }
 
-    if(this.trailCounter < this.trailMax)
+    if(this.trailCounter < this.trailMax) {
       this.trailCounter += 1;
+    }
   }
 
   isAlive = () => {
