@@ -1,6 +1,6 @@
 import type {Db} from 'mongodb';
 import {PLAYER_LIST} from './global_data';
-import {emitRoomUpdateSignal} from "./socket";
+import {emitRoomUpdateSignal} from "./room_management";
 
 interface PlayerTemplate {
   player: string;

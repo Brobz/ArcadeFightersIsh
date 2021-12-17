@@ -1,5 +1,5 @@
 import {ROOM_LIST} from "./global_data";
-import {emitRoomUpdateSignal} from "./socket";
+import {emitRoomUpdateSignal} from "./room_management";
 
 interface RoomTemplate {
   room: string;

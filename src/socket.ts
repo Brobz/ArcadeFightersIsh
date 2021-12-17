@@ -5,32 +5,12 @@ import type {Socket} from 'socket.io';
 import {Server} from 'socket.io';
 import {processLoginRes, processSignUp} from './login_management';
 import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
-import Room from './server/room';
 import {changeRoomSettings} from './update_room_properties';
 import {changePlayerAttribute} from './update_player_properties';
 import {getKeyInput} from './handle_input';
 import WallBlock from './server/wall_block';
 import ObstacleBlock from './server/obstacle_block';
-
-export function emitRoomUpdateSignal(){
-  // TODO: Update roomUpdate so that it only sends the information of
-  // the desired room, not every single one of them
-  for (const socket of Object.values(SOCKET_LIST)) {
-    socket.emit('roomUpdate', {rooms: ROOM_LIST});
-  }
-}
-
-function getDefaultRoom(roomName: string, roomCode: string){
-  return new Room(
-    roomName,
-    roomCode,
-    2,
-    4,
-    1,
-    false,
-    [[20,20], [360,360], [20, 360], [360, 20], [20, 180], [360, 180], [180, 20], [180, 360]]
-  );
-}
+import {createRoom, emitRoomUpdateSignal, joinRoom, leaveRoom} from './room_management';
 
 function generateRandomBlocks() {
   const blocks = []
@@ -60,7 +40,7 @@ function onDisconnect(id: string) {
       ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
     }
   }
-  emitRoomUpdateSignal();
+  emitRoomUpdateSignal()
   delete SOCKET_LIST[id];
   delete PLAYER_LIST[id];
 
@@ -75,64 +55,6 @@ function onConnection(socket: Socket, db: Db) {
   socket.on("logInInfo", function(data){
     var res = db.collection("accounts").find({username:data.username});
     processLoginRes({data, db, res, socket});
-  });
-
-  socket.on("setName", (data) => socket.data.player.name = data.name);
-
-  socket.on("joinRoom", function(data){
-    if (data.room == ""){
-      socket.emit("roomErrorEmptyNameJoin", {});
-      return;
-    }
-    if (!(data.room in ROOM_LIST)) {
-      const foundRoom = Object.values(ROOM_LIST).find(room => room.roomCode == data.room);
-      if (foundRoom == null) {
-        socket.emit("roomError404", {room: data.room});
-        return;
-      }
-      data.room = foundRoom.roomName;
-    }
-    const room = ROOM_LIST[data.room];
-    if (room.inGame){
-      socket.emit("roomErrorInGame", {room: data.room});
-      return;
-    }
-    const currentPlayer = PLAYER_LIST[data.player_id];
-    if(room.players.length >= room.maxSize){
-      socket.emit("roomErrorFull", {room: data.room});
-      return;
-    }
-    room.addPlayer(currentPlayer);
-    emitRoomUpdateSignal();
-  });
-
-  socket.on("createRoom", function(data){
-    if (data.room == ""){
-      socket.emit("roomErrorEmptyNameCreate", {});
-      return;
-    }
-    const roomExists = data.room in ROOM_LIST;
-    if(roomExists){
-      socket.emit("roomErrorAlreadyExists", {room: data.room});
-      return;
-    }
-    const currentPlayer = PLAYER_LIST[data.player_id];
-    const roomCount = Object.keys(ROOM_LIST).length;
-    ROOM_LIST[data.room] = getDefaultRoom(data.room, "#" + roomCount);
-    ROOM_LIST[data.room].addPlayer(currentPlayer);
-    emitRoomUpdateSignal();
-  });
-
-  socket.on("leaveRoom", function(data){
-    let roomExists = data.room in ROOM_LIST;
-    if (!roomExists){
-      return;
-    }
-    ROOM_LIST[data.room].removePlayer(PLAYER_LIST[data.player_id]);
-    if (ROOM_LIST[data.room].players.length <= 0){
-      delete ROOM_LIST[data.room];
-    }
-    emitRoomUpdateSignal();
   });
 
   socket.on("callForGameStart", function(data){
@@ -150,12 +72,13 @@ function onConnection(socket: Socket, db: Db) {
     emitRoomUpdateSignal();
   });
 
+  socket.on("setName", data => socket.data.player.name = data.name);
+  socket.on("joinRoom", data => joinRoom(data, socket));
+  socket.on("createRoom", data => createRoom(data, socket));
+  socket.on("leaveRoom", data => leaveRoom(data));
   socket.on("changeRoomSettings", changeRoomSettings);
-
-  socket.on("changePlayerAttribute", (data) => changePlayerAttribute(data, db));
-
-  socket.on("keyPress", (data) => getKeyInput(socket.data.id, data));
-
+  socket.on("changePlayerAttribute", data => changePlayerAttribute(data, db));
+  socket.on("keyPress", data => getKeyInput(socket.data.id, data));
   socket.on("disconnect", () => onDisconnect(socket.data.id));
 }
 

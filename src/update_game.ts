@@ -1,7 +1,7 @@
 import type Room from './server/room';
 
 import {AVAILABLE_POWER_UPS} from './server/power_up';
-import {emitRoomUpdateSignal} from './socket';
+import {emitRoomUpdateSignal} from './room_management';
 import {ROOM_LIST, SOCKET_LIST} from './global_data';
 import Player from './server/player';
 
