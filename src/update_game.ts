@@ -6,7 +6,7 @@ import {ROOM_LIST, SOCKET_LIST} from './global_data';
 import Player from './server/player';
 
 const POWER_UP_DELAY = 60 * 7;
-const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
+const TEAM_COLORS = ['', "#0096FF", "#ff6961"];
 
 let TIME_UNTIL_NEXT_POWER_UP = POWER_UP_DELAY;
 
@@ -36,7 +36,7 @@ function shoot(player: Player, room: Room){
     return;
   }
   const bulletColor = room.teamBased ?
-    TEAM_COLORS[player.team]:
+    TEAM_COLORS[player.team ?? 1]:
     player.color;
   room.bullets.push(player.createBullet(bulletColor));
   if (!player.hasMultigun) {
@@ -101,6 +101,27 @@ function updateRoomBullets(room: Room) {
   }
 }
 
+function updateRoomPlayer(room: Room, player: Player) {
+    player.updateState();
+    player.updatePowerUps();
+    if(!player.alive) {
+      return null;
+    }
+    player.updatePosition(room.blocks);
+    shoot(player, room);
+    return {
+      name: player.name,
+      x: player.x,
+      y: player.y,
+      hp: player.hp,
+      maxHp: player.maxHp,
+      color: player.color,
+      team: player.team,
+      teamBased: room.teamBased,
+      hasShield: player.hasShield,
+    };
+}
+
 function updateGame() {
   for(const i in ROOM_LIST) {
     const room = ROOM_LIST[i];
@@ -113,25 +134,7 @@ function updateGame() {
     }
     processPowerUps(room);
     updateRoomBullets(room);
-    const playersData = [];
-    for(const p of room.players){
-      p.updateState();
-      p.updatePowerUps();
-      if(!p.alive) continue;
-      p.updatePosition(room.blocks);
-      shoot(p, room);
-      playersData.push({
-        name: p.name,
-        x: p.x,
-        y: p.y,
-        hp: p.hp,
-        maxHp: p.maxHp,
-        color: p.color,
-        team: p.team,
-        teamBased: room.teamBased,
-        hasShield: p.hasShield,
-      });
-    }
+    const playersData = room.players.map(player => updateRoomPlayer(room, player)).filter(Boolean);
     const information = {
       bullets: room.bullets,
       blocks: room.blocks,

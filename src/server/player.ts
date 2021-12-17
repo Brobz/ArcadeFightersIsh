@@ -130,13 +130,11 @@ class Player extends Block {
       return 1;
     } if (this.isShootingLeft) {
       return 2;
-    } if (this.isShootingRight) {
-      return 3;
-    }
+    } return 3;
   }
 
   createBullet = (color: string, dir?: number) => {
-    dir = dir ?? this.getShootingDir();
+    dir ??= this.getShootingDir();
     return new Bullet(
       [this.x + 7, this.y + 7],
       [this.bulletSize, this.bulletSize],

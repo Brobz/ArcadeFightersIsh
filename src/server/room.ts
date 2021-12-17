@@ -45,7 +45,7 @@ export default class Room {
     this.bullets = [];
     this.blocks = [];
     this.powerups = [];
-    this.winner = undefined;
+    this.winner = null;
     this.players.forEach((player, index) => {
       player.reset(this.playerPositions[index])
     })
@@ -139,20 +139,12 @@ export default class Room {
       }
       return false
     }
-    let playersAlive = 0
-    let playerName: string;
-    for(const player of this.players){
-      if (!player.alive) {
-        continue;
-      }
-      playersAlive += 1;
-      playerName = player.name;
+    const alivePlayers = this.players.filter(player => player.alive);
+    if (alivePlayers.length != 1) {
+      return false;
     }
-    if(playersAlive == 1){
-      this.winner = playerName;
-      return true;
-    }
-    return false;
+    this.winner = alivePlayers[0].name;
+    return true;
   }
 
   setMaxSize = (maxSize: number) => {
