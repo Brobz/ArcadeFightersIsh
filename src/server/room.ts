@@ -52,17 +52,14 @@ export default class Room {
   }
 
   updateInfo = () => {
-    if (String(this.teamBased).toLowerCase() == "true")
-      this.info = "Mode= TDM";
-    else
-      this.info = "Mode= FFA";
-
-    this.info += "<br> Players= " + this.players.length + " / " + this.maxSize;
-
-    if (this.players.length >= this.minSize)
-      this.info += '<br> <span class="text-success"> Game ready to start!</span>';
-    else
-      this.info += '<br><span class="text-danger">(' + (this.minSize - this.players.length) + ' more player needed for game start)</span>';
+    this.info = `Mode=${this.teamBased ? "TDM" : "FFA"}<br>`;
+    this.info += `Players=${this.players.length}/${this.maxSize}<br>`;
+    const difference = this.minSize - this.players.length;
+    if (difference >= 0) {
+      this.info += '<span class="text-success"> Game ready to start!</span>';
+    } else {
+      this.info += `<span class="text-danger">(${difference} more player needed for game start)</span>`;
+    }
   }
 
   removePlayer = (player: Player) => {
@@ -77,21 +74,16 @@ export default class Room {
   }
 
   updateTeamMatch = () => {
-    this.minSize = this.maxSize / 2 + 1;
-    for(const i in this.players) {
-      if(parseInt(i) < this.maxSize / 2){
-        this.players[i].team = 1;
-      } else {
-        this.players[i].team = 2;
-      }
-    }
+    const pivot = this.maxSize / 2;
+    this.minSize = pivot + 1;
+    this.players.forEach((player, i) => {
+      player.team = i < pivot ? 1 : 2;
+    })
   }
 
   updateFreeForAll = () => {
     this.minSize = 2;
-    for(const i in this.players) {
-      this.players[i].team = parseInt(i) + 1;
-    }
+    this.players.forEach((player, i) => player.team = i + 1);
   }
 
   updateTeams = () => {
