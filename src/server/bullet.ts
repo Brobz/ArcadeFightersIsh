@@ -1,7 +1,12 @@
 import Block from './block';
 import ObstacleBlock from './obstacle_block';
+import Player from './player';
 
-class Bullet extends Block {
+function isEntityWithTeam(entity: Entity): entity is EntityWithTeam {
+  return Object.prototype.hasOwnProperty.call(entity, 'team');
+}
+
+class Bullet extends Block implements EntityWithTeam {
   speed = 5;
   hasNormalized = false;
   hasShrinked = false;
@@ -18,6 +23,7 @@ class Bullet extends Block {
   canPassThroughWalls: boolean;
   lastX: number;
   lastY: number;
+  team: Team;
 
   constructor(
     pos: Position,
@@ -93,10 +99,13 @@ class Bullet extends Block {
   checkForCollision = <T extends Entity>(entity: T | null) => {
     if(!entity)
       return null;
-    if(!this.hasCollided(entity) || entity.team == this.team){
+    if(!this.hasCollided(entity)){
       return null;
     }
     if (this.canPassThroughWalls && entity instanceof ObstacleBlock) {
+      return null;
+    }
+    if (this.team != 0 && isEntityWithTeam(entity) && this.team == entity.team) {
       return null;
     }
     return entity;

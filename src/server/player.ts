@@ -8,7 +8,7 @@ const INITIAL_SHOOTING_DELAY = 8;
 const INITIAL_BULLET_SIZE = 5;
 const INITIAL_BULLET_DMG = 5;
 
-class Player extends Block {
+class Player extends Block implements EntityWithTeam {
   maxHp = 40;
   hp = 40;
   isMovingLeft = false;
@@ -30,6 +30,7 @@ class Player extends Block {
   speed = INITIAL_SPEED;
 
   powerUps: ActivePowerUp[] = [];
+  team: Team = 0;
 
   id: string;
   name: string;

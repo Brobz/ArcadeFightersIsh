@@ -1,4 +1,4 @@
-class Block implements Entity {
+abstract class Block implements Entity {
   alive = true;
   maxHp = 25;
   hp = 25;
@@ -8,8 +8,6 @@ class Block implements Entity {
   width: number;
   height: number;
   color: string;
-
-  team: Team = null;
 
   constructor(pos: Position, size: Dimensions, color: string) {
     [this.x, this.y] = pos;
