@@ -5,6 +5,21 @@ function isEntityWithTeam(entity: Entity): entity is EntityWithTeam {
   return Object.prototype.hasOwnProperty.call(entity, 'team');
 }
 
+export const enum Dir {
+  UP = 1,
+  DOWN = 2,
+  LEFT = 4,
+  UP_LEFT = Dir.UP + Dir.LEFT,
+  DOWN_LEFT = Dir.DOWN + Dir.LEFT,
+  RIGHT = 8,
+  UP_RIGHT = Dir.UP + Dir.RIGHT,
+  DOWN_RIGHT = Dir.DOWN + Dir.RIGHT,
+}
+
+export const directions: Dir[] = [
+  Dir.UP, Dir.DOWN, Dir.LEFT, Dir.UP_LEFT, Dir.DOWN_LEFT, Dir.RIGHT, Dir.UP_RIGHT, Dir.DOWN_RIGHT,
+]
+
 class Bullet extends Block implements EntityWithTeam {
   speed = 5;
   hasNormalized = false;
@@ -14,7 +29,7 @@ class Bullet extends Block implements EntityWithTeam {
 
   dmg: number;
   // TODO: Maybe make dir an enum so that it can be more explicit
-  dir: number;
+  dir: Dir;
   isCluster: boolean;
   // TODO: Consider create a class that extends bullet but is only
   // for child bullets
@@ -29,7 +44,7 @@ class Bullet extends Block implements EntityWithTeam {
     size: Dimensions,
     color: string,
     team: Team,
-    dir: number,
+    dir: Dir,
     damage: number,
     cluster: boolean,
     child: boolean,
@@ -57,32 +72,37 @@ class Bullet extends Block implements EntityWithTeam {
   }
 
   updatePosition = () => {
-    if(this.dir == 0 || this.dir == 4 || this.dir == 6){
+    const isGoingUp = (this.dir & Dir.UP) != 0;
+    const isGoingDown = (this.dir & Dir.DOWN) != 0;
+    if(isGoingUp){
       this.y -= this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastY -= this.speed;
       }
     }
-    else if(this.dir == 1 || this.dir == 5 || this.dir == 7){
+    else if (isGoingDown){
       this.y += this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastY += this.speed;
       }
     }
-    if(this.dir == 2 || this.dir == 4 || this.dir == 7){
+    const isGoingLeft = (this.dir & Dir.LEFT) != 0;
+    const isGoingRight = (this.dir & Dir.RIGHT) != 0;
+    if(isGoingLeft){
       this.x -= this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastX -= this.speed;
       }
     }
-    else if(this.dir == 3 || this.dir == 5 || this.dir == 6){
+    else if(isGoingRight){
       this.x += this.speed;
       if(this.trailCounter >= this.trailMax){
         this.lastX += this.speed;
       }
     }
 
-    if(this.dir > 3 && !this.hasNormalized) {
+    const goingDiagonally = (isGoingUp || isGoingDown) && (isGoingLeft || isGoingRight);
+    if(goingDiagonally && !this.hasNormalized) {
       this.normalize();
     }
 

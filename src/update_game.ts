@@ -4,6 +4,7 @@ import {AVAILABLE_POWER_UPS} from './server/power_up';
 import {emitRoomUpdateSignal} from './room_management';
 import {ROOM_LIST, SOCKET_LIST} from './global_data';
 import Player from './server/player';
+import {Dir, directions} from './server/bullet';
 
 const POWER_UP_DELAY = 60 * 7;
 const TEAM_COLORS = ['', "#0096FF", "#ff6961"];
@@ -44,18 +45,10 @@ function shoot(player: Player, room: Room){
   }
 
   const createBullet = (dir: number) => player.createBullet(bulletColor, dir);
-  if(player.isShootingUp || player.isShootingLeft){
-    room.bullets.push(createBullet(4));
-  }
-  else {
-    room.bullets.push(createBullet(5));
-  }
-  if(player.isShootingUp || player.isShootingRight){
-    room.bullets.push(createBullet(6));
-  }
-  else {
-    room.bullets.push(createBullet(7));
-  }
+  const dir1 = (player.isShootingUp || player.isShootingLeft) ? Dir.UP_LEFT : Dir.DOWN_RIGHT;
+  room.bullets.push(createBullet(dir1));
+  const dir2 = (player.isShootingRight || player.isShootingUp) ? Dir.UP_RIGHT : Dir.DOWN_LEFT;
+  room.bullets.push(createBullet(dir2));
 }
 
 function createPowerUp(room: Room) {
@@ -93,9 +86,7 @@ function updateRoomBullets(room: Room) {
     if (objectCollided instanceof Player && !objectCollided.hasShield) {
       objectCollided.hp -= b.dmg;
     } else if (b.isCluster) {
-      for(let dir = 0; dir < 8; dir++) {
-        room.bullets.push(b.createClusterBullet(dir));
-      }
+      directions.forEach(dir => room.bullets.push(b.createClusterBullet(dir)));
     }
     room.bullets.splice(j, 1);
   }

@@ -1,5 +1,5 @@
 import Block from "./block";
-import Bullet from "./bullet";
+import Bullet, {Dir} from "./bullet";
 import ActivePowerUp from "./power_up/active_power_up";
 import PowerUp from "./power_up/power_up";
 
@@ -132,12 +132,12 @@ class Player extends Block implements EntityWithTeam {
 
   getShootingDir = () => {
     if (this.isShootingUp) {
-      return 0;
+      return Dir.UP;
     } if (this.isShootingDown) {
-      return 1;
+      return Dir.DOWN;
     } if (this.isShootingLeft) {
-      return 2;
-    } return 3;
+      return Dir.LEFT;
+    } return Dir.RIGHT;
   }
 
   createBullet = (color: string, dir?: number) => {
