@@ -73,10 +73,6 @@ async function processLogin(
     color: player.color,
     id,
   });
-
-  socket.emit("roomUpdate", {
-    rooms: ROOM_LIST,
-  });
 }
 
 export async function processLoginRes(args: Arguments){

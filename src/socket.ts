@@ -35,11 +35,14 @@ function generateRandomBlocks() {
 }
 
 function onDisconnect(id: string) {
-  for(var i in ROOM_LIST){
-    if(ROOM_LIST[i].players.indexOf(PLAYER_LIST[id]) >= 0){
-      ROOM_LIST[i].removePlayer(PLAYER_LIST[id]);
-    }
+  const player = PLAYER_LIST[id];
+  const room = Object.values(ROOM_LIST).find(
+    room => room.players.indexOf(player) >= 0
+  );
+  if (room == null) {
+    return;
   }
+  room.removePlayer(player);
   emitRoomUpdateSignal()
   delete SOCKET_LIST[id];
   delete PLAYER_LIST[id];
@@ -59,6 +62,9 @@ function onConnection(socket: Socket, db: Db) {
 
   socket.on("callForGameStart", function(data){
     const room = ROOM_LIST[data.room];
+    if (room == null) {
+      return;
+    }
     if(room.players.length < room.minSize)
       return;
 

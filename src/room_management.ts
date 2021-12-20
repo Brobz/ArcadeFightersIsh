@@ -20,11 +20,11 @@ function getDefaultRoom(roomName: string, roomCode: string){
 }
 
 export function emitRoomUpdateSignal(){
-  // TODO: Update roomUpdate so that it only sends the information of
-  // the desired room, not every single one of them
-  for (const socket of Object.values(SOCKET_LIST)) {
-    socket.emit('roomUpdate', {rooms: ROOM_LIST});
-  }
+  Object.values(ROOM_LIST).forEach(room => {
+    room.players.forEach(player => {
+      SOCKET_LIST[player.id].emit('roomUpdate', {room})
+    })
+  })
 }
 
 export function joinRoom(data: RoomEventsData, socket: Socket) {

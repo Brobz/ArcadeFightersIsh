@@ -1,7 +1,7 @@
 var socket;
 var id;
 var currentRoom;
-var waitingToJoinRoom = -1;
+var waitingToJoinRoom = false;
 
 // Labels and other elements without listeners
 const login_SignupDiv = document.getElementById("login_SignupDiv");
@@ -102,49 +102,51 @@ const createRoomButton = document.getElementById("createRoomButton");
 function createRoom(){
   roomErrorText.innerHTML = "";
   socket.emit("createRoom", {room: roomNameInput.value, player_id:id});
-  waitingToJoinRoom = roomNameInput.value;
+  waitingToJoinRoom = true;
 
   socket.on("roomErrorAlreadyExists", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' already exists on this server!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 
   socket.on("roomErrorEmptyNameCreate", function(){
     roomErrorText.innerHTML = "Invalid input: empty room name!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 }
 createRoomButton.onclick = createRoom;
 function joinRoom(){
   roomErrorText.innerHTML = "";
   socket.emit("joinRoom", {room: roomNameInput.value, player_id: id});
-  waitingToJoinRoom = roomNameInput.value;
+  waitingToJoinRoom = true;
 
   socket.on("roomError404", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' does not currently exist on the server!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 
   socket.on("roomErrorInGame", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' is currently in a game!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 
   socket.on("roomErrorFull", function(data){
     roomErrorText.innerHTML = "Room '" + data.room + "' is currently full!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 
   socket.on("roomErrorEmptyNameJoin", function(){
     roomErrorText.innerHTML = "Invalid input: empty room name!";
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
   });
 }
 document.getElementById('joinRoomButton').onclick = joinRoom
 function leaveRoom(){
   socket.emit("leaveRoom", {room: currentRoom, player_id: id});
   winnerText.innerHTML = "";
-  currentRoom = -1;
+  currentRoom = "";
+  roomInputDiv.style.display = "";
+  roomsDiv.style.display = "none";
 }
 document.getElementById('leaveRoomButton').onclick = leaveRoom
 const gameModeRoomSettingInput = document.getElementById('gameModeRoomSettingInput')
@@ -219,24 +221,18 @@ function updateSingleRoomPerPlayer(room, player, k) {
   startGameButton.disabled = false;
 }
 
-function updateSingleRoom(room, i) {
-  if(waitingToJoinRoom == i || waitingToJoinRoom == room.roomCode){
+function updateSingleRoom(room) {
+  if(waitingToJoinRoom){
     const canJoinRoom = room.players.find(player => player.id == id) != null;
     if (!canJoinRoom) {
       return;
     }
     roomsDiv.style.display = "";
-    currentRoomTitleText.innerHTML = i;
+    currentRoomTitleText.innerHTML = room.roomName;
+    currentRoom = room.roomName;
     currentRoomCodeText.innerHTML = "Room " + room.roomCode;
-    if (waitingToJoinRoom == i) {
-      currentRoom = waitingToJoinRoom;
-    } else {
-      currentRoom = i;
-    }
-    waitingToJoinRoom = -1;
+    waitingToJoinRoom = false;
     roomInputDiv.style.display = "none";
-  } else if(currentRoom != i) {
-    return;
   }
   roomHostControlsDiv.style.display = "none";
   roomHostControlBlockedText.style.display = "";
@@ -259,11 +255,7 @@ function updateSingleRoom(room, i) {
 
 function roomUpdate(data){
   currentRoomPlayersText.innerHTML = ""
-  if (currentRoom == -1){
-    roomInputDiv.style.display = "";
-    roomsDiv.style.display = "none";
-  }
-  data.rooms.forEach(updateSingleRoom);
+  updateSingleRoom(data.room);
 }
 
 function connected(data){
