@@ -12,19 +12,23 @@ import WallBlock from './server/wall_block';
 import ObstacleBlock from './server/obstacle_block';
 import {createRoom, emitRoomUpdateSignal, joinRoom, leaveRoom} from './room_management';
 
-function generateRandomBlocks() {
+function buildWall() {
   const blocks = []
   for(let x = 0; x < 20; x++) {
-    if (x == 0 || x == 19) {
-      continue;
-    }
+    const invalidX = x != 0 && x != 19;
     for(let y = 0; y < 20; y++) {
-      if (y == 0 || y == 19) {
+      const invalidY = y != 0 && y != 19
+      if (invalidX && invalidY) {
         continue;
       }
       blocks.push(new WallBlock([x * 20, y * 20]));
     }
   }
+  return blocks;
+}
+
+function generateRandomBlocks() {
+  const blocks = []
   for(let i = 0; i < 10; i++) {
     var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
@@ -32,6 +36,12 @@ function generateRandomBlocks() {
     blocks.push(new ObstacleBlock([x, y]));
   }
   return blocks;
+}
+
+function generateMap () {
+  const map: (WallBlock | ObstacleBlock)[] = buildWall();
+  map.concat(generateRandomBlocks());
+  return map;
 }
 
 function onDisconnect(id: string) {
@@ -69,7 +79,7 @@ function onConnection(socket: Socket, db: Db) {
       return;
 
     room.reset();
-    room.blocks = generateRandomBlocks();
+    room.blocks = generateMap();
     room.inGame = true;
 
     room.players.forEach(
