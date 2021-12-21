@@ -1,6 +1,6 @@
 declare type Position = [number, number];
 declare type Dimensions = [number, number];
-declare type Team = number | null;
+declare type Team = number;
 
 declare interface Entity {
   x: number;
@@ -8,8 +8,10 @@ declare interface Entity {
   width: number;
   height: number;
   color: string;
-  team: Team;
-  hp: number;
-  maxHp: number;
-  alive: boolean;
+
+  hasCollided: (entity: Entity) => boolean;
+}
+
+declare interface EntityWithTeam extends Entity {
+  team: Team
 }

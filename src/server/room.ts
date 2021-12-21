@@ -3,6 +3,7 @@ import type Bullet from './bullet';
 import type PowerUp from './power_up/power_up';
 import type WallBlock from './wall_block';
 import type ObstacleBlock from './obstacle_block';
+import {SOCKET_LIST} from '../global_data';
 
 type Block = WallBlock | ObstacleBlock;
 
@@ -44,24 +45,21 @@ export default class Room {
     this.bullets = [];
     this.blocks = [];
     this.powerups = [];
-    this.winner = undefined;
+    this.winner = null;
     this.players.forEach((player, index) => {
       player.reset(this.playerPositions[index])
     })
   }
 
   updateInfo = () => {
-    if (String(this.teamBased).toLowerCase() == "true")
-      this.info = "Mode= TDM";
-    else
-      this.info = "Mode= FFA";
-
-    this.info += "<br> Players= " + this.players.length + " / " + this.maxSize;
-
-    if (this.players.length >= this.minSize)
-      this.info += '<br> <span class="text-success"> Game ready to start!</span>';
-    else
-      this.info += '<br><span class="text-danger">(' + (this.minSize - this.players.length) + ' more player needed for game start)</span>';
+    this.info = `Mode=${this.teamBased ? "TDM" : "FFA"}<br>`;
+    this.info += `Players=${this.players.length}/${this.maxSize}<br>`;
+    const difference = this.minSize - this.players.length;
+    if (difference >= 0) {
+      this.info += '<span class="text-success"> Game ready to start!</span>';
+    } else {
+      this.info += `<span class="text-danger">(${difference} more player needed for game start)</span>`;
+    }
   }
 
   removePlayer = (player: Player) => {
@@ -76,21 +74,16 @@ export default class Room {
   }
 
   updateTeamMatch = () => {
-    this.minSize = this.maxSize / 2 + 1;
-    for(const i in this.players) {
-      if(parseInt(i) < this.maxSize / 2){
-        this.players[i].team = 1;
-      } else {
-        this.players[i].team = 2;
-      }
-    }
+    const pivot = this.maxSize / 2;
+    this.minSize = pivot + 1;
+    this.players.forEach((player, i) => {
+      player.team = i < pivot ? 1 : 2;
+    })
   }
 
   updateFreeForAll = () => {
     this.minSize = 2;
-    for(const i in this.players) {
-      this.players[i].team = parseInt(i) + 1;
-    }
+    this.players.forEach((player, i) => player.team = i + 1);
   }
 
   updateTeams = () => {
@@ -138,20 +131,12 @@ export default class Room {
       }
       return false
     }
-    let playersAlive = 0
-    let playerName: string;
-    for(const player of this.players){
-      if (!player.alive) {
-        continue;
-      }
-      playersAlive += 1;
-      playerName = player.name;
+    const alivePlayers = this.players.filter(player => player.alive);
+    if (alivePlayers.length != 1) {
+      return false;
     }
-    if(playersAlive == 1){
-      this.winner = playerName;
-      return true;
-    }
-    return false;
+    this.winner = alivePlayers[0].name;
+    return true;
   }
 
   setMaxSize = (maxSize: number) => {
@@ -176,5 +161,30 @@ export default class Room {
       return false;
     });
     this.setPowerUps(newPowerUps);
+  }
+
+  showEndOfGame = () => {
+    this.inGame = false;
+    this.players.forEach(player => {
+      SOCKET_LIST[player.id].emit("drawEndgameText", {winner: this.winner})
+    });
+  }
+
+  finishGame = () => {
+    this.players.forEach(player => {
+      SOCKET_LIST[player.id].emit(
+        "endGame", {room: this, roomIndex: this.roomName}
+      );
+    });
+    this.reset();
+  }
+
+  collidesWithBlocks = <T extends Entity>(entity: T) => (
+    this.blocks.some(entity.hasCollided)
+  )
+
+  getObjectCollidedWithBullet = (bullet: Bullet) => {
+    return this.blocks.find(bullet.checkForCollision) ??
+      this.players.find(bullet.checkForCollision);
   }
 }

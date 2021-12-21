@@ -1,5 +1,5 @@
 import Block from "./block";
-import Bullet from "./bullet";
+import Bullet, {Dir} from "./bullet";
 import ActivePowerUp from "./power_up/active_power_up";
 import PowerUp from "./power_up/power_up";
 
@@ -8,9 +8,10 @@ const INITIAL_SHOOTING_DELAY = 8;
 const INITIAL_BULLET_SIZE = 5;
 const INITIAL_BULLET_DMG = 5;
 
-class Player extends Block {
+class Player extends Block implements EntityWithTeam {
   maxHp = 40;
   hp = 40;
+  alive = true;
   isMovingLeft = false;
   isMovingRight = false;
   isMovingUp = false;
@@ -30,6 +31,7 @@ class Player extends Block {
   speed = INITIAL_SPEED;
 
   powerUps: ActivePowerUp[] = [];
+  team: Team = 0;
 
   id: string;
   name: string;
@@ -110,9 +112,14 @@ class Player extends Block {
 
   updateState = () => {
     this.alive = this.hp > 0;
+    if (!this.alive) {
+      return false;
+    }
+    this.updatePowerUps();
+    return true;
   }
 
-  updateShooting = () => {
+  isShooting = () => {
     this.timeUntilNextShot -= 1;
     const canShoot = this.timeUntilNextShot <= 0;
     const isShooting = this.isShootingUp || this.isShootingDown || this.isShootingLeft || this.isShootingRight;
@@ -125,18 +132,16 @@ class Player extends Block {
 
   getShootingDir = () => {
     if (this.isShootingUp) {
-      return 0;
+      return Dir.UP;
     } if (this.isShootingDown) {
-      return 1;
+      return Dir.DOWN;
     } if (this.isShootingLeft) {
-      return 2;
-    } if (this.isShootingRight) {
-      return 3;
-    }
+      return Dir.LEFT;
+    } return Dir.RIGHT;
   }
 
   createBullet = (color: string, dir?: number) => {
-    dir = dir ?? this.getShootingDir();
+    dir ??= this.getShootingDir();
     return new Bullet(
       [this.x + 7, this.y + 7],
       [this.bulletSize, this.bulletSize],

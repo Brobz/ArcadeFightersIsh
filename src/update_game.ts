@@ -1,32 +1,26 @@
-import {ROOM_LIST, SOCKET_LIST} from './global_data';
-import Bullet from './server/bullet';
-import Player from './server/player';
+import type Room from './server/room';
+
 import {AVAILABLE_POWER_UPS} from './server/power_up';
-import Room from './server/room';
-import {emitRoomUpdateSignal} from './socket';
+import {emitRoomUpdateSignal} from './room_management';
+import {ROOM_LIST, SOCKET_LIST} from './global_data';
+import Player from './server/player';
+import {Dir, directions} from './server/bullet';
 
-const POWERUP_DELAY = 60 * 7;
-const TEAM_COLORS = [undefined, "#0096FF", "#ff6961"];
+const POWER_UP_DELAY = 60 * 7;
+const TEAM_COLORS = ['', "#0096FF", "#ff6961"];
 
-let TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
+let TIME_UNTIL_NEXT_POWER_UP = POWER_UP_DELAY;
 
-function finishGameForRoom(room: Room, i: string) {
-  room.inGame = false;
-  for(const player of room.players) {
-    SOCKET_LIST[player.id].emit("drawEndgameText", {winner: room.winner});
-  }
+function finishGameForRoom(room: Room) {
+  room.showEndOfGame();
   setTimeout(() => {
-    for(const player of room.players){
-      SOCKET_LIST[player.id].emit("endGame", {room: room, roomIndex: i});
-    }
-    room.reset();
+    room.finishGame();
     emitRoomUpdateSignal();
   }, 3000);
 }
 
 function checkForGameEnd(){
-  for (const i in ROOM_LIST) {
-    const room = ROOM_LIST[i];
+  for (const room of Object.values(ROOM_LIST)) {
     if(!room.inGame) {
       continue
     };
@@ -34,17 +28,16 @@ function checkForGameEnd(){
     if (!thereIsAWinner) {
       continue;
     }
-    finishGameForRoom(room, i);
+    finishGameForRoom(room);
   }
 }
 
-function getShootingDir(player: Player) {
-}
-
-function shoot(player: Player, room_id: string){
-  const room = ROOM_LIST[room_id];
+function shoot(player: Player, room: Room){
+  if (!player.isShooting()) {
+    return;
+  }
   const bulletColor = room.teamBased ?
-    TEAM_COLORS[player.team]:
+    TEAM_COLORS[player.team ?? 1]:
     player.color;
   room.bullets.push(player.createBullet(bulletColor));
   if (!player.hasMultigun) {
@@ -52,43 +45,70 @@ function shoot(player: Player, room_id: string){
   }
 
   const createBullet = (dir: number) => player.createBullet(bulletColor, dir);
-  if(player.isShootingUp || player.isShootingLeft){
-    room.bullets.push(createBullet(4));
-  }
-  if(player.isShootingDown || player.isShootingRight){
-    room.bullets.push(createBullet(5));
-  }
-  if(player.isShootingUp || player.isShootingRight){
-    room.bullets.push(createBullet(6));
-  }
-  if(player.isShootingDown || player.isShootingLeft){
-    room.bullets.push(createBullet(7));
-  }
+  const dir1 = (player.isShootingUp || player.isShootingLeft) ? Dir.UP_LEFT : Dir.DOWN_RIGHT;
+  room.bullets.push(createBullet(dir1));
+  const dir2 = (player.isShootingRight || player.isShootingUp) ? Dir.UP_RIGHT : Dir.DOWN_LEFT;
+  room.bullets.push(createBullet(dir2));
 }
 
 function createPowerUp(room: Room) {
-  let passed = false
   let pUP;
-  while(!passed){
+  do {
     const x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     const type = Math.floor(Math.random() * (AVAILABLE_POWER_UPS.length));
     pUP = new AVAILABLE_POWER_UPS[type]([x, y])
-    const foundElement = room.blocks.find(pUP.checkForCollision);
-    passed = foundElement == null;
-  }
+  } while (!room.collidesWithBlocks(pUP));
   room.powerups.push(pUP);
-  TIME_UNTIL_NEXT_POWERUP = POWERUP_DELAY;
+  TIME_UNTIL_NEXT_POWER_UP = POWER_UP_DELAY;
 }
 
-function processPowerUps(room_id: string){
-  TIME_UNTIL_NEXT_POWERUP -= 1;
-  const room = ROOM_LIST[room_id];
+function processPowerUps(room: Room){
+  TIME_UNTIL_NEXT_POWER_UP -= 1;
 
-  if(TIME_UNTIL_NEXT_POWERUP <= 0) {
+  if(TIME_UNTIL_NEXT_POWER_UP <= 0) {
     createPowerUp(room);
   }
   room.processPowerUps();
+}
+
+function updateRoomBullets(room: Room) {
+  for(let j = room.bullets.length - 1; j > -1; j--){
+    const b = room.bullets[j];
+    b.updatePosition();
+    if(b.isChild && !b.hasShrinked) {
+      b.shrink();
+    }
+    const objectCollided = room.getObjectCollidedWithBullet(b);
+    if (objectCollided == null) {
+      continue;
+    }
+    if (objectCollided instanceof Player && !objectCollided.hasShield) {
+      objectCollided.hp -= b.dmg;
+    } else if (b.isCluster) {
+      directions.forEach(dir => room.bullets.push(b.createClusterBullet(dir)));
+    }
+    room.bullets.splice(j, 1);
+  }
+}
+
+function updateRoomPlayer(room: Room, player: Player) {
+    if(!player.updateState()) {
+      return null;
+    }
+    player.updatePosition(room.blocks);
+    shoot(player, room);
+    return {
+      name: player.name,
+      x: player.x,
+      y: player.y,
+      hp: player.hp,
+      maxHp: player.maxHp,
+      color: player.color,
+      team: player.team,
+      teamBased: room.teamBased,
+      hasShield: player.hasShield,
+    };
 }
 
 function updateGame() {
@@ -101,58 +121,9 @@ function updateGame() {
     if (!room.inGame) {
       continue;
     }
-    processPowerUps(i);
-    for(let j = room.bullets.length - 1; j > -1; j--){
-      const b = room.bullets[j];
-      b.updatePosition();
-      for(const k in room.blocks){
-        const collider = b.checkForCollision(room.blocks[k]);
-        if(collider == null) continue;
-        if(b.isCluster) {
-          for(let dir = 0; dir < 8; dir++) {
-            room.bullets.push(b.createClusterBullet(dir));
-          }
-        }
-        room.bullets.splice(j, 1);
-        continue;
-      }
-      if(b.isChild && !b.hasShrinked) {
-        b.shrink();
-      }
-      for (const player of room.players) {
-        if(!player.alive) {
-          continue
-        }
-        const collider = b.checkForCollision(player);
-        if(collider == null) continue;
-        if(!collider.hasShield) {
-          collider.hp -= b.dmg;
-        }
-        room.bullets.splice(j, 1);
-        continue;
-      }
-    }
-    const playersData = [];
-    for(const p of room.players){
-      p.updateState();
-      p.updatePowerUps();
-      if(!p.alive) continue;
-      p.updatePosition(room.blocks);
-      if(p.updateShooting()){
-        shoot(p, i);
-      }
-      playersData.push({
-        name: p.name,
-        x: p.x,
-        y: p.y,
-        hp: p.hp,
-        maxHp: p.maxHp,
-        color: p.color,
-        team: p.team,
-        teamBased: room.teamBased,
-        hasShield: p.hasShield,
-      });
-    }
+    processPowerUps(room);
+    updateRoomBullets(room);
+    const playersData = room.players.map(player => updateRoomPlayer(room, player)).filter(Boolean);
     const information = {
       bullets: room.bullets,
       blocks: room.blocks,
@@ -160,9 +131,7 @@ function updateGame() {
       winner: room.winner,
       playersData,
     };
-    for(const player of room.players){
-      SOCKET_LIST[player.id].emit("update", information);
-    }
+    room.players.forEach(player => SOCKET_LIST[player.id].emit("update", information));
   }
 }
 
