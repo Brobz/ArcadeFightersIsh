@@ -141,7 +141,7 @@ class Player extends Block implements EntityWithTeam {
   }
 
   createBullet = (color: string, dir?: number) => {
-    dir ??= this.getShootingDir();
+    if (dir == null) dir = this.getShootingDir();
     return new Bullet(
       [this.x + 7, this.y + 7],
       [this.bulletSize, this.bulletSize],
