@@ -1,3 +1,6 @@
+declare module 'bcrypt';
+declare module 'express';
+
 declare type Position = [number, number];
 declare type Dimensions = [number, number];
 declare type Team = number;
