@@ -12,7 +12,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run prod",
-    "build": "tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
+    "tsc": "tsc",
+    "build": "npm run tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
     "lint": "eslint . & echo 'lint complete'",
     "dev": "ts-node-dev --respawn ./src/app.js",
     "run-node": "node --experimental-modules --es-module-specifier-resolution=node",
