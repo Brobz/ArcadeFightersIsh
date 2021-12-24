@@ -7,13 +7,12 @@
     "bcrypt": "^5.0.1",
     "express": "^4.14.0",
     "mongodb": "^4.2.0",
-    "socket.io": "^4.4.0",
-    "typescript": "^2.7.2"
+    "socket.io": "^4.4.0"
   },
   "scripts": {
+    "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run prod",
-    "tsc": "tsc",
     "build": "npm run tsc && rm -rf ./built/client && cp -r ./client ./built/client/",
     "lint": "eslint . & echo 'lint complete'",
     "dev": "ts-node-dev --respawn ./src/app.js",
