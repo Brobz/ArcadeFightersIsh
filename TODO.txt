@@ -1,0 +1,7 @@
+TODO:
+
+-> Add Single Color Strictness
+  -> No two players my have the same color on the server!!!
+    -> Accounts will now be created with a random (unique) color
+    -> Upon selecting an already existing color (which is checked via a DB query), an alert is displayed and the selection is reverted!
+      -> Please choose another color!

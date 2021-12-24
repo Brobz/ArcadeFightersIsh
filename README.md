@@ -18,7 +18,7 @@ Green - 	Heal up to max health.<br>
 Blue - 		Shoot a spray of bullets in 3 directions.<br>
 Gray - 		Potent shield that grants complete immunity.<br>
 Red - 	  Boost of movement speed.<br>
-Pink - 		Bullets split into 3 smaller bullets uppon impact.<br>
+Pink - 		Bullets split into 3 smaller bullets upon impact.<br>
 Purple - 	Shoot bigger and more damaging bullets.<br>
 Gold - 		Increased fire rate.<br>
 Orange -  Allows bullets to pass through obstacles.<br>
