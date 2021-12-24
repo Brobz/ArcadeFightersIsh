@@ -40,8 +40,8 @@ function generateRandomBlocks() {
 
 function generateMap () {
   const map: (WallBlock | ObstacleBlock)[] = buildWall();
-  map.concat(generateRandomBlocks());
-  return map;
+  let obstacleBlocks = generateRandomBlocks();
+  return map.concat(obstacleBlocks);
 }
 
 function onDisconnect(id: string) {

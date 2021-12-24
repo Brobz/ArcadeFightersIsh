@@ -102,6 +102,8 @@ function updateRoomPlayer(room: Room, player: Player) {
       name: player.name,
       x: player.x,
       y: player.y,
+      width: player.width,
+      height: player.height,
       hp: player.hp,
       maxHp: player.maxHp,
       color: player.color,

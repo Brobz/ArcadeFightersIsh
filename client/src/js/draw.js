@@ -21,7 +21,6 @@ function drawPowerUps(data) {
     dPupBlur = -1;
   powerupBlur += pupRate * dPupBlur;
 
-  //canvas.drawImage(ring_borders_img, 0, 0);
   for(const powerUp of data.powerups) {
     canvas.shadowBlur = powerupBlur;
     canvas.shadowColor = powerUp.color;
@@ -64,12 +63,12 @@ function drawBlocks(data) {
 function drawPlayer(data) {
   if(data.hasShield) {
     canvas.fillStyle = "DarkSlateGrey";
-    canvas.fillRect(data.x - 5, data.y - 5, 30, 30);
+    canvas.fillRect(data.x - 5, data.y - 5, data.width + 10, data.height + 10);
   }
   canvas.fillStyle = data.color;
-  canvas.fillRect(data.x, data.y, 20, 20);
+  canvas.fillRect(data.x, data.y, data.width, data.height);
   canvas.fillText(data.name, data.x + 10, data.y - 15);
-  canvas.strokeRect(data.x, data.y, 20, 20);
+  canvas.strokeRect(data.x, data.y, data.width, data.height);
 
   if(data.teamBased){
     canvas.fillStyle = TEAM_COLORS[data.team];
