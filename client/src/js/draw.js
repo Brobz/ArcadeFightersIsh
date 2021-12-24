@@ -1,5 +1,8 @@
+const canvas = canvasElement.getContext("2d");
+canvas.font = "15px Monaco";
+canvas.textAlign = 'center';
 canvas.scale(1.25, 1.25);
-var powerupBlur = 0;
+let powerupBlur = 0;
 var dPupBlur = 1;
 var pupMax = 60;
 var pupRate = 1;
@@ -11,88 +14,84 @@ function drawEndgameText(data){
   canvas.fillText(data.winner + " is victorious!", 200, 200);
 }
 
-function draw(data){
+function drawPowerUps(data) {
+  if(powerupBlur == 0)
+    dPupBlur = 1;
+  if(powerupBlur == pupMax)
+    dPupBlur = -1;
+  powerupBlur += pupRate * dPupBlur;
+
+  //canvas.drawImage(ring_borders_img, 0, 0);
+  for(const powerUp of data.powerups) {
+    canvas.shadowBlur = powerupBlur;
+    canvas.shadowColor = powerUp.color;
+    canvas.fillStyle = powerUp.color;
+    canvas.fillRect(powerUp.x, powerUp.y, powerUp.width, powerUp.height);
+    canvas.strokeRect(powerUp.x, powerUp.y, powerUp.width, powerUp.height);
+  }
+
+  canvas.shadowBlur = 0;
+}
+
+function drawBullets(data) {
+  for(const bullet of data.bullets){
+    canvas.fillStyle = bullet.color;
+    canvas.strokeStyle = bullet.color;
+    canvas.globalAlpha = 0.3;
+    canvas.lineWidth = bullet.width;
+    canvas.beginPath();
+    canvas.moveTo(bullet.lastX + bullet.width / 2, bullet.lastY + bullet.height / 2);
+    canvas.lineTo(bullet.x + bullet.width / 2, bullet.y + bullet.height / 2);
+    canvas.stroke();
+    canvas.globalAlpha = 1;
+    canvas.lineWidth = 1;
+    canvas.strokeStyle = "black";
+    canvas.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+    canvas.strokeRect(bullet.x, bullet.y, bullet.width, bullet.height);
+  }
+}
+
+function drawBlocks(data) {
+  for(const block of data.blocks){
+    canvas.fillStyle = block.color;
+    canvas.lineWidth = 3;
+    canvas.fillRect(block.x, block.y, block.width, block.height);
+    canvas.strokeRect(block.x, block.y, block.width, block.height);
+    canvas.lineWidth = 1;
+  }
+}
+
+function drawPlayer(data) {
+  if(data.hasShield) {
+    canvas.fillStyle = "DarkSlateGrey";
+    canvas.fillRect(data.x - 5, data.y - 5, 30, 30);
+  }
+  canvas.fillStyle = data.color;
+  canvas.fillRect(data.x, data.y, 20, 20);
+  canvas.fillText(data.name, data.x + 10, data.y - 15);
+  canvas.strokeRect(data.x, data.y, 20, 20);
+
+  if(data.teamBased){
+    canvas.fillStyle = TEAM_COLORS[data.team];
+    canvas.fillRect(data.x + 4, data.y + 4, 12, 12);
+    canvas.strokeRect(data.x + 4, data.y + 4, 12, 12);
+  }
+
+  canvas.fillStyle = "#FF0000";
+  canvas.strokeStyle = "#000000";
+  canvas.fillRect(data.x - 10, data.y - 10, 40, 5);
+  canvas.strokeRect(data.x - 10, data.y - 10, 40, 5);
+  canvas.fillStyle = "#00FF00";
+  canvas.fillRect(data.x - 10, data.y - 10, 40 * (data.hp / data.maxHp), 5);
+  canvas.strokeRect(data.x - 10, data.y - 10, 40 * (data.hp / data.maxHp), 5);
+}
+
+function draw(data) {
   canvas.font = "10px monospace";
   canvas.clearRect(0, 0, 500, 500);
   canvas.strokeStyle = "#000000";
-  for(var i = data.length - 1; i > -1; i--){
-    if(data[i].room != currentRoom)
-      continue;
-
-    if(data[i].blocks != null){
-
-      if(powerupBlur == 0)
-        dPupBlur = 1;
-      if(powerupBlur == pupMax)
-        dPupBlur = -1;
-
-      powerupBlur += pupRate * dPupBlur;
-
-      //canvas.drawImage(ring_borders_img, 0, 0);
-      for(var k in data[i].powerups){
-        canvas.shadowBlur = powerupBlur;
-        canvas.shadowColor = data[i].powerups[k].color;
-        canvas.fillStyle = data[i].powerups[k].color;
-        canvas.fillRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
-        canvas.strokeRect(data[i].powerups[k].x, data[i].powerups[k].y, data[i].powerups[k].width, data[i].powerups[k].height);
-      }
-
-      canvas.shadowBlur = 0;
-
-
-      for(var k in data[i].bullets){
-        canvas.fillStyle = data[i].bullets[k].color;
-        canvas.strokeStyle = data[i].bullets[k].color;
-        canvas.globalAlpha = 0.3;
-        canvas.lineWidth = data[i].bullets[k].width;
-        canvas.beginPath();
-        canvas.moveTo(data[i].bullets[k].lastX + data[i].bullets[k].width / 2, data[i].bullets[k].lastY + data[i].bullets[k].height / 2);
-        canvas.lineTo(data[i].bullets[k].x + data[i].bullets[k].width / 2, data[i].bullets[k].y + data[i].bullets[k].height / 2);
-        canvas.stroke();
-        canvas.globalAlpha = 1;
-        canvas.lineWidth = 1;
-        canvas.strokeStyle = "black";
-        canvas.fillRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
-        canvas.strokeRect(data[i].bullets[k].x, data[i].bullets[k].y, data[i].bullets[k].width, data[i].bullets[k].height);
-      }
-
-      for(var k = 0; k < data[i].blocks.length; k++){
-        //canvas.drawImage(block_img, data[i].blocks[k].x, data[i].blocks[k].y);
-
-        canvas.fillStyle = data[i].blocks[k].color;
-        canvas.lineWidth = 3;
-        canvas.fillRect(data[i].blocks[k].x, data[i].blocks[k].y, 20, 20);
-        canvas.strokeRect(data[i].blocks[k].x, data[i].blocks[k].y, 20, 20);
-        canvas.lineWidth = 1;
-      }
-    }
-
-    for(var k in data[i].playerPowerups){
-      if(data[i].playerPowerups[k] == 2){
-        canvas.fillStyle = "DarkSlateGrey";
-        canvas.fillRect(data[i].x - 5, data[i].y - 5, 30, 30);
-      }
-    }
-
-    canvas.fillStyle = data[i].color;
-    canvas.fillRect(data[i].x, data[i].y, 20, 20);
-    canvas.fillText(data[i].name, data[i].x + 10, data[i].y - 15);
-    canvas.strokeRect(data[i].x, data[i].y, 20, 20);
-
-    if(data[i].teamBased){
-      canvas.fillStyle = TEAM_COLORS[data[i].team];
-      canvas.fillRect(data[i].x + 4, data[i].y + 4, 12, 12);
-      canvas.strokeRect(data[i].x + 4, data[i].y + 4, 12, 12);
-    }
-
-    canvas.fillStyle = "#FF0000";
-    canvas.strokeStyle = "#000000";
-    canvas.fillRect(data[i].x - 10, data[i].y - 10, 40, 5);
-    canvas.strokeRect(data[i].x - 10, data[i].y - 10, 40, 5);
-    canvas.fillStyle = "#00FF00";
-    canvas.fillRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
-    canvas.strokeRect(data[i].x - 10, data[i].y - 10, 40 * (data[i].hp / data[i].maxHp), 5);
-
-  }
-
+  drawPowerUps(data);
+  drawBullets(data);
+  drawBlocks(data);
+  data.playersData.forEach(drawPlayer);
 }
