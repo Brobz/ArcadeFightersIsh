@@ -7,7 +7,7 @@ export default class BigGuy extends ActivePowerUp{
   originalHeight: number;
 
   constructor(pos: Position) {
-    super(pos, 'Cyan', PowerUpType.SPEED);
+    super(pos, 'Cyan', PowerUpType.SIZE);
   }
 
   turnOnEffectFor = (player: Player, time: number) => {

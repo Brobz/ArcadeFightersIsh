@@ -1,6 +1,7 @@
 export const enum PowerUpType {
   HEAL,
   SPEED,
+  SIZE,
   SHIELD,
   INCREASED_FIRE_RATE,
   MULTI_GUN,

@@ -1,6 +1,6 @@
 {
   "name": "ArcadeFightersIsh",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Online multiplayer arcade game; WASD keys to move, arrow keys to shoot!",
   "main": "app.js",
   "dependencies": {
