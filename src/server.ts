@@ -6,7 +6,7 @@ export default function createServer() {
   const app = express();
   const server = new Server(app);
 
-  app.get("/", function(req, res){
+  app.get("/", function(req: any, res: any){
       res.sendFile(__dirname + "/client/index.html");
   });
 
