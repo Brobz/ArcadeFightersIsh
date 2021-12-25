@@ -49,10 +49,7 @@ function onDisconnect(id: string) {
   const room = Object.values(ROOM_LIST).find(
     room => room.players.indexOf(player) >= 0
   );
-  if (room == null) {
-    return;
-  }
-  room.removePlayer(player);
+  if (room != null) room.removePlayer(player);
   emitRoomUpdateSignal()
   delete SOCKET_LIST[id];
   delete PLAYER_LIST[id];
