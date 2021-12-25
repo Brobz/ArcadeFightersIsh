@@ -4,4 +4,21 @@ TODO:
   -> No two players my have the same color on the server!!!
     -> Accounts will now be created with a random (unique) color
     -> Upon selecting an already existing color (which is checked via a DB query), an alert is displayed and the selection is reverted!
-      -> Please choose another color!
+      -> XXX Already has this color! Please choose another color!
+
+-> Optimize obstacle and powerup generation
+  -> Disallow clipping! (no more overlapping obstacles, no more powerups behind obstacles!)
+
+-> Add further lobby customization
+  -> Choose available powerups, obstacle size / amount, powerup strength, spawning positions, etc.
+  -> Maybe a map editor???
+
+-> Add more game modes!
+  -> Capture the flag?
+  -> Domination?
+  -> King of the Hill?
+  -> One in the Chamber?
+  -> Infected?
+
+-> Add a Queue system?
+  -> ELO matchmaking?
