@@ -65,14 +65,13 @@ function onDisconnect(id: string) {
 }
 
 function onConnection(socket: Socket, db: Db) {
+  const collection = db.collection('accounts');
   socket.on("signUpInfo", async function(data){
-    const res = db.collection("accounts").find({username:data.username});
-    await processSignUp({data, db, res, socket});
+    await processSignUp({collection, data, socket});
   });
 
-  socket.on("logInInfo", function(data){
-    var res = db.collection("accounts").find({username:data.username});
-    processLoginRes({data, db, res, socket});
+  socket.on("logInInfo", async function(data){
+    await processLoginRes({collection, data, socket});
   });
 
   socket.on("callForGameStart", function(data){
