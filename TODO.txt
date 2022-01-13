@@ -7,7 +7,7 @@ TODO:
       -> XXX Already has this color! Please choose another color!
 
 -> Optimize obstacle and powerup generation
-  -> Disallow clipping! (no more overlapping obstacles, no more powerups behind obstacles!)
+  -> Disallow clipping! (no more overlapping obstacles)
 
 -> Add further lobby customization
   -> Choose available powerups, obstacle size / amount, powerup strength, spawning positions, etc.

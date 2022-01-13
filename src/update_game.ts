@@ -58,7 +58,7 @@ function createPowerUp(room: Room) {
     const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     const type = Math.floor(Math.random() * (AVAILABLE_POWER_UPS.length));
     pUP = new AVAILABLE_POWER_UPS[type]([x, y])
-  } while (!room.collidesWithBlocks(pUP));
+  } while (room.collidesWithBlocks(pUP));
   room.powerups.push(pUP);
   TIME_UNTIL_NEXT_POWER_UP = POWER_UP_DELAY;
 }
