@@ -59,11 +59,11 @@ async function checkIfDuplicateIGN({collection, data: {ign}}: Arguments) {
 export async function processSignUp(args: Arguments) {
   const {socket} = args;
   try {
-    checkIfDuplicateUsername(args);
-    checkIfDuplicateIGN(args);
+    await checkIfDuplicateUsername(args);
+    await checkIfDuplicateIGN(args);
   } catch (error) {
     if (error instanceof Error) {
-      socket.emit('signUpFailed', error.message);
+      socket.emit('signUpFailed', {msg: error.message});
     }
     return;
   }
