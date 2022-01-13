@@ -57,7 +57,7 @@ signButton.onclick = function(){
   socket = io();
   signedText.innerHTML = "Signing Up...";
   socket.emit("signUpInfo", {username:nameInput.value.toLowerCase(), password:passInput.value, ign:ignInput.value});
-  socket.on("signUpSuccessfull", function(data){
+  socket.on("signUpSuccessful", function(data){
     signedText.innerHTML = '<span style="color:DarkGreen;">' + data.msg + '</span>';
   });
   socket.on("signUpFailed", function(data){
