@@ -55,7 +55,7 @@ export default class Room {
     this.info = `Mode: ${this.teamBased ? "TDM" : "FFA"}<br>`;
     this.info += `Players: ${this.players.length} / ${this.maxSize}<br>`;
     const difference = this.minSize - this.players.length;
-    if (difference >= 0) {
+    if (difference <= 0) {
       this.info += '<span class="text-success"> Game ready to start!</span>';
     } else {
       this.info += `<span class="text-danger">(${difference} more player needed for game start)</span>`;
