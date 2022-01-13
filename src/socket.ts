@@ -28,12 +28,17 @@ function buildWall() {
 }
 
 function generateRandomBlocks() {
-  const blocks = []
-  for(let i = 0; i < 10; i++) {
-    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+  const blocks: ObstacleBlock[] = [];
+  while (blocks.length < 10) {
+    const x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const block = new ObstacleBlock([x, y]);
 
-    blocks.push(new ObstacleBlock([x, y]));
+    if (blocks.some(block.hasCollided)) {
+      continue;
+    }
+
+    blocks.push(block);
   }
   return blocks;
 }
