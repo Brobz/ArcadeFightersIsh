@@ -7,7 +7,13 @@ export default async function connectToDatabase() {
   if (dbURI == null) {
     throw Error('You should add the environmental variable DATABASE_URI');
   }
-  const client = await MongoClient.connect(dbURI);
-  console.log(">> Successfully Connected to MongoDB!")
-  return client.db('AFI_DB');
+  try {
+    const client = await MongoClient.connect(dbURI);
+    console.log(">> Successfully Connected to MongoDB!")
+    return client.db('AFI_DB');
+  } catch (error) {
+    console.log('>> Error connecting to MongoDB')
+    console.log(error);
+    throw error;
+  }
 }
