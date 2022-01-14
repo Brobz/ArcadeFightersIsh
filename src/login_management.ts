@@ -1,70 +1,85 @@
 import type {Socket} from 'socket.io';
-import type {Db, Document, FindCursor, WithId} from 'mongodb';
+import type {Collection, Document, WithId} from 'mongodb';
 
 import bcrypt from 'bcrypt'
 import Player from './server/player'
-import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
+import {PLAYER_LIST, SOCKET_LIST} from './global_data';
 
 type DbResult = WithId<Document>
-type DbResponse = FindCursor<DbResult>;
 interface LoginData {
   username: string;
   password: string;
   ign: string;
 }
 interface Arguments {
+  collection: Collection<Document>,
   data: LoginData;
-  db: Db
-  res: DbResponse;
   socket: Socket;
 }
 
 const SALT_ROUNDS = 10;
-const DEFAULT_COLOR = "#c61a93";
 
-async function processSignUpHelper({data, db, res, socket}: Arguments) {
-  const results = await res.toArray();
-  if(results.length > 0){
-    socket.emit("signUpFailed", {msg: "Sign Up failed: in-game-name already taken!"});
-    return;
-  }
+function generateRandomColor() {
+  const generateRandomValue = () => Math.round(Math.random() * 256).toString(16);
+  const r = generateRandomValue();
+  const g = generateRandomValue();
+  const b = generateRandomValue();
+  return `#${r}${g}${b}`;
+}
+
+async function createUser({collection, data, socket}: Arguments) {
   const hash = await bcrypt.hash(data.password, SALT_ROUNDS)
-  db.collection("accounts").insertOne({
+  const color = generateRandomColor();
+  collection.insertOne({
     username: data.username,
     password: hash,
     ign: data.ign,
-    color: DEFAULT_COLOR,
+    color,
   });
 
   socket.emit("signUpSuccessful", {msg: "Account Created Successfully!"});
 }
 
-export async function processSignUp(args: Arguments) {
-  const {data, db, socket} = args;
-  const results = await args.res.toArray();
-  if(results.length > 0) {
-    socket.emit("signUpFailed", {msg: "Sign Up failed: Username already taken!"});
+async function checkIfDuplicateUsername({collection, data: {username}}: Arguments) {
+  const results = await collection.find({username}).toArray();
+  if (results.length == 0) {
     return;
   }
-  const res = db.collection("accounts").find({ign:data.ign});
-  await processSignUpHelper(args);
+  throw Error('Sign Up failed: Username already taken!');
+}
+
+async function checkIfDuplicateIGN({collection, data: {ign}}: Arguments) {
+  const results = await collection.find({ign}).toArray();
+  if (results.length == 0) {
+    return;
+  }
+  throw Error('Sign Up failed: in-game-name already taken!');
+}
+
+export async function processSignUp(args: Arguments) {
+  const {socket} = args;
+  try {
+    await checkIfDuplicateUsername(args);
+    await checkIfDuplicateIGN(args);
+  } catch (error) {
+    if (error instanceof Error) {
+      socket.emit('signUpFailed', {msg: error.message});
+    }
+    return;
+  }
+  await createUser(args);
 }
 
 async function processLogin(
   data: LoginData,
   socket: Socket,
-  results: DbResult[],
+  result: DbResult,
 ) {
-  if(data.username in SOCKET_LIST){
-    socket.emit("connectionFailed", {msg:"This account is currently logged in elsewhere!"});
-    return;
-  }
-
   const id = data.username;
   socket.data.id = id;
   SOCKET_LIST[id] = socket;
 
-  const player = new Player(id, results[0].ign, results[0].color);
+  const player = new Player(id, result.ign, result.color);
   socket.data.player = player;
   PLAYER_LIST[id] = player;
 
@@ -75,17 +90,37 @@ async function processLogin(
   });
 }
 
+function checkIfConnected({data: {username}}: Arguments) {
+  if (username in SOCKET_LIST) {
+    throw Error('This account is currently logged in elsewhere!');
+  }
+  return;
+}
+
+async function getUser({collection, data: {username, password}}: Arguments) {
+  const results = await collection.find({username}).toArray();
+  if (results.length == 0) {
+    throw Error('Invalid Username/Password');
+  }
+  const user = results[0];
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) {
+    throw Error('Invalid Username/Password');
+  }
+  return user;
+}
+
 export async function processLoginRes(args: Arguments){
-  const results = await args.res.toArray();
-  const {data, socket} = args;
-  if (results.length <= 0){
-    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
+  const {socket} = args;
+  let user: DbResult;
+  try {
+    checkIfConnected(args);
+    user = await getUser(args);
+  } catch(error) {
+    if (error instanceof Error) {
+      socket.emit("connectionFailed", {msg: error.message});
+    }
     return;
   }
-  const valid = await bcrypt.compare(data.password, results[0].password);
-  if(!valid){
-    socket.emit("connectionFailed", {msg:"Invalid Username/Password"});
-    return;
-  }
-  await processLogin(data, socket, results);
+  await processLogin(args.data, socket, user);
 }

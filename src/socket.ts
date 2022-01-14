@@ -28,12 +28,17 @@ function buildWall() {
 }
 
 function generateRandomBlocks() {
-  const blocks = []
-  for(let i = 0; i < 10; i++) {
-    var x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    var y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+  const blocks: ObstacleBlock[] = [];
+  while (blocks.length < 10) {
+    const x = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const y = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    const block = new ObstacleBlock([x, y]);
 
-    blocks.push(new ObstacleBlock([x, y]));
+    if (blocks.some(block.hasCollided)) {
+      continue;
+    }
+
+    blocks.push(block);
   }
   return blocks;
 }
@@ -60,14 +65,13 @@ function onDisconnect(id: string) {
 }
 
 function onConnection(socket: Socket, db: Db) {
+  const collection = db.collection('accounts');
   socket.on("signUpInfo", async function(data){
-    const res = db.collection("accounts").find({username:data.username});
-    await processSignUp({data, db, res, socket});
+    await processSignUp({collection, data, socket});
   });
 
-  socket.on("logInInfo", function(data){
-    var res = db.collection("accounts").find({username:data.username});
-    processLoginRes({data, db, res, socket});
+  socket.on("logInInfo", async function(data){
+    await processLoginRes({collection, data, socket});
   });
 
   socket.on("callForGameStart", function(data){
