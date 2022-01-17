@@ -14,6 +14,7 @@ export default class Room {
   powerups: PowerUp[] = [];
   inGame = false;
   info = "NO ROOM INFO";
+  canStartGame = false;
   winner: string | null = null;
 
   roomName: string;
@@ -57,8 +58,10 @@ export default class Room {
     const difference = this.minSize - this.players.length;
     if (difference <= 0) {
       this.info += '<span class="text-success"> Game ready to start!</span>';
+      this.canStartGame = true;
     } else {
       this.info += `<span class="text-danger">(${difference} more player needed for game start)</span>`;
+      this.canStartGame = false;
     }
   }
 

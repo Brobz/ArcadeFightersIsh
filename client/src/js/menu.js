@@ -218,7 +218,7 @@ function updateSingleRoomPerPlayer(room, player, k) {
   }
   roomHostControlsDiv.style.display = "";
   roomHostControlBlockedText.style.display = "none";
-  startGameButton.disabled = false;
+  startGameButton.disabled = !room.canStartGame;
 }
 
 function updateSingleRoom(room) {

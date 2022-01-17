@@ -28,7 +28,6 @@ class Bullet extends Block implements EntityWithTeam {
   trailMax = 5;
 
   dmg: number;
-  // TODO: Maybe make dir an enum so that it can be more explicit
   dir: Dir;
   isCluster: boolean;
   // TODO: Consider create a class that extends bullet but is only
