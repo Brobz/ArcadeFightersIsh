@@ -6,6 +6,16 @@ TODO:
     -> Upon selecting an already existing color (which is checked via a DB query), an alert is displayed and the selection is reverted!
       -> XXX Already has this color! Please choose another color!
 
+-> Make use of the new REFRESH_RATE var in order to always maintain a base game speed, no matter the refresh rate setting!
+
+-> Refactor "teamBased" mode
+  -> Make "team count" & "players per team" optional optional parameters
+
+-> Add more player data
+  -> Games played, W/L, total kills, total deaths, k/d, total shots fired, accuracy
+  -> Powerups picked up info, total game time, damage dealt, damage taken
+  -> Rooms created, rooms joined, etc...
+
 -> Add further lobby customization
   -> Choose available powerups, obstacle size / amount, powerup strength, spawning positions, etc.
   -> Maybe a map editor???

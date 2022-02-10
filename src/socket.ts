@@ -102,7 +102,6 @@ function onConnection(socket: Socket, db: Db) {
 }
 
 export default function createIOSocket(server: HTTPServer, db: Db) {
-  // TODO: Update for better typescript support
   const io = new Server(server);
   const handleConnection = (socket: Socket) => onConnection(socket, db);
   io.sockets.on('connection', handleConnection);

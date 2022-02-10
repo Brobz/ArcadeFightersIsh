@@ -201,14 +201,14 @@ function endGame(data){
 
 function updateSingleRoomPerPlayer(room, player, k) {
   if(room.teamBased){
-    currentRoomPlayersText.innerHTML += '<br><span style="color:' + player.color + ';">' + player.name + '</span><span style="color:' + TEAM_COLORS[player.team] + ';"> | Team ' + player.team + "</span>";
+    currentRoomPlayersText.innerHTML += '<br><span style="color:' + player.color + ';">' + player.name + '</span><span style="color:' + TEAM_COLORS[player.team] + ';"> | Team ' + player.team + " | </span>";
   } else {
-    currentRoomPlayersText.innerHTML += '<br><span style="color:' + player.color + ';">' + player.name + " | Team " + player.team + "</span>";
+    currentRoomPlayersText.innerHTML += '<br><span style="color:' + player.color + ';">' + player.name + " | Team " + player.team + " | </span>";
   }
   if (k != 0) {
     return;
   }
-  currentRoomPlayersText.innerHTML += '<span style="color:' + player.color + ';">' + "<b> | HOST |</b>";
+  currentRoomPlayersText.innerHTML += '<span style="color:' + player.color + ';">' + "<b>HOST |</b>";
   const playerIsHost = player.id == id;
   if (!playerIsHost) {
     return;

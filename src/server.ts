@@ -4,6 +4,8 @@ import { Server } from 'http';
 export default function createServer() {
 
   const app = express();
+
+  // Need to encapsulate our express app inside of an HTTP server, as socket.io requires it
   const server = new Server(app);
 
   // Serve all site contents from the /client folder to all default route "/" requests
