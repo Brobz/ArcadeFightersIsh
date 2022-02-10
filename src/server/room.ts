@@ -176,7 +176,7 @@ export default class Room {
   finishGame = () => {
     this.players.forEach(player => {
       SOCKET_LIST[player.id].emit(
-        "endGame", {room: this, roomIndex: this.roomName}
+        "endGame", {winner: this.winner, teamBased: this.teamBased, roomIndex: this.roomName}
       );
     });
     this.reset();

@@ -14,8 +14,13 @@ export default function createServer() {
     res.status(404).sendFile(__dirname + "/client/404.html");
   });
 
+  // Grab the port number from env vars
+  const port = process.env.PORT
+  if (port == null)
+    throw Error('>> Environment Variable missing: "PORT"');
+
   // Start the server (listen on specified port for incoming connections)
-  server.listen(process.env.PORT || 5000);
+  server.listen(port);
 
   // All done!
   console.log(">> Server Ready!");

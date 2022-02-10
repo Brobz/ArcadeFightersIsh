@@ -151,8 +151,8 @@ function leaveRoom(){
 document.getElementById('leaveRoomButton').onclick = leaveRoom
 const gameModeRoomSettingInput = document.getElementById('gameModeRoomSettingInput')
 function updateGameModeRoomSetting(){
-  socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value});
-  if(gameModeRoomSettingInput.value == "true"){
+  socket.emit("changeRoomSettings", {room: currentRoom, setting: "teamBased", value: gameModeRoomSettingInput.value == "true"});
+  if(gameModeRoomSettingInput.value){
     if(parseInt(maxPlayerInput.value) % 2){
       maxPlayerInput.value = Math.min(8, parseInt(maxPlayerInput.value) + 1);
     }
@@ -186,17 +186,14 @@ function startGame(data){
 }
 
 function endGame(data){
-  if (data.roomIndex != currentRoom) {
+  if (data.roomIndex != currentRoom)
     return;
-  }
-  const players = data.room.players;
-  const player = players.find(player => player.alive);
-  if (!data.room.teamBased) {
-    winnerText.innerHTML = player.name + " WON!<br>";
-    winnerText.innerHTML += "with " + Math.round(player.hp) + " hp left<br>";
-  } else {
-    winnerText.innerHTML = "Team " + player.team + " WON!<br>";
-  }
+
+  if (!data.teamBased)
+    winnerText.innerHTML = data.winner + " WON!<br>";
+  else
+    winnerText.innerHTML = data.winner + " WON!<br>";
+
   connectedText.style.display = "";
   roomsDiv.style.display = "";
   canvasElement.style.display = "none";

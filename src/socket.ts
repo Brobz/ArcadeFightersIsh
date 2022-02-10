@@ -92,7 +92,6 @@ function onConnection(socket: Socket, db: Db) {
     emitRoomUpdateSignal();
   });
 
-  socket.on("setName", data => socket.data.player.name = data.name);
   socket.on("joinRoom", data => joinRoom(data, socket));
   socket.on("createRoom", data => createRoom(data, socket));
   socket.on("leaveRoom", data => leaveRoom(data));

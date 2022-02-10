@@ -4,9 +4,8 @@ const dbURI = process.env.DATABASE_URI;
 
 export default async function connectToDatabase() {
   console.log(">> Connecting to MongoDB...");
-  if (dbURI == null) {
-    throw Error('>> Enviroment Variable missing: "DATABASE_URI"');
-  }
+  if (dbURI == null)
+    throw Error('>> Environment Variable missing: "DATABASE_URI"');
   try {
     const client = await MongoClient.connect(dbURI);
     console.log(">> Successfully Connected to MongoDB!")

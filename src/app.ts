@@ -7,5 +7,9 @@ connectToDatabase().then(db => {
   const server = createServer();
   createIOSocket(server, db);
 
-  setInterval(update, 1000/60);
+  const refresh_rate = process.env.REFRESH_RATE;
+  if (refresh_rate == null)
+    throw Error('>> Environment Variable missing: "REFRESH_RATE"');
+
+  setInterval(update, 1000 / parseInt(refresh_rate));
 })

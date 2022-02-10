@@ -16,11 +16,12 @@ type ChangeRoomSettingsData = ChangeRoomMaxSize | ChangeRoomTeamBase;
 
 export function changeRoomSettings(data: ChangeRoomSettingsData){
   const room = ROOM_LIST[data.room]
-  if (data.setting == 'maxSize') {
+
+  if (data.setting == 'maxSize')
     room.setMaxSize(data.value);
-  } else {
+  else if (data.setting == 'teamBased')
     room.setTeamBased(data.value);
-  }
+
   room.updateTeams();
   room.updateInfo();
   emitRoomUpdateSignal();

@@ -6,7 +6,10 @@ import {ROOM_LIST, SOCKET_LIST} from './global_data';
 import Player from './server/player';
 import {Dir, directions} from './server/bullet';
 
-const POWER_UP_DELAY = 60 * 7;
+// 60 * n, where n = number of seconds in between each powerup spawn
+const SECONDS_IN_BETWEEN_POWER_UPS = 5;
+const POWER_UP_DELAY = 60 * SECONDS_IN_BETWEEN_POWER_UPS;
+
 const TEAM_COLORS = ['', "#0096FF", "#ff6961"];
 
 let TIME_UNTIL_NEXT_POWER_UP = POWER_UP_DELAY;
