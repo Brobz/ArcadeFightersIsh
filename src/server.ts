@@ -6,11 +6,7 @@ export default function createServer() {
   const app = express();
   const server = new Server(app);
 
-  app.get("/", function(req: any, res: any){
-      res.sendFile(__dirname + "/client/index.html");
-  });
-
-  app.use("/client", express.static(__dirname + "/client"));
+  app.use(express.static(__dirname + "/client"));
 
   server.listen(process.env.PORT || 5000);
 
