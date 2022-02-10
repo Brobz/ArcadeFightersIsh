@@ -10,11 +10,11 @@
     "strictPropertyInitialization": false,
     "target": "esnext",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "*": ["node_modules/*", "server/types/*"]
     },
-    "typeRoots": ["node_modules/@types", "src/types"],
+    "typeRoots": ["node_modules/@types", "server/types"],
     "outDir": "./built"
   },
-  "include": ["./src/**/*", "jest.config.js"],
+  "include": ["./server/**/*", "jest.config.js"],
   "exclude": ["node_modules"]
 }

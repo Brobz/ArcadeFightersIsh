@@ -2,7 +2,7 @@ import type {Socket} from 'socket.io';
 import type {Collection, Document, WithId} from 'mongodb';
 
 import bcrypt from 'bcrypt'
-import Player from './server/player'
+import Player from './models/player'
 import {PLAYER_LIST, SOCKET_LIST} from './global_data';
 
 type DbResult = WithId<Document>

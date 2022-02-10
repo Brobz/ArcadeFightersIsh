@@ -1,10 +1,10 @@
-import type Room from './server/room';
+import type Room from './models/room';
 
-import {AVAILABLE_POWER_UPS} from './server/power_up';
+import {AVAILABLE_POWER_UPS} from './models/power_up';
 import {emitRoomUpdateSignal} from './room_management';
 import {ROOM_LIST, SOCKET_LIST} from './global_data';
-import Player from './server/player';
-import {Dir, directions} from './server/bullet';
+import Player from './models/player';
+import {Dir, directions} from './models/bullet';
 
 // 60 * n, where n = number of seconds in between each powerup spawn
 const SECONDS_IN_BETWEEN_POWER_UPS = 5;

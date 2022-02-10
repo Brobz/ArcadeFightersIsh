@@ -1,5 +1,5 @@
 import {PLAYER_LIST} from "./global_data";
-import Player from "./server/player";
+import Player from "./models/player";
 
 enum KeyEvent {
   D = 'd',

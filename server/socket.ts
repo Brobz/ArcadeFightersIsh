@@ -8,8 +8,8 @@ import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
 import {changeRoomSettings} from './update_room_properties';
 import {changePlayerAttribute} from './update_player_properties';
 import {getKeyInput} from './handle_input';
-import WallBlock from './server/wall_block';
-import ObstacleBlock from './server/obstacle_block';
+import WallBlock from './models/wall_block';
+import ObstacleBlock from './models/obstacle_block';
 import {createRoom, emitRoomUpdateSignal, joinRoom, leaveRoom} from './room_management';
 
 function buildWall() {

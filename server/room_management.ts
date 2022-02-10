@@ -1,6 +1,6 @@
 import type {Socket} from 'socket.io';
 import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
-import Room from './server/room';
+import Room from './models/room';
 
 interface RoomEventsData {
   room: string;

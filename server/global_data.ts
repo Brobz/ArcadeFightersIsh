@@ -1,5 +1,5 @@
-import type Player from './server/player';
-import type Room from './server/room';
+import type Player from './models/player';
+import type Room from './models/room';
 import type {Socket} from 'socket.io';
 
 interface List<T> {
