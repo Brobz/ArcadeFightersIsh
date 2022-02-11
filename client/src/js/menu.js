@@ -28,6 +28,7 @@ const playerColorText = document.getElementById("playerColorText");
 const currentRoomTitleText = document.getElementById("currentRoomTitleText");
 const currentRoomInfo = document.getElementById("currentRoomInfo");
 const roomInputDiv = document.getElementById('roomInputDiv');
+const playerColorErrorText = document.getElementById('playerColorErrorText');
 
 // Buttons and other elements with listeners
 const connectButton = document.getElementById("connectButton");
@@ -165,9 +166,23 @@ function updateGameModeRoomSetting(){
 gameModeRoomSettingInput.onchange = updateGameModeRoomSetting;
 const playerColorInput = document.getElementById('playerColorInput');
 function changePlayerColor(){
+  playerColorErrorText.innerHTML = '';
+  socket.emit("getColor", {color: playerColorInput.value});
+}
+function freeColor(data){
   playerColorText.innerHTML = playerColorInput.value;
   playerColorText.style.color = playerColorInput.value;
-  socket.emit("changePlayerAttribute", {player:id, attribute:"color", value:playerColorInput.value});
+  connectedText.style.color = data.color;
+  socket.emit("changePlayerAttribute", {player:id, attribute:"color", value:playerColorInput.value})
+}
+function takenColor(data){
+  playerColorErrorText.innerHTML = `<span style='color:${data.color};'>${data.color}</span> - Color already taken by <span style='color:${data.color};'>${data.ign}</span>!`;
+  // Reset color picker to player color
+  playerColorInput.value = playerColorText.innerHTML;
+  // Set timeout to get rid of error text
+  setTimeout(() => {
+    playerColorErrorText.innerHTML = '';
+  }, 4000);
 }
 playerColorInput.onchange = changePlayerColor;
 
@@ -259,6 +274,7 @@ function connected(data){
   id = data.id;
 
   connectedText.innerHTML = data.msg;
+  connectedText.style.color = data.color;
   playerColorText.innerHTML = data.color;
   playerColorText.style.color = data.color;
   playerColorInput.value = data.color;
@@ -268,6 +284,10 @@ function connected(data){
   socket.on("startGame", startGame);
 
   socket.on("endGame", endGame);
+
+  socket.on("freeColor", freeColor);
+
+  socket.on("takenColor", takenColor)
 
   login_SignupDiv.style.display = "none";
   roomInputDiv.style.display = "";

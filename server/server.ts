@@ -5,9 +5,6 @@ export default function createServer() {
 
   const app = express();
 
-  // Need to encapsulate our express app inside of an HTTP server, as socket.io requires it
-  const server = new Server(app);
-
   // Serve all site contents from the /client folder to all default route "/" requests
   app.use(express.static(__dirname + "/client"));
 
@@ -20,6 +17,9 @@ export default function createServer() {
   const port = process.env.PORT
   if (port == null)
     throw Error('>> Environment Variable missing: "PORT"');
+
+  // Need to encapsulate our express app inside of an HTTP server, as socket.io requires it
+  const server = new Server(app);
 
   // Start the server (listen on specified port for incoming connections)
   server.listen(port);

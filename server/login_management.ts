@@ -10,6 +10,7 @@ interface LoginData {
   username: string;
   password: string;
   ign: string;
+  color: string;
 }
 interface Arguments {
   collection: Collection<Document>,
@@ -19,17 +20,24 @@ interface Arguments {
 
 const SALT_ROUNDS = 10;
 
-function generateRandomColor() {
-  const generateRandomValue = () => Math.round(Math.random() * 256).toString(16);
-  const r = generateRandomValue();
-  const g = generateRandomValue();
-  const b = generateRandomValue();
-  return `#${r}${g}${b}`;
+async function generateRandomColor({collection, data, socket}: Arguments) {
+  let colorTaken = true;
+  let newColor = "#"
+  while (colorTaken){
+    let generateRandomValue = () => Math.round(Math.random() * 256).toString(16);
+    let r = generateRandomValue();
+    let g = generateRandomValue();
+    let b = generateRandomValue();
+    newColor = `#${r}${g}${b}`;
+    data.color = newColor;
+    colorTaken = await colorIsTaken({collection, data, socket});
+  }
+  return newColor;
 }
 
 async function createUser({collection, data, socket}: Arguments) {
   const hash = await bcrypt.hash(data.password, SALT_ROUNDS)
-  const color = generateRandomColor();
+  const color = await generateRandomColor({collection, data, socket});
   collection.insertOne({
     username: data.username,
     password: hash,
@@ -108,6 +116,38 @@ async function getUser({collection, data: {username, password}}: Arguments) {
     throw Error('Invalid Username/Password');
   }
   return user;
+}
+
+export async function getColor({collection, data: {color}, socket}: Arguments){
+  const query = { color: color };
+  const options = {
+    projection: { _id: 0, ign: 1, color: 1 },
+  };
+  const player = await collection.findOne(query, options);
+  if (player == null){
+    // no player with that color in the server!
+    socket.emit("freeColor", {color: color});
+  }
+  else{
+    // color already taken!
+    socket.emit("takenColor", {ign: player.ign, color: color});
+  }
+}
+
+export async function colorIsTaken({collection, data: {color}, socket}: Arguments){
+  const query = { color: color };
+  const options = {
+    projection: { _id: 0, ign: 1, color: 1 },
+  };
+  const player = await collection.findOne(query, options);
+  if (player == null){
+    // no player with that color in the server!
+    return false;
+  }
+  else{
+    // color already taken!
+    return true;
+  }
 }
 
 export async function processLoginRes(args: Arguments){

@@ -1,11 +1,5 @@
 TODO:
 
--> Add Single Color Strictness
-  -> No two players my have the same color on the server!!!
-    -> Accounts will now be created with a random (unique) color
-    -> Upon selecting an already existing color (which is checked via a DB query), an alert is displayed and the selection is reverted!
-      -> XXX Already has this color! Please choose another color!
-
 -> Make use of the new REFRESH_RATE var in order to always maintain a base game speed, no matter the refresh rate setting!
 
 -> Refactor "teamBased" mode

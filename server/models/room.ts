@@ -155,7 +155,7 @@ export default class Room {
   }
 
   processPowerUps = () => {
-    const newPowerUps = this.powerups.filter(powerUp => {
+    const remainingPowerUps = this.powerups.filter(powerUp => {
       const collidedPlayer = this.players.find(powerUp.checkForCollision);
       if (collidedPlayer == null) {
         return true;
@@ -163,7 +163,7 @@ export default class Room {
       collidedPlayer.powerUp(powerUp);
       return false;
     });
-    this.setPowerUps(newPowerUps);
+    this.setPowerUps(remainingPowerUps);
   }
 
   showEndOfGame = () => {

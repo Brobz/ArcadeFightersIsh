@@ -3,7 +3,7 @@ import type {Server as HTTPServer} from 'http';
 import type {Socket} from 'socket.io';
 
 import {Server} from 'socket.io';
-import {processLoginRes, processSignUp} from './login_management';
+import {processLoginRes, processSignUp, getColor} from './login_management';
 import {PLAYER_LIST, ROOM_LIST, SOCKET_LIST} from './global_data';
 import {changeRoomSettings} from './update_room_properties';
 import {changePlayerAttribute} from './update_player_properties';
@@ -72,6 +72,10 @@ function onConnection(socket: Socket, db: Db) {
 
   socket.on("logInInfo", async function(data){
     await processLoginRes({collection, data, socket});
+  });
+
+  socket.on("getColor", async function(data){
+    await getColor({collection, data, socket});
   });
 
   socket.on("callForGameStart", function(data){
